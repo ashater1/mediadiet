@@ -1,10 +1,7 @@
-import { googleBooks } from "~/features/books";
-import { listToString } from "~/utils/funcs";
 import { LoaderFunctionArgs } from "@vercel/remix";
-import { safeFilter } from "~/utils/funcs";
 import { z } from "zod";
-import { format } from "date-fns";
 import { openlibrary } from "~/features/books/openLibrary";
+import { listToString, safeFilter } from "~/utils/funcs";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const _bookId = params.id;
