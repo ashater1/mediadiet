@@ -15,7 +15,7 @@ export default function Navbar({ username }: { username: string | undefined }) {
       { name: "Activity", to: username || "" },
       { name: "Friends", to: "friends" },
       { name: "Lists", to: "lists" },
-      { name: "Saved for Later", to: "saved" },
+      { name: "Saved", to: "saved" },
       { name: "Settings", to: "settings" },
     ],
     []
