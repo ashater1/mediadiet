@@ -15,7 +15,8 @@
     "@remix-run/react": "^2.0.0",
     "@remix-run/serve": "^2.0.0",
     "@vercel/analytics": "^1.0.2",
-    "@vercel/remix": "^2.0.0",
+    "@vercel/remix": "^2.0.1",
+    "classnames": "^2.3.2",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -26,9 +27,23 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "eslint": "^8.38.0",
+    "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "description": "This directory is a brief example of a [Remix](https://remix.run/docs) site that can be deployed to Vercel with zero configuration.",
+  "version": "1.0.0",
+  "main": "remix.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mediadiet/mediadiet-v2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mediadiet/mediadiet-v2/issues"
+  },
+  "homepage": "https://github.com/mediadiet/mediadiet-v2#readme"
 }

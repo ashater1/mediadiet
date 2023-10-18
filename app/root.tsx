@@ -1,4 +1,4 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
+import stylesheet from "~/tailwind.css";
 import {
   Links,
   LiveReload,
@@ -11,7 +11,8 @@ import { Analytics } from "@vercel/analytics/react";
 import type { LinksFunction } from "@vercel/remix";
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
 ];
 
 export default function App() {
@@ -23,7 +24,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 w-screen h-screen">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
