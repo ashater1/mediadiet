@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
 import type { LinksFunction } from "@vercel/remix";
+import Navbar from "./features/nav/Navbar";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -25,6 +26,7 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 w-screen h-screen">
+        <Navbar username="adam" />
         <Outlet />
         <ScrollRestoration />
         <Scripts />

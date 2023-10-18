@@ -6,25 +6,22 @@ import {
   redirect,
 } from "@vercel/remix";
 import classNames from "classnames";
-import {
-  getAuthSession,
-  getUsername,
-  loginSchema,
-  signInWithPassword,
-} from "~/features/auth";
-import { Logo } from "~/features/brand/logo";
+import { Logo } from "~/features/brand/Logo";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+import {
+  getSession,
+  getUserDetails,
+  loginSchema,
+  signInWithPassword,
+} from "~/features/auth/authv2.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
+  const session = await getSession({ request, response });
 
-  const { session } = await getAuthSession({ request, response });
-
-  if (session) {
-    const userId = session.user.id;
-    const username = await getUsername(userId);
-    throw redirect(`/${username}`, { headers: response.headers });
+  if (!!session) {
+    throw redirect(`/`, { headers: response.headers });
   }
 
   return null;
@@ -35,12 +32,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = Object.fromEntries(await request.formData());
   const parsedLogin = loginSchema.safeParse({ ...submission });
 
+  console.log(parsedLogin.success ? "null" : parsedLogin.error);
+
   if (!parsedLogin.success) {
-    return json(parsedLogin.error.flatten().fieldErrors);
+    return json(parsedLogin.error.flatten().fieldErrors, {
+      headers: request.headers,
+    });
   }
 
   const { email, password } = parsedLogin.data;
-
   const { data, error } = await signInWithPassword({
     email,
     password,
@@ -52,9 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ email: "Invalid email or password.", password: null });
   }
 
-  const userId = data.user.id;
-  console.log({ userId });
-  const username = await getUsername(userId);
+  const { username } = await getUserDetails(data.user.id);
   throw redirect(`/${username}`, { headers: response.headers });
 }
 
