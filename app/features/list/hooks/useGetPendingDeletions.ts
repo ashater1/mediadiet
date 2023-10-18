@@ -7,10 +7,9 @@ export function usePendingDeletions() {
   const pendingDeletions = fetchers
     .filter(
       (f) =>
-        f.submission?.action.startsWith("/list") &&
-        f.submission?.action.endsWith("/delete")
+        f.formAction?.startsWith("/list") && f.formAction?.endsWith("/delete")
     )
-    .map((f) => f.submission?.formData.get("id"));
+    .map((f) => f.formData?.get("id"));
 
   return safeFilter(pendingDeletions);
 }

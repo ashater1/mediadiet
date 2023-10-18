@@ -1,5 +1,4 @@
 import { redirect } from "@vercel/remix";
-import { camelCase, isArray, transform, isObject } from "lodash";
 
 export function convertStringToBool(value: FormDataEntryValue) {
   if (typeof value !== "string")
@@ -37,17 +36,6 @@ export function listToString(
 export function safeFilter<T>(array: (T | null | undefined)[]): T[] {
   return array.filter((item) => item !== null && item !== undefined) as T[];
 }
-
-export const camelize = (obj: Record<string, unknown>) =>
-  transform(
-    obj,
-    (result: Record<string, unknown>, value: unknown, key: string, target) => {
-      const camelKey = isArray(target) ? key : camelCase(key);
-      result[camelKey] = isObject(value)
-        ? camelize(value as Record<string, unknown>)
-        : value;
-    }
-  );
 
 const primitives: Record<string, any> = {
   null: null,

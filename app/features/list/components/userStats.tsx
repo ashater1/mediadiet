@@ -1,14 +1,12 @@
-import { AvatarImage } from "~/components/avatar";
-import { Counts } from "~/features/list/db";
+import { UserMinusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { type User } from "@prisma/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { UserMinusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
-import { Button } from "~/components/button";
 import { NavLink, useFetcher } from "@remix-run/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { set } from "lodash";
-import { getAvatarUrl } from "~/features/friends/functions/getAvatarUrl";
+import { FallbackAvatar } from "~/components/avatar";
+import { Button } from "~/components/button";
+import { Counts } from "~/features/list/db";
 
 type Follow = Pick<User, "avatar" | "firstName" | "lastName" | "username">;
 
@@ -37,9 +35,9 @@ export function UserStats({
     <>
       <div className="hidden h-full w-80 flex-none flex-col border-r-gray-300/10 p-4 md:flex md:border-r">
         <div className="flex-none p-6 text-center">
-          <AvatarImage
-            className="h-24 w-24 overflow-hidden"
-            imgSrc={user?.avatar ? getAvatarUrl(user.avatar) : null}
+          <FallbackAvatar
+          // className="h-24 w-24 overflow-hidden"
+          // imgSrc={user?.avatar ? getAvatarUrl(user.avatar) : null}
           />
 
           <div className="mt-4 flex items-center justify-center">
@@ -177,19 +175,19 @@ function FollowAvatar({ avatar, firstName, lastName, username }: Follow) {
       <Tooltip.Root>
         <Tooltip.Trigger>
           <NavLink to={`/${username}`} prefetch="intent">
-            <AvatarImage
-              fallback={
-                (firstName || lastName) && (
-                  <div className="flex h-full w-full items-center justify-center stroke-white/80 stroke-1">
-                    {firstName?.at(0) && <div>{firstName.at(0)}</div>}
-                    {lastName?.at(0) && <div>{lastName.at(0)}</div>}
-                  </div>
-                )
-              }
-              className={
-                "h-auto w-full max-w-[30px] stroke-2 p-1 [&>*]:stroke-2"
-              }
-              imgSrc={avatar && getAvatarUrl(avatar)}
+            <FallbackAvatar
+            // fallback={
+            //   (firstName || lastName) && (
+            //     <div className="flex h-full w-full items-center justify-center stroke-white/80 stroke-1">
+            //       {firstName?.at(0) && <div>{firstName.at(0)}</div>}
+            //       {lastName?.at(0) && <div>{lastName.at(0)}</div>}
+            //     </div>
+            //   )
+            // }
+            // className={
+            //   "h-auto w-full max-w-[30px] stroke-2 p-1 [&>*]:stroke-2"
+            // }
+            // imgSrc={avatar && getAvatarUrl(avatar)}
             />
           </NavLink>
         </Tooltip.Trigger>

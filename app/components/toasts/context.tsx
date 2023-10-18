@@ -4,7 +4,7 @@ import * as Toast from "@radix-ui/react-toast";
 import { SuccessToast } from "./success";
 import { AnimatePresence, motion } from "framer-motion";
 
-export const ToastsContext = createContext<{
+const ToastsContext = createContext<{
   createToast: ReturnType<typeof useToasts>["createToast"];
   toastList: ReturnType<typeof useToasts>["toastList"];
 } | null>(null);

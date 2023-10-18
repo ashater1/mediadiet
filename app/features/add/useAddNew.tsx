@@ -1,5 +1,5 @@
 import { useFetcher } from "@remix-run/react";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce.js";
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { loader as bookSearchLoader } from "~/routes/search/book";
 import { loader as movieSearchLoader } from "~/routes/search/movie";

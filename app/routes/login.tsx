@@ -14,7 +14,7 @@ import {
   getUserDetails,
   loginSchema,
   signInWithPassword,
-} from "~/features/auth/authv2.server";
+} from "~/features/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
