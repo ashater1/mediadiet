@@ -7,6 +7,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import classNames from "classnames";
 import { Logo } from "~/features/brand/Logo";
 import { useUserContext } from "../auth/context";
+import { FallbackAvatar } from "~/components/avatar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -62,8 +63,9 @@ export default function Navbar() {
               {user?.username ? (
                 <div className="flex gap-2 h-full items-center justify-center">
                   <NewEntryModal />
-                  <button className="border border-primary-800 rounded-full p-1.5 hover:bg-primary-800/10 stroke-gray-700 hover:stroke-gray-900">
-                    <UserIcon className="w-7 h-7 stroke-[1px] " />
+                  <button className="border border-primary-800/20 rounded-full p-1 overflow-hidden hover:bg-primary-800/10  w-12 h-12">
+                    {/* <UserIcon className="w-7 h-7 stroke-[1px] " /> */}
+                    <FallbackAvatar />
                   </button>
                 </div>
               ) : (

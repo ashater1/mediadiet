@@ -111,7 +111,7 @@ export function FavoriteHeart({
         isOn
           ? "fill-red-300 stroke-slate-700 stroke-1"
           : "fill-transparent stroke-slate-500 stroke-1",
-        "h-5 w-5 transition-all duration-300 md:h-6 md:w-6",
+        "h-5 w-5 transition-all duration-300 md:h-5 md:w-5",
         className && className
       )}
     />
@@ -129,7 +129,7 @@ export function ReviewIcon({
         isOn
           ? "fill-orange-100 stroke-slate-700 stroke-[1.2]"
           : "fill-transparent stroke-slate-300 stroke-1",
-        "h-5 w-5 transition-all duration-300 md:h-6 md:w-6",
+        "h-5 w-5 transition-all duration-300 md:h-5 md:w-5",
         className && className
       )}
     />
@@ -144,7 +144,7 @@ export function MovieIcon({
     <VideoCameraIcon
       {...props}
       className={classNames(
-        "h-5 w-5 fill-blue-300 stroke-black md:h-6 md:w-6",
+        "h-5 w-5 fill-blue-300 stroke-black md:h-5 md:w-5",
         className
       )}
     />
@@ -159,7 +159,7 @@ export function TvShowIcon({
     <TvIcon
       {...props}
       className={classNames(
-        "h-5 w-5 fill-slate-700 stroke-purple-800 md:h-6 md:w-6",
+        "h-5 w-5 fill-slate-700 stroke-purple-800 md:h-5 md:w-5",
         className && className
       )}
     />
@@ -174,7 +174,7 @@ export function BookIcon({
     <BookOpenIcon
       {...props}
       className={classNames(
-        "h-5 w-5 fill-orange-200 md:h-6 md:w-6",
+        "h-5 w-5 fill-orange-200 md:h-5 md:w-5",
         className && className
       )}
     />

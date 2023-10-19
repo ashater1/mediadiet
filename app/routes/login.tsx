@@ -69,7 +69,7 @@ export default function Login() {
   const passwordError = actionData?.password;
 
   return (
-    <div className="h-full w-full flex items-center justify-center p-4">
+    <div className="h-screen w-screen flex items-center justify-center p-4">
       <div className="-mt-20 flex flex-col gap-10 w-full max-w-md">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">

@@ -17,8 +17,10 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import classNames from "classnames";
 import React, { useMemo } from "react";
 import invariant from "tiny-invariant";
+import DataCell from "~/components/table/DataCell";
 import { useAddNewContext } from "~/features/add/context";
 import { getUserDetails } from "~/features/auth/auth.server";
+import { EmptyState } from "~/features/list/components/emptyState";
 import { UserHeaderBar } from "~/features/list/components/listUserHeaderBar";
 import { getUserEntriesAndCounts } from "~/features/list/db/entries";
 import { usePendingDeletions } from "~/features/list/hooks/useGetPendingDeletions";
@@ -92,7 +94,7 @@ export default function UserIndex() {
         accessorKey: "consumedDate",
         header: "Date",
         cell: (props) => (
-          <div className="flex h-full w-full items-center justify-center text-xs md:text-base">
+          <div className="flex h-full w-full items-center justify-center text-xs md:text-sm">
             {`${props.getValue()}`}
           </div>
         ),
@@ -132,12 +134,12 @@ export default function UserIndex() {
               </div>
 
               <div className="flex flex-col">
-                <div className="text-sm font-semibold line-clamp-2 md:text-base">
+                <div className="text-sm font-semibold line-clamp-2 md:text-sm">
                   {props.getValue() as string}
                 </div>
 
                 <div className="flex items-center gap-x-2">
-                  <div className="mt-0.5 text-xs text-gray-500 line-clamp-2 md:text-sm">
+                  <div className="mt-0.5 text-xs text-gray-500 line-clamp-2 md:text-xs">
                     {props.row.getValue("creators")}
                   </div>
                 </div>
@@ -166,7 +168,7 @@ export default function UserIndex() {
         accessorKey: "releaseYear",
         header: "Year",
         cell: (props) => (
-          <div className="flex h-full w-full items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center text-sm">
             {`${props.getValue()}`}
           </div>
         ),
@@ -235,7 +237,7 @@ export default function UserIndex() {
         tvCount={data.counts.tv}
       />
 
-      <div className="mt-1.5 mb-1.5 border-b border-b-primary-800/20 md:mt-6 md:mb-6" />
+      <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 
       <div>
         {data.entries.length ? (
@@ -248,7 +250,7 @@ export default function UserIndex() {
                       <th
                         className={classNames(
                           header.id !== "title" ? "hidden md:table-cell" : null,
-                          "px-3 py-2"
+                          "px-3 py-1 text-sm"
                         )}
                         key={header.id}
                       >
@@ -275,14 +277,12 @@ export default function UserIndex() {
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
-                        <td
-                          className={classNames(
-                            !["title", "consumedDate"].includes(
-                              cell.column.id
-                            ) && "hidden md:table-cell",
-                            cell.column.id === "title" && "w-full",
-                            "px-2 py-3 align-middle md:px-5 md:py-6	"
-                          )}
+                        <DataCell
+                          className={
+                            !["title", "consumedDate"].includes(cell.column.id)
+                              ? "hidden md:table-cell"
+                              : ""
+                          }
                           {...{
                             key: cell.id,
                           }}
@@ -291,7 +291,7 @@ export default function UserIndex() {
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
-                        </td>
+                        </DataCell>
                       );
                     })}
                   </TableRow>
@@ -383,57 +383,5 @@ export function ContextMenuItem({
     >
       {children}
     </ContextMenu.Item>
-  );
-}
-
-type EmptyStateProps =
-  | {
-      isSelf: false;
-      name: string;
-    }
-  | { isSelf: true; name?: string };
-
-function EmptyState({
-  isSelf,
-  name,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & EmptyStateProps) {
-  const { openModal } = useAddNewContext();
-
-  return (
-    <div {...props} className="mx-auto flex max-w-lg flex-col gap-4">
-      <div className="flex justify-center gap-6">
-        <MovieIcon className="stroke-1 md:h-10 md:w-10" />
-        <BookIcon className="stroke-1 md:h-10 md:w-10" />
-        <TvShowIcon className="stroke-1 md:h-10 md:w-10" />
-      </div>
-
-      <div className="flex flex-col items-center gap-5">
-        <div className="text-center">
-          <h2 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-            {isSelf
-              ? "You don't have anything in your list yet"
-              : `${name} doesn't have anything on their list yet`}
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            {isSelf
-              ? "Start adding to your list so you can show others what you've been watching & reading, and start building your year-end list!"
-              : "Check back later to see if they've starting adding things!"}
-          </p>
-        </div>
-
-        {isSelf && (
-          <button
-            onClick={openModal}
-            type="button"
-            className="flex h-10 items-center justify-center rounded border px-3 text-sm font-medium text-gray-500 hover:bg-indigo-500 hover:text-gray-50"
-          >
-            <PlusIcon className="stroke-4 h-5 w-5" />
-            <span className="ml-2">Start adding to your list</span>
-          </button>
-        )}
-      </div>
-    </div>
   );
 }

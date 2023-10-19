@@ -54,25 +54,27 @@ export default function App() {
   const isAuthPage = useIsAuthPage();
 
   return (
-    <html className="min-h-screen" lang="en">
+    <html lang="en">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full w-full bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 ">
-        <ToastContext>
-          <AddNewContext>
-            <UserContextProvider user={data}>
-              {!isAuthPage && <Navbar />}
+      <body className="flex bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 h-full min-h-screen">
+        <div className="h-full w-full">
+          <ToastContext>
+            <AddNewContext>
+              <UserContextProvider user={data}>
+                {!isAuthPage && <Navbar />}
 
-              <Outlet />
-              <ScrollRestoration />
-              <Scripts />
-              <LiveReload />
-              <Analytics />
-            </UserContextProvider>
-          </AddNewContext>
-        </ToastContext>
+                <Outlet />
+                <ScrollRestoration />
+                <Scripts />
+                <LiveReload />
+                <Analytics />
+              </UserContextProvider>
+            </AddNewContext>
+          </ToastContext>
+        </div>
       </body>
     </html>
   );
