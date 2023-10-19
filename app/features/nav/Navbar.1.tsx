@@ -7,7 +7,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import classNames from "classnames";
 import { Logo } from "~/features/brand/Logo";
 import { useUserContext } from "../auth/context";
-import { FallbackAvatar } from "~/components/avatar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

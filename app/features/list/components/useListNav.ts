@@ -1,8 +1,8 @@
-import { useEffect, useReducer, useState } from "react";
-import xor from "lodash/xor";
 import { useSearchParams } from "@remix-run/react";
-import { paramsToObject } from "~/utils/supabase";
+import xor from "lodash/xor";
+import { useEffect, useReducer, useState } from "react";
 import { z } from "zod";
+import { paramsToObject } from "~/utils/supabase";
 
 export type OneOfArray<T> = T extends any[] ? T[number] : T;
 
@@ -15,13 +15,6 @@ export type Action =
   | { type: "favorited"; payload: true | false }
   | { type: "sort"; payload: "desc" | "asc" }
   | { type: "reset" };
-
-// export type State = {
-//   favorited: (true | false)[];
-//   rating: ("liked" | "disliked" | null)[];
-//   sort: "desc" | "asc";
-//   type: ("movie" | "tv" | "book")[];
-// };
 
 const initial: State = {
   type: [],

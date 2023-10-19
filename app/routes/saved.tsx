@@ -7,7 +7,10 @@ import { format } from "date-fns";
 import { z } from "zod";
 import { PageFrame, PageHeader } from "~/components/frames";
 import { getUserDetails } from "~/features/auth/auth.server";
-import ListUserHeaderBar from "~/features/list/components/listUserHeaderBar";
+import {
+  UserHeaderBar,
+  UserItemsCountAndFilter,
+} from "~/features/list/components/listUserHeaderBar";
 import {
   bookReviewInclude,
   movieReviewInclude,
@@ -176,7 +179,7 @@ export default function Saved() {
             </div>
 
             <div className="md:ml-auto">
-              <ListUserHeaderBar
+              <UserItemsCountAndFilter
                 movieCount={data.movieCount}
                 bookCount={data.bookCount}
                 tvCount={data.tvCount}

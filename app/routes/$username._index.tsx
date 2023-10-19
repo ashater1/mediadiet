@@ -17,10 +17,9 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import classNames from "classnames";
 import React, { useMemo } from "react";
 import invariant from "tiny-invariant";
-import { FallbackAvatar } from "~/components/avatar";
 import { useAddNewContext } from "~/features/add/context";
 import { getUserDetails } from "~/features/auth/auth.server";
-import ListUserHeaderBar from "~/features/list/components/listUserHeaderBar";
+import { UserHeaderBar } from "~/features/list/components/listUserHeaderBar";
 import { getUserEntriesAndCounts } from "~/features/list/db/entries";
 import { usePendingDeletions } from "~/features/list/hooks/useGetPendingDeletions";
 import {
@@ -227,39 +226,18 @@ export default function UserIndex() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-        <div className="hidden h-16 w-16 overflow-hidden rounded-full bg-gray-100 md:block">
-          {data.user.avatar ? (
-            <img className="h-full w-full" src={data.user.avatar} />
-          ) : (
-            <FallbackAvatar />
-          )}
-        </div>
+      <UserHeaderBar
+        username={data.user.username}
+        firstName={data.user.firstName}
+        lastName={data.user.lastName}
+        moiveCount={data.counts.movies}
+        bookCount={data.counts.books}
+        tvCount={data.counts.tv}
+      />
 
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold tracking-tight text-gray-900 md:text-3xl">
-            {data.user.firstName
-              ? data.user.firstName + " " + data.user.lastName
-              : `${data.user.username}`}
-          </h2>
+      <div className="mt-1.5 mb-1.5 border-b border-b-primary-800/20 md:mt-6 md:mb-6" />
 
-          {data.user.firstName && (
-            <span className="text-sm text-gray-500">
-              @ {data.user.username}
-            </span>
-          )}
-        </div>
-
-        <ListUserHeaderBar
-          movieCount={data.counts.movies}
-          bookCount={data.counts.books}
-          tvCount={data.counts.tv}
-        />
-      </div>
-
-      <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
-
-      <div className="mt-4 md:mt-4">
+      <div>
         {data.entries.length ? (
           <table className="w-full" key="table">
             <thead className="sr-only md:not-sr-only">

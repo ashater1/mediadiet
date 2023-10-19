@@ -20,7 +20,7 @@ import { AddNewContext } from "./features/add/context";
 import { getUserDetails } from "./features/auth/auth.server";
 import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
-import Navbar from "./features/nav/Navbar";
+import Navbar from "./features/nav/Navbar.1";
 
 export const meta: MetaFunction = () => {
   return [
@@ -54,16 +54,17 @@ export default function App() {
   const isAuthPage = useIsAuthPage();
 
   return (
-    <html lang="en">
+    <html className="min-h-screen" lang="en">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 w-screen h-screen">
+      <body className="h-full w-full bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 ">
         <ToastContext>
           <AddNewContext>
             <UserContextProvider user={data}>
               {!isAuthPage && <Navbar />}
+
               <Outlet />
               <ScrollRestoration />
               <Scripts />
