@@ -1,13 +1,12 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useParams } from "@remix-run/react";
 import classNames from "classnames";
-import { useContext } from "react";
 import { Button } from "~/components/button";
-import { AddNewContext } from "~/features/add/context";
+import { useAddNewContext } from "~/features/add/context";
 
 export default function EmptyList({ isSelf }: { isSelf?: boolean }) {
   const params = useParams();
-  const addNew = useContext(AddNewContext);
+  const addNew = useAddNewContext();
 
   return (
     <div className="flex gap-6 text-center">

@@ -2,7 +2,7 @@ import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
 import { NewBookSchema } from "~/features/add/types";
 import { getUser } from "~/features/auth/auth.server";
 import { addNewBookEntry } from "~/features/books";
-import { deleteSavedBook } from "~/routes/saved/delete";
+import { deleteSavedBook } from "~/features/saved/delete";
 import { convertStringToBool } from "~/utils/funcs";
 
 export async function action({ request }: ActionFunctionArgs) {

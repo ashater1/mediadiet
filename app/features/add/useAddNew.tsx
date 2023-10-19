@@ -1,13 +1,13 @@
 import { useFetcher } from "@remix-run/react";
 import debounce from "lodash/debounce.js";
 import { useEffect, useMemo, useReducer, useState } from "react";
-import { loader as bookSearchLoader } from "~/routes/search/book";
-import { loader as movieSearchLoader } from "~/routes/search/movie";
-import { loader as tvSearchLoader } from "~/routes/search/tv";
+import { loader as bookSearchLoader } from "~/routes/search.book._index";
+import { loader as movieSearchLoader } from "~/routes/search.movie._index";
+import { loader as tvSearchLoader } from "~/routes/search.tv._index";
 import { MediaType } from "../list/types";
-import { loader as bookLoader } from "~/routes/search/book/$id";
-import { loader as movieLoader } from "~/routes/search/movie/$id";
-import { loader as tvLoader } from "~/routes/search/tv/$id";
+import { loader as bookLoader } from "~/routes/search.book.$id";
+import { loader as movieLoader } from "~/routes/search.movie.$id";
+import { loader as tvLoader } from "~/routes/search.tv.$id";
 import { useToastsContext } from "~/components/toasts/context";
 import { SerializeFrom } from "@vercel/remix";
 

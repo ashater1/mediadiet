@@ -17,7 +17,7 @@ import {
   useLocation,
   useSearchParams,
   useSubmit,
-  useTransition,
+  useNavigation,
 } from "@remix-run/react";
 import {
   useListNav,
@@ -328,7 +328,7 @@ export function MylistNav({
   totalItemCount: number;
   itemsWithReviewCount: number;
 }) {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
@@ -394,7 +394,7 @@ export function MylistNav({
 
       <div className="ml-auto flex items-center">
         <div className="mr-2">
-          <Spinner loading={transition.state === "submitting"} />
+          <Spinner loading={navigation.state === "submitting"} />
         </div>
 
         <Form

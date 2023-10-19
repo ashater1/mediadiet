@@ -1,24 +1,23 @@
+import { Link, useFetcher, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
-import { Link, useFetcher, useSubmit, useTransition } from "@remix-run/react";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce.js";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
-import { getAuthUser } from "~/features/auth";
+import { getUser } from "~/features/auth/auth.server";
 import { MediaType } from "~/features/list/types";
 import {
   addSavedBook,
   addSavedMovie,
   addSavedShow,
-  getSavedBooks,
   getSavedMovies,
   getSavedShows,
-} from "~/features/saved/db";
+} from "~/features/saved/add";
 import { SearchCombobox } from "~/features/search";
-import { loader as bookSearchLoader } from "~/routes/search/book";
-import { loader as movieSearchLoader } from "~/routes/search/movie";
-import { loader as tvSearchLoader } from "~/routes/search/tv";
+import { loader as bookSearchLoader } from "~/routes/search.book._index";
+import { loader as movieSearchLoader } from "~/routes/search.movie._index";
+import { loader as tvSearchLoader } from "~/routes/search.tv._index";
 
 const AddToSavedSchema = z.object({
   id: z.string(),
@@ -28,8 +27,7 @@ const AddToSavedSchema = z.object({
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
-
-  const user = await getAuthUser({ request, response });
+  const user = await getUser({ request, response });
 
   if (!user) {
     throw redirect("/login", { headers: request.headers });
@@ -80,7 +78,7 @@ export default function Add() {
   const [isLoading, setIsLoading] = useState(false);
 
   const submit = useSubmit();
-  const transition = useTransition();
+  const navigation = useNavigation();
 
   let {
     data: searchData,
@@ -148,7 +146,7 @@ export default function Add() {
 
       <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-white md:w-auto">
         <div className="w-full p-6 md:w-[500px]">
-          {transition.state !== "idle" ? (
+          {navigation.state !== "idle" ? (
             <div className="flex items-center justify-center p-3">
               <Spinner diameter={7} />
             </div>

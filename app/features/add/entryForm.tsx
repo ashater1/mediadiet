@@ -1,7 +1,13 @@
-import { action as addBookAction } from "~/routes/list/book/add";
-import { action as addMovieAction } from "~/routes/list/movie/add";
-import { action as addTvAction } from "~/routes/list/tv/add";
+import { Menu } from "@headlessui/react";
 import { ArrowLeftCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
+import { Spinner } from "~/components/login/Spinner";
+import { action as addBookAction } from "~/routes/list.book.add";
+import { action as addMovieAction } from "~/routes/list.movie.add";
+import { action as addTvAction } from "~/routes/list.tv.add";
+import { safeFilter } from "~/utils/funcs";
+import { MediaType } from "../list/types";
 import {
   EntryFormHeader,
   EntryFormImage,
@@ -9,15 +15,7 @@ import {
   EntryFormInputs,
   EntryFormRoot,
 } from "./components/entryForm";
-import { loader as tvLoader } from "~/routes/search/tv/$id";
-import { MediaType } from "../list/types";
-import { Menu } from "@headlessui/react";
-import { safeFilter } from "~/utils/funcs";
 import { useAddNewContext } from "./context";
-import { useEffect } from "react";
-import { useFetcher } from "@remix-run/react";
-import { Spinner } from "~/components/login/Spinner";
-import classNames from "classnames";
 
 type NewEntryFormProps = {
   id: string;

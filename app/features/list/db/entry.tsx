@@ -6,7 +6,7 @@ import {
 } from "../db";
 import { format } from "date-fns";
 import { MediaType } from "../types";
-import { UpdateSchemaType } from "~/routes/$username/$reviewId/edit";
+import { UpdateSchemaType } from "~/routes/$username.$reviewId.edit";
 
 type WithReviewId<T> = T & { reviewId: string };
 

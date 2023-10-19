@@ -41,10 +41,10 @@ export async function getUser({
 }
 
 export async function getUserOrRedirect({
-  to,
+  to = "login",
   request,
   response,
-}: RequestResponse & { to: string }) {
+}: RequestResponse & { to?: string }) {
   const serverClient = getServerClient({ request, response });
 
   const user = await getUser({ request, response });

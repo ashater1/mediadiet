@@ -1,9 +1,8 @@
-import { ActionFunctionArgs, json } from "@vercel/remix";
-import { addNewTvEntry } from "~/features/tvAndMovies/db";
+import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
 import { NewTvSchema } from "~/features/add/types";
+import { addNewTvEntry } from "~/features/tvAndMovies/db";
 import { convertStringToBool, createSupabaseClient } from "~/utils/supabase";
-import { redirect } from "remix-typedjson";
-import { deleteSavedMovie, deleteSavedShow } from "~/routes/saved/delete";
+import { deleteSavedShow } from "~/features/saved/delete";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
