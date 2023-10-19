@@ -1,9 +1,7 @@
-import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
+import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { ComboboxOption, getSearchTerm } from "~/features/search";
-import { googleBooks } from "~/features/books";
-import { format } from "date-fns";
-import { listToString, safeFilter } from "~/utils/funcs";
 import { openlibrary } from "~/features/books/openLibrary";
+import { listToString, safeFilter } from "~/utils/funcs";
 
 export type BookSearchResults = (ComboboxOption & {
   imgSrc: string | null;

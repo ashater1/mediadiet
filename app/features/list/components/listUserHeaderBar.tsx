@@ -1,8 +1,8 @@
 import {
   Form,
+  useNavigation,
   useSearchParams,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 import classNames from "classnames";
 
@@ -17,13 +17,12 @@ export default function ListUserHeaderBar({
   tvCount: number;
   labels?: [string, string, string];
 }) {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
 
   const checkedMediaTypes =
-    transition.submission?.formData.getAll("type") ??
-    searchParams.getAll("type");
+    navigation.formData?.getAll("type") ?? searchParams.getAll("type");
 
   return (
     <Form

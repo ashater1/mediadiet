@@ -1,14 +1,13 @@
-import { ActionFunctionArgs, json } from "@vercel/remix";
-import { redirect } from "remix-typedjson";
+import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
 import { NewBookSchema } from "~/features/add/types";
-import { getAuthUser } from "~/features/auth";
+import { getUser } from "~/features/auth/auth.server";
 import { addNewBookEntry } from "~/features/books";
 import { deleteSavedBook } from "~/routes/saved/delete";
 import { convertStringToBool } from "~/utils/funcs";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
-  const user = await getAuthUser({ request, response });
+  const user = await getUser({ request, response });
 
   if (!user) {
     throw redirect("/login");

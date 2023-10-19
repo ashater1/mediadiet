@@ -1,7 +1,7 @@
 import { db } from "~/utils/db.server";
 import { format, formatInTimeZone } from "date-fns-tz";
 import { listToString, safeFilter } from "~/utils/funcs";
-import { orderBy } from "lodash";
+import orderBy from "lodash/orderBy.js";
 
 export type MovieDbImageSizes =
   | 92

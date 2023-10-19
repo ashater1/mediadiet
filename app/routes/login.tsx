@@ -10,7 +10,8 @@ import { Logo } from "~/features/brand/Logo";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import {
-  getSession,
+  findUser,
+  getUser,
   getUserDetails,
   loginSchema,
   signInWithPassword,
@@ -18,10 +19,10 @@ import {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
-  const session = await getSession({ request, response });
+  const user = await getUserDetails({ request, response });
 
-  if (!!session) {
-    throw redirect(`/`, { headers: response.headers });
+  if (user) {
+    throw redirect(`/${user.username}`, { headers: response.headers });
   }
 
   return null;
@@ -52,7 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ email: "Invalid email or password.", password: null });
   }
 
-  const { username } = await getUserDetails(data.user.id);
+  const { username } = await findUser(data.user.id);
   throw redirect(`/${username}`, { headers: response.headers });
 }
 

@@ -88,7 +88,21 @@ export async function signOut({
   throw redirect("/login", { headers: response.headers });
 }
 
-export async function getUserDetails(id: string) {
+export async function getUserDetails({
+  request,
+  response,
+}: {
+  request: Request;
+  response: Response;
+}) {
+  const user = await getUser({ request, response });
+  if (!user) return null;
+
+  const userDetails = await findUser(user.id);
+  return userDetails;
+}
+
+export async function findUser(id: string) {
   const user = await db.user.findFirstOrThrow({
     where: { id },
   });

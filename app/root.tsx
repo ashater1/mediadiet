@@ -1,4 +1,3 @@
-import stylesheet from "~/tailwind.css";
 import {
   Links,
   LiveReload,
@@ -6,36 +5,71 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
-import type { LinksFunction } from "@vercel/remix";
-import Navbar from "./features/nav/Navbar";
+import {
+  json,
+  MetaFunction,
+  type LinksFunction,
+  type LoaderFunctionArgs,
+} from "@vercel/remix";
+import stylesheet from "~/tailwind.css";
 import { ToastContext } from "./components/toasts/context";
 import { AddNewContext } from "./features/add/context";
+import { getUserDetails } from "./features/auth/auth.server";
+import { UserContextProvider } from "./features/auth/context";
+import { useIsAuthPage } from "./features/auth/hooks";
+import Navbar from "./features/nav/Navbar";
+
+export const meta: MetaFunction = () => {
+  return [
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+    { charSet: "utf-8" },
+  ];
+};
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
   { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
 ];
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const response = new Response();
+  const user = await getUserDetails({ request, response });
+
+  if (user) {
+    const { username, firstName, lastName } = user;
+    return json(
+      { username, firstName, lastName },
+      { headers: request.headers }
+    );
+  }
+
+  return null;
+}
+
 export default function App() {
+  const data = useLoaderData<typeof loader>();
+  const isAuthPage = useIsAuthPage();
+
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
       <body className="bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 w-screen h-screen">
         <ToastContext>
           <AddNewContext>
-            <Navbar username="adam" />
-            <Outlet />
-            <ScrollRestoration />
-            <Scripts />
-            <LiveReload />
-            <Analytics />
+            <UserContextProvider user={data}>
+              {!isAuthPage && <Navbar />}
+              <Outlet />
+              <ScrollRestoration />
+              <Scripts />
+              <LiveReload />
+              <Analytics />
+            </UserContextProvider>
           </AddNewContext>
         </ToastContext>
       </body>

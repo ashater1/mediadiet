@@ -3,7 +3,7 @@ export function PageFrame({
   ...props
 }: React.HTMLProps<HTMLDivElement>) {
   return (
-    <div className="mx-auto w-full px-4 sm:px-2 lg:px-8">
+    <div {...props} className="mx-auto w-full px-4 sm:px-2 lg:px-8">
       <div className="mx-auto mt-6 flex max-w-5xl">{children}</div>
     </div>
   );

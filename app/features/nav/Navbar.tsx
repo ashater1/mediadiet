@@ -1,4 +1,4 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Bars3Icon, UserIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import { Link, NavLink } from "@remix-run/react";
 import { NewEntryModal } from "../add/entryModal";
@@ -6,13 +6,15 @@ import { useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import classNames from "classnames";
 import { Logo } from "~/features/brand/Logo";
+import { useUserContext } from "../auth/context";
 
-export default function Navbar({ username }: { username: string | undefined }) {
+export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const user = useUserContext();
 
   const navigation = useMemo(
     () => [
-      { name: "Activity", to: username || "" },
+      { name: "Activity", to: user?.username || "" },
       { name: "Friends", to: "friends" },
       { name: "Lists", to: "lists" },
       { name: "Saved", to: "saved" },
@@ -23,14 +25,14 @@ export default function Navbar({ username }: { username: string | undefined }) {
 
   return (
     <Dialog.Root open={open} onOpenChange={() => setOpen((o) => !o)}>
-      <div className="flex items-center justify-center py-2">
+      <div className="flex items-center justify-center py-2 mb-10">
         <div className="flex w-full max-w-5xl justify-between px-4">
           <div className="flex gap-3">
             <Logo size="lg" />
           </div>
 
           <div className="hidden items-center gap-3 md:flex">
-            {username &&
+            {user?.username &&
               navigation.map((item) => (
                 <NavLink
                   key={item.name}
@@ -57,8 +59,13 @@ export default function Navbar({ username }: { username: string | undefined }) {
             </Dialog.Trigger>
 
             <div className="hidden h-full items-center justify-center gap-3 md:flex">
-              {username ? (
-                <NewEntryModal />
+              {user?.username ? (
+                <div className="flex gap-2 h-full items-center justify-center">
+                  <NewEntryModal />
+                  <button className="border border-primary-800 rounded-full p-1.5 hover:bg-primary-800/10 stroke-gray-700 hover:stroke-gray-900">
+                    <UserIcon className="w-7 h-7 stroke-[1px] " />
+                  </button>
+                </div>
               ) : (
                 <Link
                   to="/login"

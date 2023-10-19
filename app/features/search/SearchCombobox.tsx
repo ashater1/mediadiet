@@ -82,7 +82,7 @@ export function SearchCombobox({
                     ? `Search for a ${mediaType}`
                     : "Choose a type"
                 }
-                className="z-50 w-full rounded border border-white/30 p-1.5 pl-10 text-gray-800 outline-none focus:ring-0"
+                className="z-50 w-full rounded border border-primary-800/50 p-1.5 pl-10 text-gray-800 outline-none focus:ring-0"
               />
             </div>
           </div>

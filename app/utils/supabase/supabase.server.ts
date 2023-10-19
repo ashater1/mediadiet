@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import { createClient } from "@supabase/supabase-js";
 import { type Database } from "types/supabaseSchema";
 
 export type RequestResponse = {

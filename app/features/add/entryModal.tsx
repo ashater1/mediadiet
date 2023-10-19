@@ -1,11 +1,11 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { ReviewForm } from "./entryForm";
-import { SearchCombobox } from "../search";
-import { SelectMediaType } from "./SelectMediaType";
-import { useAddNewContext } from "./context";
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 import { MediaType } from "../list/types";
+import { SearchCombobox } from "../search";
+import { SelectMediaType } from "./SelectMediaType";
+import { useAddNewContext } from "./context";
+import { ReviewForm } from "./entryForm";
 
 export function NewEntryModal() {
   const {
@@ -37,11 +37,11 @@ export function NewEntryModal() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             />
           </Dialog.Overlay>
 
-          <Dialog.Content className="fixed top-1/2 left-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-white md:w-auto">
+          <Dialog.Content className="fixed top-1/2 left-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 md:w-auto">
             <div>
               <Dialog.Title className="sr-only">Add new entry</Dialog.Title>
 
