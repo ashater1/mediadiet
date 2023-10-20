@@ -1,13 +1,13 @@
-import { Bars3Icon, UserIcon } from "@heroicons/react/24/outline";
-import { motion } from "framer-motion";
-import { Link, NavLink } from "@remix-run/react";
-import { NewEntryModal } from "../add/entryModal";
-import { useMemo, useState } from "react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Link, NavLink } from "@remix-run/react";
 import classNames from "classnames";
-import { Logo } from "~/features/brand/Logo";
-import { useUserContext } from "../auth/context";
+import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
 import { FallbackAvatar } from "~/components/avatar";
+import { NewEntryModal } from "~/features/add/entryModal";
+import { useUserContext } from "~/features/auth/context";
+import { Logo } from "../brand/logo";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

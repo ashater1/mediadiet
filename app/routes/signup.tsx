@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { getUser, getUserById, signUp } from "~/features/auth/auth.server";
-import { Logo } from "~/features/brand/Logo";
+import { Logo } from "~/features/brand/logo";
 
 const SignUpSchema = z
   .object({
