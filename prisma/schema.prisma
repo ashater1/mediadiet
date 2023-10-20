@@ -9,22 +9,23 @@ datasource db {
 }
 
 model User {
-  id            String          @id @db.Uuid
-  createdAt     DateTime?       @default(now()) @map("created_date")
-  bio           String?
-  email         String?
-  firstName     String?         @map("first_name")
-  lastName      String?         @map("last_name")
-  username      String          @unique
-  avatar        String?
-  BookForLater  BookForLater[]
-  BookReviews   BookReview[]
-  MovieForLater MovieForLater[]
-  MovieReviews  MovieReview[]
-  ShowForLater  ShowForLater[]
-  TvReviews     TvReview[]
-  user_A        User[]          @relation("UserFollows")
-  user_B        User[]          @relation("UserFollows")
+  id             String          @id @db.Uuid
+  createdAt      DateTime?       @default(now()) @map("created_date")
+  bio            String?
+  email          String?
+  firstName      String?         @map("first_name")
+  lastName       String?         @map("last_name")
+  username       String          @unique
+  avatar         String?
+  soderberghMode Boolean         @default(false) @map("soderbergh_mode")
+  BookForLater   BookForLater[]
+  BookReviews    BookReview[]
+  MovieForLater  MovieForLater[]
+  MovieReviews   MovieReview[]
+  ShowForLater   ShowForLater[]
+  TvReviews      TvReview[]
+  user_A         User[]          @relation("UserFollows")
+  user_B         User[]          @relation("UserFollows")
 
   @@map("user")
 }

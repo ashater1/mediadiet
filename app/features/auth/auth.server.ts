@@ -41,7 +41,7 @@ export async function getUser({
 }
 
 export async function getUserOrRedirect({
-  to = "login",
+  to = "/login",
   request,
   response,
 }: RequestResponse & { to?: string }) {
