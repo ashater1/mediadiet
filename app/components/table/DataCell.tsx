@@ -14,7 +14,7 @@ export default function DataCell({
       {...props}
       className={classNames(
         className,
-        "px-2 py-3.5 align-middle md:px-5 md:py-5"
+        "px-1 py-3.5 align-middle md:px-5 md:py-5"
       )}
     >
       {children}

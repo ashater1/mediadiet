@@ -145,20 +145,21 @@ export default function UserIndex() {
                 </div>
               </div>
 
-              <div className="ml-auto inline-flex flex-shrink-0 items-center gap-2 md:hidden">
-                {props.row.getValue("hasReview") ? <ReviewIcon isOn /> : null}
-
-                {props.row.getValue("favorited") ? (
-                  <FavoriteHeart isOn />
-                ) : null}
-
-                {props.row.getValue("rating") === "liked" ? (
-                  <ThumbsUp isOn />
-                ) : props.row.getValue("rating") === "disliked" ? (
-                  <ThumbsDown isOn />
-                ) : props.row.getValue("rating") === "meh" ? (
-                  <MehThumb isOn />
-                ) : null}
+              <div className="ml-auto inline-flex flex-col flex-shrink-0 items-center gap-2 md:hidden">
+                {typeof props.row.getValue("stars") === "number" && (
+                  <div className="flex">
+                    <StarsDisplay
+                      size={5}
+                      stars={props.row.getValue("stars")}
+                    />
+                  </div>
+                )}
+                <div className="ml-auto flex gap-2">
+                  {props.row.getValue("hasReview") ? <ReviewIcon isOn /> : null}
+                  {props.row.getValue("favorited") ? (
+                    <FavoriteHeart isOn />
+                  ) : null}
+                </div>
               </div>
             </div>
           );

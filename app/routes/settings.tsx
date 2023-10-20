@@ -1,3 +1,9 @@
+import { PageFrame } from "~/features/ui/frames";
+
 export default function Settings() {
-  return <div>Settings</div>;
+  return (
+    <PageFrame>
+      <div>Settings</div>
+    </PageFrame>
+  );
 }

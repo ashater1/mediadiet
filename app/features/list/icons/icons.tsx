@@ -212,12 +212,14 @@ export function StarsDisplay({
   stars: number;
   size?: number;
 }) {
-  const heightAndWidth = `h-${size} w-${size}`;
+  if (stars === 0) return null;
 
+  const heightAndWidth = `h-${size} w-${size}`;
   return (
     <>
       {[...Array(stars)].map((_, i) => (
         <StarIcon
+          key={i}
           className={classNames(
             heightAndWidth,
             "fill-yellow-300 stroke-black stroke-[0.75px]"
