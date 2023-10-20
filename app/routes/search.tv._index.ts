@@ -1,6 +1,7 @@
 import { json, LoaderFunctionArgs } from "@vercel/remix";
 import { ComboboxOption, getSearchTerm, SearchTypes } from "~/features/search";
 import { movieDb } from "~/features/tvAndMovies";
+import { titleize } from "~/utils/capitalize";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -11,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const data: ComboboxOption[] = tvShows.map((show) => {
     return {
       id: String(show.id),
-      title: show.name,
+      title: titleize(show.name) ?? "",
       firstAirYear: show.first_air_date?.slice(0, 4),
     };
   });

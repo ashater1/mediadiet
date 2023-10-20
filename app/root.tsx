@@ -20,7 +20,7 @@ import { AddNewContext } from "./features/add/context";
 import { getUserDetails } from "./features/auth/auth.server";
 import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
-import Navbar from "./features/nav/Navbar.1";
+import Navbar from "./features/nav/Navbar";
 
 export const meta: MetaFunction = () => {
   return [

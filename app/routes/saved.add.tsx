@@ -144,7 +144,7 @@ export default function Add() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg" />
       </Link>
 
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-white md:w-auto">
+      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 md:w-auto">
         <div className="w-full p-6 md:w-[500px]">
           {navigation.state !== "idle" ? (
             <div className="flex items-center justify-center p-3">

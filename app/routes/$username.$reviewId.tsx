@@ -106,7 +106,7 @@ export default function Review() {
                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
               />
 
-              <div className="flex flex-col">
+              <div className="flex flex-col text-sm gap-0.5">
                 <Link to={`/${params.username}`}>Reviewed by Adam Shater</Link>
                 <p className="text-gray-500">
                   {review.mediaType === "movie"
@@ -117,55 +117,54 @@ export default function Review() {
                   {review.formattedDate}
                 </p>
               </div>
+              {review.isSelf && (
+                <div className="ml-auto flex items-center justify-center gap-2">
+                  <button
+                    disabled={deleting}
+                    onClick={handleDelete}
+                    className={classNames(
+                      deleting
+                        ? "animate-pulse opacity-50"
+                        : "hover:opacity-100 ",
+                      "flex items-center justify-center gap-2 rounded border border-gray-200 bg-gray-100 p-2 text-sm text-gray-800 opacity-75 hover:text-red-500 md:px-3 md:py-1"
+                    )}
+                  >
+                    {deleting ? (
+                      <Spinner diameter={5} />
+                    ) : (
+                      <>
+                        <TrashIcon className="h-6 w-6 md:h-4 md:w-4" />
+                        <span className="hidden md:block text-xs">Delete</span>
+                      </>
+                    )}
+                  </button>
+
+                  <Link
+                    to="edit"
+                    className="flex items-center justify-center gap-2 rounded border border-gray-200 bg-gray-100 p-2 text-sm text-gray-800 opacity-75 hover:text-blue-500 md:px-3 md:py-1"
+                  >
+                    <PencilSquareIcon className="h-6 w-6 md:h-4 md:w-4" />
+                    <span className="hidden md:inline-block text-xs">Edit</span>
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="mb-4 mt-2 border-b border-gray-200" />
 
             <div className="group flex w-full flex-col">
               <div className="flex w-full items-center">
-                <h2 className="min-w-0 text-xl font-semibold text-gray-900 line-clamp-2 md:text-2xl">
+                <h2 className="min-w-0 text-lg font-semibold text-gray-900 line-clamp-2 md:text-lg">
                   {review.title}
                 </h2>
 
-                <div className="ml-6 flex items-center">
+                <div className="ml-auto flex items-center">
                   {review.stars && <StarsDisplay stars={review.stars} />}
 
                   <div className="px-4">
                     {review.favorited && <FavoriteHeart isOn />}
                   </div>
                 </div>
-
-                {review.isSelf && (
-                  <div className="ml-auto flex items-center justify-center gap-2">
-                    <button
-                      disabled={deleting}
-                      onClick={handleDelete}
-                      className={classNames(
-                        deleting
-                          ? "animate-pulse opacity-50"
-                          : "hover:opacity-100 ",
-                        "flex items-center justify-center gap-2 rounded border border-gray-200 bg-gray-100 p-2 text-sm text-gray-800 opacity-75 hover:text-red-500 md:h-8 md:w-24 md:px-3 md:py-1"
-                      )}
-                    >
-                      {deleting ? (
-                        <Spinner diameter={5} />
-                      ) : (
-                        <>
-                          <TrashIcon className="h-5 w-5" />
-                          <span className="hidden md:block">Delete</span>
-                        </>
-                      )}
-                    </button>
-
-                    <Link
-                      to="edit"
-                      className="ml-auto flex items-center justify-center gap-2 rounded border border-gray-200 bg-gray-100 p-2 text-sm text-gray-800 opacity-75  hover:text-blue-800 hover:opacity-100 md:h-8 md:px-3 md:py-1"
-                    >
-                      <PencilSquareIcon className="h-5 w-5" />
-                      <span className="hidden md:inline-block">Edit</span>
-                    </Link>
-                  </div>
-                )}
               </div>
 
               <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -174,7 +173,7 @@ export default function Review() {
                 <span>{review.releaseYear}</span>
               </div>
               <div className="mt-5">
-                <p className="mt-1">{review.review}</p>
+                <p className="mt-1 text-sm leading-5">{review.review}</p>
               </div>
             </div>
           </div>

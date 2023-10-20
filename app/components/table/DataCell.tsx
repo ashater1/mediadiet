@@ -8,12 +8,13 @@ export default function DataCell({
 }: {
   className?: string;
   children?: React.ReactNode;
-} & React.HTMLAttributes<HTMLDataElement>) {
+} & React.HTMLAttributes<HTMLTableCellElement>) {
   return (
     <td
+      {...props}
       className={classNames(
         className,
-        "px-2 py-3.5 align-middle md:px-5 md:py-3.5"
+        "px-2 py-3.5 align-middle md:px-5 md:py-5"
       )}
     >
       {children}

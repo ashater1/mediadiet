@@ -63,17 +63,26 @@ export default function Navbar() {
               {user?.username ? (
                 <div className="flex gap-2 h-full items-center justify-center">
                   <NewEntryModal />
-                  <button className="border border-primary-800 rounded-full p-1.5 hover:bg-primary-800/10 stroke-gray-700 hover:stroke-gray-900">
-                    <UserIcon className="w-7 h-7 stroke-[1px] " />
+                  <button className="border border-primary-800/20 rounded-full p-1 overflow-hidden hover:bg-primary-800/10  w-12 h-12">
+                    {/* <UserIcon className="w-7 h-7 stroke-[1px] " /> */}
+                    <FallbackAvatar />
                   </button>
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  className="flex h-10 items-center justify-center rounded border bg-primary-800 px-3 text-sm font-medium text-gray-100 hover:bg-primary-700 hover:text-gray-50 active:bg-primary-600"
-                >
-                  <span>Sign in</span>
-                </Link>
+                <div className="flex items-center justify-center gap-5">
+                  <Link
+                    to="login"
+                    className="text-slate-800 hover:text-slate-600 text-sm font-medium"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    to="signup"
+                    className="flex h-10 items-center justify-center rounded border bg-primary-800 px-3 text-sm font-medium text-gray-100 hover:bg-primary-700 hover:text-gray-50 active:bg-primary-600"
+                  >
+                    <span>Sign up</span>
+                  </Link>
+                </div>
               )}
             </div>
           </div>

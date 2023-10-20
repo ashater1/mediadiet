@@ -1,7 +1,8 @@
 import { LoaderFunctionArgs, json } from "@vercel/remix";
-import { ComboboxOption, getSearchTerm } from "~/features/search";
 import { openlibrary } from "~/features/books/openLibrary";
+import { ComboboxOption, getSearchTerm } from "~/features/search";
 import { listToString, safeFilter } from "~/utils/funcs";
+import { titleize } from "~/utils/capitalize";
 
 export type BookSearchResults = (ComboboxOption & {
   imgSrc: string | null;
@@ -17,6 +18,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   const data: BookSearchResults = books.map((book) => {
+    console.log({
+      original: book.title,
+      fixed: book.title && titleize(book.title),
+    });
     const coverTypeAndId = book.cover_i
       ? `id/${book.cover_i}`
       : book.cover_edition_key
@@ -42,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       id: book.key,
       imgSrc,
       releaseYear: year,
-      title: book.title ?? "",
+      title: book.title ? titleize(book.title) ?? "" : "",
       medianPages,
     };
   });

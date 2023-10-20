@@ -11,7 +11,7 @@ export function PageFrame({
 
 export function PageHeader({ children }: { children: React.ReactNode }) {
   return (
-    <h1 className="relative flex items-center text-xl font-bold tracking-tight text-gray-900 md:text-3xl ">
+    <h1 className="relative flex items-center text-lg font-bold tracking-tight text-gray-900 md:text-xl ">
       {children}
     </h1>
   );

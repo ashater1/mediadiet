@@ -3,14 +3,11 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
+import { titleize } from "~/utils/capitalize";
 import { format } from "date-fns";
 import { z } from "zod";
-import { PageFrame, PageHeader } from "~/components/frames";
 import { getUserDetails } from "~/features/auth/auth.server";
-import {
-  UserHeaderBar,
-  UserItemsCountAndFilter,
-} from "~/features/list/components/listUserHeaderBar";
+import { UserItemsCountAndFilter } from "~/features/list/components/listUserHeaderBar";
 import {
   bookReviewInclude,
   movieReviewInclude,
@@ -22,6 +19,7 @@ import {
   deleteSavedMovieItem,
   deleteSavedShowItem,
 } from "~/features/saved/delete";
+import { PageFrame, PageHeader } from "~/features/ui/frames";
 import { db } from "~/utils/db.server";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { ContextMenuItem } from "./$username._index";
@@ -50,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const normalizedBooks = saved.BookForLater.map((d) => ({
     ...d,
     formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: d.book.title,
+    title: titleize(d.book.title),
     creators: listToString(safeFilter(d.book.authors.map((d) => d.name))),
     mediaType: "book" as const,
   }));
@@ -58,7 +56,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const normalizedMovies = saved.MovieForLater.map((d) => ({
     ...d,
     formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: d.movie.title,
+    title: titleize(d.movie.title),
     creators: listToString(safeFilter(d.movie.directors.map((d) => d.name))),
     mediaType: "movie" as const,
   }));
@@ -66,7 +64,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const normalizedShows = saved.ShowForLater.map((d) => ({
     ...d,
     formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: d.tvShow.title,
+    title: titleize(d.tvShow.title ?? ""),
     creators: null,
     mediaType: "tv" as const,
   }));
@@ -171,7 +169,7 @@ export default function Saved() {
                 Saved For Later
               </PageHeader>
               <NavLink to="add">
-                <button className="ml-auto flex items-center justify-center gap-2 rounded-md border px-2 py-1 hover:bg-gray-100 md:ml-4">
+                <button className="ml-auto flex items-center justify-center gap-2 rounded border px-2 py-1 bg-gray-100 border-slate-600 hover:bg-gray-200 active:bg-gray-300 md:ml-4">
                   <PlusIcon className="h-4 w-4" />
                   <span>Add</span>
                 </button>
@@ -190,7 +188,7 @@ export default function Saved() {
 
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
-          <ul className="mt-6 flex flex-col gap-3 md:gap-8">
+          <ul className="mt-6 flex flex-col gap-4 md:gap-8">
             {data.items.map((d) => (
               <ContextMenu.Root key={d.id}>
                 <ContextMenu.Trigger asChild>
@@ -205,11 +203,13 @@ export default function Saved() {
                       ) : null}
                     </div>
                     <div className="flex flex-col">
-                      <div className="text-sm font-semibold line-clamp-2 md:text-lg">
+                      <div className="text-sm font-semibold line-clamp-2 md:text-base">
                         {d.title}
                       </div>
                       <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
-                        <div className="text-sm">{d.creators}</div>
+                        {d.creators?.length && (
+                          <div className="text-sm">{d.creators}</div>
+                        )}
                         <div className="text-xs text-gray-500">
                           Added on {d.formattedAddedAt}
                         </div>

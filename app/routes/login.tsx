@@ -1,4 +1,5 @@
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -6,16 +7,14 @@ import {
   redirect,
 } from "@vercel/remix";
 import classNames from "classnames";
-import { Logo } from "~/features/brand/Logo";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import {
-  findUser,
-  getUser,
+  getUserById,
   getUserDetails,
   loginSchema,
   signInWithPassword,
 } from "~/features/auth/auth.server";
+import { Logo } from "~/features/brand/Logo";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -53,7 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ email: "Invalid email or password.", password: null });
   }
 
-  const { username } = await findUser(data.user.id);
+  const { username } = await getUserById(data.user.id);
   throw redirect(`/${username}`, { headers: response.headers });
 }
 
@@ -70,7 +69,7 @@ export default function Login() {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center p-4">
-      <div className="-mt-20 flex flex-col gap-10 w-full max-w-md">
+      <div className="-mt-20 flex flex-col gap-5 w-full max-w-md">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">
             Sign in
@@ -81,20 +80,20 @@ export default function Login() {
         </div>
         <Form className="flex flex-col gap-y-2" method="post">
           <div className="relative rounded-md shadow-sm">
-            <div className="pointer-events-none absolute inset-0 z-10 rounded-md ring-1 ring-inset ring-gray-300" />
+            <div className="pointer-events-none absolute inset-0 z-10 rounded-md oveflow-hidden ring-1 ring-inset ring-gray-300" />
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address
               </label>
 
-              <div className="qoverflow-hidden  relative rounded-md">
+              <div>
                 <input
                   id="email-address"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  className="relative block w-full rounded-b-none border-b px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 sm:text-sm sm:leading-6"
+                  className="relative block w-full rounded-t-md border-b px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                   placeholder="Email address"
                 />
                 {emailError && (
@@ -117,7 +116,7 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="relative block w-full rounded-b-md border-0 px-3 py-1.5 text-gray-900  placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 sm:text-sm sm:leading-6"
+                  className="relative block w-full rounded-b-md border-0 px-3 py-1.5 text-gray-900  placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                   placeholder="Password"
                 />
 
@@ -159,7 +158,7 @@ export default function Login() {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-primary-800 focus:ring-primary-800"
+                className="h-4 w-4 rounded border-gray-300 text-primary-800 focus:ring-primary-800 outline-none"
               />
               <label
                 htmlFor="remember-me"
@@ -184,8 +183,8 @@ export default function Login() {
               type="submit"
               disabled={loggingIn}
               className={classNames(
-                loggingIn ? "opacity-50" : "hover:bg-primary-700",
-                "flex h-10 w-full items-center justify-center rounded-md bg-primary-800 text-sm font-semibold leading-6 text-white  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
+                loggingIn ? "mt-opacity-50" : "hover:bg-primary-700",
+                "mt-4 flex h-10 w-full items-center justify-center rounded-md bg-primary-800 text-sm font-semibold leading-6 text-white  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
               )}
             >
               <div className="relative">
@@ -194,74 +193,15 @@ export default function Login() {
             </button>
           </div>
         </Form>
-        {/* <form className="space-y-6" action="#" method="POST">
-          <div className="relative -space-y-px rounded-md shadow-sm">
-            <div className="pointer-events-none absolute inset-0 z-10 rounded-md ring-1 ring-inset ring-gray-300" />
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="px-2 outline-0 relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800/50 sm:text-sm sm:leading-6"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="px-2 outline-0 relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800/50 sm:text-sm sm:leading-6"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="rounded-md outline-none bg-primary h-4 w-4 border-gray-300 text-primary  focus:ring-2 focus:ring-inset focus:ring-primary-800/50"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-3 block text-sm leading-6 text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm leading-6">
-              <a
-                href="#"
-                className="py-1 px-2 font-semibold text-primary hover:text-pink-800 rounded focus:ring-2 focus:ring-inset focus:ring-primary-800/50 outline-none"
-              >
-                Forgot password?
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-primary-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white hover:bg-primary-700 active:bg-primary-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
-            >
-              Sign in
-            </button>
-          </div>
-        </form> */}
+        <p className="text-center text-sm text-gray-500">
+          Not a member?{" "}
+          <Link
+            to="/signup"
+            className="font-semibold leading-6 text-primary-800 hover:text-primary-700"
+          >
+            Sign up now. It's free!
+          </Link>
+        </p>
       </div>
     </div>
   );

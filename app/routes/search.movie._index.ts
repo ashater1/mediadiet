@@ -1,6 +1,7 @@
-import { json, LoaderFunctionArgs, SerializeFrom } from "@vercel/remix";
+import { json, LoaderFunctionArgs } from "@vercel/remix";
 import { ComboboxOption, getSearchTerm } from "~/features/search";
 import { movieDb } from "~/features/tvAndMovies";
+import { titleize } from "~/utils/capitalize";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const searchTerm = getSearchTerm(request.url);
@@ -9,7 +10,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const data: ComboboxOption[] = movies.map((movie) => {
     return {
       id: String(movie.id),
-      title: movie.title ?? "",
+      title: movie.title ? titleize(movie.title) ?? "" : "",
       releaseYear: movie.release_date?.slice(0, 4),
     };
   });

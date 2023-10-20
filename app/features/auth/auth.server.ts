@@ -56,6 +56,11 @@ export async function getUserOrRedirect({
   return user;
 }
 
+export const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  password: z.string().min(6, { message: "Incorrect email or password." }),
+});
+
 export async function signInWithPassword({
   email,
   password,
@@ -98,11 +103,11 @@ export async function getUserDetails({
   const user = await getUser({ request, response });
   if (!user) return null;
 
-  const userDetails = await findUser(user.id);
+  const userDetails = await getUserById(user.id);
   return userDetails;
 }
 
-export async function findUser(id: string) {
+export async function getUserById(id: string) {
   const user = await db.user.findFirstOrThrow({
     where: { id },
   });
@@ -110,7 +115,70 @@ export async function findUser(id: string) {
   return user;
 }
 
-export const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(6, { message: "Incorrect email or password." }),
-});
+export async function signUp({
+  email,
+  password,
+  username,
+  request,
+  response,
+}: {
+  email: string;
+  password: string;
+  username: string;
+  request: Request;
+  response: Response;
+}) {
+  const serverClient = getServerClient({
+    request,
+    response,
+  });
+
+  // convert username to lowercase
+  let _username = username.toLowerCase();
+
+  const [usernameExists, emailExists] = await Promise.all([
+    db.user.findFirst({ where: { username: _username } }),
+    db.user.findFirst({ where: { email } }),
+  ]);
+
+  if (!!usernameExists) {
+    return {
+      success: false,
+      username: ["Username already exists."],
+      email: null,
+      password: null,
+      confirmPassword: null,
+    };
+  }
+
+  if (!!emailExists) {
+    return {
+      success: false,
+      username: null,
+      email: ["Email address is already being used."],
+      password: null,
+      confirmPassword: null,
+    };
+  }
+
+  const { data, error } = await serverClient.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  if (data.user?.id) {
+    await db.user.create({
+      data: {
+        id: data.user.id,
+        username: _username,
+        email,
+      },
+    });
+  }
+
+  return { success: true, data };
+}
