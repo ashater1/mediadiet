@@ -14,7 +14,7 @@ import {
   loginSchema,
   signInWithPassword,
 } from "~/features/auth/auth.server";
-import { Logo } from "~/features/brand/Logo";
+import { Logo } from "~/features/brand/logo";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
