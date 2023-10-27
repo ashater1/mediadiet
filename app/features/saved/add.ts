@@ -1,4 +1,4 @@
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 import { getDirectors, movieDb } from "../tvAndMovies";
 import { openlibrary } from "../books/openLibrary";
 import { parse } from "date-fns";
@@ -195,7 +195,7 @@ export async function addSavedBook({
   // });
 
   // return savedBook;
-  console.log({ upsertedBook });
+
   return upsertedBook;
 }
 

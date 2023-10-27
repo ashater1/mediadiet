@@ -65,8 +65,6 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   }
 
-  console.log("Redirect!");
-
   throw redirect("/saved", {
     headers: request.headers,
   });

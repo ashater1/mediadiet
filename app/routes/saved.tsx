@@ -20,7 +20,7 @@ import {
   deleteSavedShowItem,
 } from "~/features/saved/delete";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { ContextMenuItem } from "./$username._index";
 

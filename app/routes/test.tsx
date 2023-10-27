@@ -1,50 +1,16 @@
-const capitalize = (word: string) => {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-};
+import { useLoaderData } from "@remix-run/react";
+import Spinner from "~/components/spinner";
 
-const lowerCaseWords = [
-  "a",
-  "an",
-  "and",
-  "at",
-  "but",
-  "by",
-  "for",
-  "in",
-  "nor",
-  "of",
-  "on",
-  "or",
-  "so",
-  "the",
-  "to",
-  "up",
-  "yet",
-];
+export async function loader() {
+  const data = await fetch(
+    "https://api.letterboxd.com/api/v0/search?input=the+matrix&searchMethod=Autocomplete&include=FilmSearchItem"
+  );
 
-function titleize(title: string) {
-  // This converts a string into an AP/APA standard title
-  let splitTitle = title.split(" ");
-  let noExtraSpaces = splitTitle.filter((word) => word !== "");
-  if (!noExtraSpaces.length) return;
-  if (noExtraSpaces.length === 1) return capitalize(noExtraSpaces[0]);
-
-  return noExtraSpaces
-    .map((word, i) => {
-      // Capitalize the first and last word, and any word that isn't in the lowerCaseWords array
-      if (
-        i === 0 ||
-        i === noExtraSpaces.length - 1 ||
-        !lowerCaseWords.includes(word.toLowerCase())
-      ) {
-        return capitalize(word);
-      }
-      return word.toLowerCase();
-    })
-    .join(" ");
+  return await data.json();
 }
 
 export default function Test() {
-  const title = titleize("The braiding   of THE  sWEETGRASS yet");
-  return <div className="p-20">{title}</div>;
+  const data = useLoaderData<typeof loader>();
+
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }

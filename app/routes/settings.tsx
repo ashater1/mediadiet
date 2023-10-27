@@ -48,8 +48,8 @@ function SettingsNavLink({
         classNames(
           isActive
             ? "bg-primary-200 text-gray-900"
-            : "border-transparent text-gray-700 active:scale-95",
-          "inline-flex gap-4 items-center px-2 py-1.5 font-medium hover:bg-primary-200  rounded"
+            : "border-transparent text-gray-700 active:bg-primary-300",
+          "inline-flex gap-4 items-center px-2 py-1.5 font-medium hover:bg-primary-200 text-sm rounded"
         )
       }
       to={to}

@@ -39,9 +39,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getUserDetails({ request, response });
 
   if (user) {
-    const { username, firstName, lastName } = user;
+    const { username, firstName, lastName, avatar } = user;
     return json(
-      { username, firstName, lastName },
+      { username, firstName, lastName, avatar },
       { headers: request.headers }
     );
   }
@@ -65,7 +65,6 @@ export default function App() {
             <AddNewContext>
               <UserContextProvider user={data}>
                 {!isAuthPage && <Navbar />}
-
                 <Outlet />
                 <ScrollRestoration />
                 <Scripts />

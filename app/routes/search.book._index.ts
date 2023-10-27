@@ -18,10 +18,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   const data: BookSearchResults = books.map((book) => {
-    console.log({
-      original: book.title,
-      fixed: book.title && titleize(book.title),
-    });
     const coverTypeAndId = book.cover_i
       ? `id/${book.cover_i}`
       : book.cover_edition_key

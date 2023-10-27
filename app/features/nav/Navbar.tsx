@@ -1,4 +1,7 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftOnRectangleIcon,
+  Bars3Icon,
+} from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Link, NavLink } from "@remix-run/react";
 import classNames from "classnames";
@@ -63,10 +66,11 @@ export default function Navbar() {
               {user?.username ? (
                 <div className="flex gap-2 h-full items-center justify-center">
                   <NewEntryModal />
-                  <button className="border border-primary-800/20 rounded-full p-1 overflow-hidden hover:bg-primary-800/10  w-12 h-12">
+                  <Link to="/logout">
                     {/* <UserIcon className="w-7 h-7 stroke-[1px] " /> */}
-                    <FallbackAvatar />
-                  </button>
+                    {/* <FallbackAvatar /> */}
+                    <ArrowLeftOnRectangleIcon className="w-6 h-6 rotate-180" />
+                  </Link>
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-5">

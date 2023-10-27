@@ -1,6 +1,6 @@
 import { movieDb } from "./api";
 import { getDirectors } from "./utils";
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 
 type AddNewMovieEntryArgs = {
   onPlane: boolean;
@@ -37,7 +37,6 @@ export async function addNewMovieEntry({
   userId,
   stars,
 }: AddNewMovieEntryArgs) {
-  console.log({ stars });
   const movie = await movieDb.getMovie(movieId);
 
   let directors = movie.credits?.crew

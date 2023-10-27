@@ -1,4 +1,4 @@
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 import { format, formatInTimeZone } from "date-fns-tz";
 import { listToString, safeFilter } from "~/utils/funcs";
 import orderBy from "lodash/orderBy.js";

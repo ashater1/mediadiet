@@ -7,7 +7,15 @@ export const UserContext = createContext<User | null>(null);
 
 export function useUserContext() {
   const context = useContext(UserContext);
+  if (context === null) {
+    throw new Error("useUserContext must be used within a UserContextProvider");
+  }
   return context;
+}
+
+export function getAvatarUrl(avatar: string | null | undefined) {
+  if (!avatar) return null;
+  return `https://cgoipxithucvtnbvyypv.supabase.co/storage/v1/object/public/public/avatars/${avatar}`;
 }
 
 export function UserContextProvider({
@@ -17,5 +25,7 @@ export function UserContextProvider({
   user: User | null;
   children: React.ReactNode;
 }) {
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={user || null}>{children}</UserContext.Provider>
+  );
 }

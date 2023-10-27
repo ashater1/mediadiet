@@ -8,6 +8,7 @@ import {
 } from "@vercel/remix";
 import classNames from "classnames";
 import { motion } from "framer-motion";
+import Spinner from "~/components/spinner";
 import {
   getUserById,
   getUserDetails,
@@ -31,8 +32,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
   const submission = Object.fromEntries(await request.formData());
   const parsedLogin = loginSchema.safeParse({ ...submission });
-
-  console.log(parsedLogin.success ? "null" : parsedLogin.error);
 
   if (!parsedLogin.success) {
     return json(parsedLogin.error.flatten().fieldErrors, {
@@ -58,9 +57,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Login() {
   const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-
-  const loggingIn = transition.state !== "idle" && !!transition.formData;
+  const navigation = useNavigation();
+  const loading =
+    navigation.state !== "idle" &&
+    navigation.formData?.get("actionId") === "login";
 
   const emailError =
     actionData?.email && actionData.email !== "Invalid email or password.";
@@ -120,7 +120,7 @@ export default function Login() {
                   placeholder="Password"
                 />
 
-                {passwordError && !loggingIn && (
+                {passwordError && !loading && (
                   <motion.div
                     key="passwordError'"
                     initial={{ opacity: 0 }}
@@ -135,7 +135,7 @@ export default function Login() {
             </div>
           </div>
 
-          {(actionData?.email || actionData?.password) && !loggingIn && (
+          {(actionData?.email || actionData?.password) && !loading && (
             <motion.p
               key="error"
               initial={{ opacity: 0, y: -10 }}
@@ -180,15 +180,17 @@ export default function Login() {
 
           <div>
             <button
+              name="actionId"
+              value="login"
               type="submit"
-              disabled={loggingIn}
+              disabled={loading}
               className={classNames(
-                loggingIn ? "mt-opacity-50" : "hover:bg-primary-700",
+                loading ? "mt-opacity-50" : "hover:bg-primary-700",
                 "mt-4 flex h-10 w-full items-center justify-center rounded-md bg-primary-800 text-sm font-semibold leading-6 text-white  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
               )}
             >
               <div className="relative">
-                <span>Sign in</span>
+                {loading ? <Spinner className="w-5 h-5" /> : "Sign in"}
               </div>
             </button>
           </div>

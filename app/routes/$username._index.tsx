@@ -1,8 +1,4 @@
-import {
-  PencilSquareIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import {
@@ -18,8 +14,8 @@ import classNames from "classnames";
 import React, { useMemo } from "react";
 import invariant from "tiny-invariant";
 import DataCell from "~/components/table/DataCell";
-import { useAddNewContext } from "~/features/add/context";
 import { getUserDetails } from "~/features/auth/auth.server";
+import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";
 import { UserHeaderBar } from "~/features/list/components/listUserHeaderBar";
 import { getUserEntriesAndCounts } from "~/features/list/db/entries";
@@ -27,12 +23,9 @@ import { usePendingDeletions } from "~/features/list/hooks/useGetPendingDeletion
 import {
   BookIcon,
   FavoriteHeart,
-  MehThumb,
   MovieIcon,
   ReviewIcon,
   StarsDisplay,
-  ThumbsDown,
-  ThumbsUp,
   TvShowIcon,
 } from "~/features/list/icons/icons";
 import { MediaType } from "~/features/list/types";
@@ -87,6 +80,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
+  const user = useUserContext();
 
   const columns: ColumnDef<UserData["entries"]>[] = useMemo(
     () => [
@@ -230,6 +224,7 @@ export default function UserIndex() {
   return (
     <div className="flex w-full flex-col">
       <UserHeaderBar
+        avatar={getAvatarUrl(user.avatar) ?? undefined}
         username={data.user.username}
         firstName={data.user.firstName}
         lastName={data.user.lastName}

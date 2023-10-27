@@ -8,7 +8,7 @@ type RequestResponse = {
   response: Response;
 };
 
-const getServerClient = ({ request, response }: RequestResponse) => {
+export const getServerClient = ({ request, response }: RequestResponse) => {
   return createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!,

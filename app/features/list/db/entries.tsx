@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import _ from "lodash";
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 import { listToString, safeFilter } from "~/utils/funcs";
 
 export type MovieDbImageSizes =

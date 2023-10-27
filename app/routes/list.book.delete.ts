@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from "@vercel/remix";
 import invariant from "tiny-invariant";
 import { getUserOrRedirect } from "~/features/auth/auth.server";
-import { db } from "~/utils/db.server";
+import { db } from "~/db.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
