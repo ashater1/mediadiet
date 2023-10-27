@@ -1,7 +1,7 @@
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@vercel/remix";
-import { useState } from "react";
 import { z } from "zod";
 import Spinner from "~/components/spinner";
 import { db } from "~/db.server";
@@ -89,7 +89,7 @@ export default function Profile() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <h2 className="text-lg font-semibold">Soderbergh Mode</h2>
-            <QuestionMarkCircleIcon className="fill-primary-800 w-5 h-5 hover:fill-primary-700 active:fill-primary-600" />
+            <TooltipDemo />
           </div>
           <div className="flex items-center gap-3">
             <label htmlFor="soderberghMode">Enabled</label>
@@ -113,3 +113,37 @@ export default function Profile() {
     </div>
   );
 }
+
+const TooltipDemo = () => {
+  return (
+    <Tooltip.Provider delayDuration={0}>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <QuestionMarkCircleIcon className="fill-primary-800 w-5 h-5 hover:fill-primary-700 active:fill-primary-600" />
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            side="right"
+            className="whitespace-pre-line text-sm w-64 p-2.5 shadow-lg border bg-primary-50 rounded"
+            sideOffset={5}
+          >
+            <p>
+              Inspired by Steven Soderbergh's annual{" "}
+              <Link
+                to="https://extension765.com/blogs/soderblog/seen-read-2022"
+                target="_blank"
+                className="italic underline"
+              >
+                SEEN, READ
+              </Link>{" "}
+              list, this gives users a more minimialist option to just track
+              what they've watched and read, and mark the things they really
+              liked.
+            </p>
+            <Tooltip.Arrow className="fill-white" />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+};
