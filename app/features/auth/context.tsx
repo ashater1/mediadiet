@@ -7,9 +7,7 @@ export const UserContext = createContext<User | null>(null);
 
 export function useUserContext() {
   const context = useContext(UserContext);
-  if (context === null) {
-    throw new Error("useUserContext must be used within a UserContextProvider");
-  }
+
   return context;
 }
 

@@ -186,6 +186,7 @@ export async function getUserEntriesAndCounts({
     firstName: entriesAndUser.firstName,
     id: entriesAndUser.id,
     lastName: entriesAndUser.lastName,
+    soderberghMode: entriesAndUser.soderberghMode,
     username: entriesAndUser.username,
   };
 

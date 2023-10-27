@@ -169,7 +169,7 @@ export default function Saved() {
                 Saved For Later
               </PageHeader>
               <NavLink to="add" className="flex items-center">
-                <button className="text-sm text-white ml-auto flex items-center justify-center gap-2 rounded px-2 py-1 bg-primary-800 hover:bg-primary-700 active:bg-primary-600 md:ml-4">
+                <button className="text-sm text-white flex items-center justify-center gap-2 rounded px-2 py-1 bg-primary-800 hover:bg-primary-700 active:bg-primary-600 ml-4">
                   <PlusIcon className="h-4 w-4" />
                 </button>
               </NavLink>

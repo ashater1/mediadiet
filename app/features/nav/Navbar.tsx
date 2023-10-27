@@ -18,8 +18,8 @@ export default function Navbar() {
   const navigation = useMemo(
     () => [
       { name: "Activity", to: user?.username || "" },
-      { name: "Friends", to: "friends" },
-      { name: "Lists", to: "lists" },
+      // { name: "Friends", to: "friends" },
+      // { name: "Lists", to: "lists" },
       { name: "Saved", to: "saved" },
       { name: "Settings", to: "settings" },
     ],
@@ -66,8 +66,6 @@ export default function Navbar() {
                 <div className="flex gap-2 h-full items-center justify-center">
                   <NewEntryModal />
                   <Link to="/logout">
-                    {/* <UserIcon className="w-7 h-7 stroke-[1px] " /> */}
-                    {/* <FallbackAvatar /> */}
                     <ArrowLeftOnRectangleIcon className="w-6 h-6 rotate-180" />
                   </Link>
                 </div>
@@ -101,17 +99,13 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           />
         </Dialog.Overlay>
+
         <Dialog.Content
           asChild
-          className="fixed top-0 left-0 h-full bg-white md:hidden"
+          className="fixed w-full top-0 mt-20 left-0 h-full bg-white md:hidden"
         >
-          <motion.div
-            className="overflow-hidden"
-            initial={{ width: 0 }}
-            animate={{ width: "50%" }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex flex-col py-3">
+          <div className="overflow-hidden flex flex-col gap-6">
+            <div className="flex flex-col gap-3 pt-3 px-3">
               {navigation.map((item) => (
                 <NavLink
                   onClick={() => setOpen(false)}
@@ -120,9 +114,9 @@ export default function Navbar() {
                   className={({ isActive }) =>
                     classNames(
                       isActive
-                        ? "border-l-purple-700 bg-purple-100"
-                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "inline-flex items-center whitespace-nowrap  border-l-4 px-3 py-1.5 text-sm font-medium"
+                        ? "bg-primary-100"
+                        : "hover:bg-primary-200 active:bg-primary-300",
+                      "inline-flex items-center whitespace-nowrap px-3 py-2 rounded font-medium"
                     )
                   }
                 >
@@ -130,7 +124,27 @@ export default function Navbar() {
                 </NavLink>
               ))}
             </div>
-          </motion.div>
+            <div className="mx-5 border-b-[1px] border-slate-300" />
+            {!user?.username ? (
+              <div className="w-full px-2 flex flex-col gap-2">
+                <Link
+                  to="/login"
+                  className="rounded w-full bg-primary-800 hover:bg-primary-700 active:bg-primary-600 text-white flex items-center whitespace-nowrap py-1.5 justify-center flex-0"
+                >
+                  Sign in
+                </Link>
+              </div>
+            ) : (
+              <div className="w-full px-2 flex flex-col gap-2">
+                <Link
+                  to="/logout"
+                  className="rounded w-full bg-primary-800 hover:bg-primary-700 active:bg-primary-600 text-white flex items-center whitespace-nowrap py-1.5 justify-center flex-0"
+                >
+                  Sign out
+                </Link>
+              </div>
+            )}
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

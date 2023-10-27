@@ -15,7 +15,7 @@ import React, { useMemo } from "react";
 import invariant from "tiny-invariant";
 import DataCell from "~/components/table/DataCell";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { getAvatarUrl, useUserContext } from "~/features/auth/context";
+import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";
 import { UserHeaderBar } from "~/features/list/components/listUserHeaderBar";
 import { getUserEntriesAndCounts } from "~/features/list/db/entries";
@@ -80,8 +80,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
-  const user = useUserContext();
-
   const columns: ColumnDef<UserData["entries"]>[] = useMemo(
     () => [
       {
@@ -212,6 +210,7 @@ export default function UserIndex() {
     groupedColumnMode: "remove",
     initialState: {
       columnVisibility: {
+        stars: !data.user.soderberghMode,
         creators: false,
         id: false,
       },
@@ -224,10 +223,10 @@ export default function UserIndex() {
   return (
     <div className="flex w-full flex-col">
       <UserHeaderBar
-        avatar={getAvatarUrl(user.avatar) ?? undefined}
+        avatar={getAvatarUrl(data.user.avatar) ?? undefined}
         username={data.user.username}
-        firstName={data.user.firstName}
-        lastName={data.user.lastName}
+        firstName={data.user?.firstName}
+        lastName={data.user?.lastName}
         moiveCount={data.counts.movies}
         bookCount={data.counts.books}
         tvCount={data.counts.tv}
