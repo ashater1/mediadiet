@@ -1,4 +1,7 @@
-import { UserIcon } from "@heroicons/react/24/outline";
+import {
+  AdjustmentsHorizontalIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { NavLink, Outlet } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import classNames from "classnames";
@@ -15,18 +18,14 @@ export default function Settings() {
   return (
     <PageFrame>
       <div className="flex gap-16">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-32">
           <SettingsNavLink to="profile">
-            <UserIcon className="w-5 h-5" />
+            <AdjustmentsHorizontalIcon className="w-5 h-5" />
             <span>Profile</span>
           </SettingsNavLink>
           <SettingsNavLink to="avatar">
             <UserIcon className="w-5 h-5" />
             <span>Avatar</span>
-          </SettingsNavLink>
-          <SettingsNavLink to="integrations">
-            <UserIcon className="w-5 h-5" />
-            <span>Integrations</span>
           </SettingsNavLink>
         </div>
         <Outlet />

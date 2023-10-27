@@ -17,7 +17,8 @@ import classNames from "classnames";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
-import { getUser, getUserDetails } from "~/features/auth/auth.server";
+import { getUserDetails } from "~/features/auth/auth.server";
+import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import { deleteEntry } from "~/features/list/db/entry";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 import { getReview } from "~/features/reviews/db";
@@ -76,6 +77,7 @@ export default function Review() {
   const params = useParams();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const user = useUserContext();
 
   const deleting =
     navigation.state !== "idle" &&
@@ -103,7 +105,7 @@ export default function Review() {
             <div className="flex items-center gap-3">
               <img
                 className="h-10 w-10 rounded-full"
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                src={getAvatarUrl(user.avatar) ?? undefined}
               />
 
               <div className="flex flex-col text-sm gap-0.5">

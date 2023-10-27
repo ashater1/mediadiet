@@ -5,7 +5,10 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import classNames from "classnames";
+import { useSpinDelay } from "spin-delay";
 import { FallbackAvatar } from "~/components/avatar";
+import Spinner from "~/components/spinner";
+import { useIsLoading } from "~/utils/useIsLoading";
 
 export function UserHeaderBar({
   avatar,
@@ -67,87 +70,99 @@ export function UserItemsCountAndFilter({
   const navigation = useNavigation();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
+  const isLoading = useIsLoading({});
+  const showSpinner = useSpinDelay(isLoading, {
+    delay: 100,
+    minDuration: 650,
+  });
 
   const checkedMediaTypes =
     navigation.formData?.getAll("type") ?? searchParams.getAll("type");
 
   return (
-    <Form
-      onChange={(e) => submit(e.currentTarget)}
-      className="flex divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
-    >
-      <div
-        className={classNames(
-          checkedMediaTypes.length &&
-            !checkedMediaTypes.includes("movie") &&
-            "opacity-40",
-          "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
-        )}
+    <div className="relative md:ml-auto self-auto md:self-end w-min">
+      {showSpinner && (
+        <div className="absolute right-0 translate-x-full">
+          <Spinner className="mr-4 w-6 h-6" />
+        </div>
+      )}
+      <Form
+        onChange={(e) => submit(e.currentTarget)}
+        className="relative flex divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
       >
-        <label htmlFor="movie" className="cursor-pointer pr-4">
-          <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
-            {movieCount}
-          </span>
-          <span className="ml-2">{labels[0]}</span>
-        </label>
+        <div
+          className={classNames(
+            checkedMediaTypes.length &&
+              !checkedMediaTypes.includes("movie") &&
+              "opacity-40",
+            "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
+          )}
+        >
+          <label htmlFor="movie" className="cursor-pointer pr-4">
+            <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
+              {movieCount}
+            </span>
+            <span className="ml-2">{labels[0]}</span>
+          </label>
 
-        <input
-          hidden
-          type="checkbox"
-          name="type"
-          id="movie"
-          value="movie"
-          defaultChecked={checkedMediaTypes.includes("movie")}
-        />
-      </div>
+          <input
+            hidden
+            type="checkbox"
+            name="type"
+            id="movie"
+            value="movie"
+            defaultChecked={checkedMediaTypes.includes("movie")}
+          />
+        </div>
 
-      <div
-        className={classNames(
-          checkedMediaTypes.length &&
-            !checkedMediaTypes.includes("book") &&
-            "opacity-40",
-          "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
-        )}
-      >
-        <label htmlFor="book" className="cursor-pointer px-4">
-          <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
-            {bookCount}
-          </span>
-          <span className="ml-2">{labels[1]}</span>
-        </label>
-        <input
-          hidden
-          type="checkbox"
-          name="type"
-          id="book"
-          value="book"
-          defaultChecked={checkedMediaTypes.includes("book")}
-        />
-      </div>
+        <div
+          className={classNames(
+            checkedMediaTypes.length &&
+              !checkedMediaTypes.includes("book") &&
+              "opacity-40",
+            "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
+          )}
+        >
+          <label htmlFor="book" className="cursor-pointer px-4">
+            <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
+              {bookCount}
+            </span>
+            <span className="ml-2">{labels[1]}</span>
+          </label>
+          <input
+            hidden
+            type="checkbox"
+            name="type"
+            id="book"
+            value="book"
+            defaultChecked={checkedMediaTypes.includes("book")}
+          />
+        </div>
 
-      <div
-        className={classNames(
-          checkedMediaTypes.length &&
-            !checkedMediaTypes.includes("tv") &&
-            "opacity-40",
-          "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
-        )}
-      >
-        <label htmlFor="tv" className="cursor-pointer px-4">
-          <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
-            {tvCount}
-          </span>
-          <span className="ml-2">{labels[2]}</span>
-        </label>
-        <input
-          hidden
-          type="checkbox"
-          name="type"
-          id="tv"
-          value="tv"
-          defaultChecked={checkedMediaTypes.includes("tv")}
-        />
-      </div>
-    </Form>
+        <div
+          className={classNames(
+            checkedMediaTypes.length &&
+              !checkedMediaTypes.includes("tv") &&
+              "opacity-40",
+            "flex items-baseline gap-x-2 transition-opacity duration-200 ease-in-out"
+          )}
+        >
+          <label htmlFor="tv" className="cursor-pointer px-4">
+            <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
+              {tvCount}
+            </span>
+            <span className="ml-2">{labels[2]}</span>
+          </label>
+          <input
+            hidden
+            type="checkbox"
+            name="type"
+            id="tv"
+            value="tv"
+            defaultChecked={checkedMediaTypes.includes("tv")}
+          />
+        </div>
+      </Form>
+    </div>
   );
 }

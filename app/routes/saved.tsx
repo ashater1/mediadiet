@@ -3,9 +3,9 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { titleize } from "~/utils/capitalize";
 import { format } from "date-fns";
 import { z } from "zod";
+import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { UserItemsCountAndFilter } from "~/features/list/components/listUserHeaderBar";
 import {
@@ -20,7 +20,7 @@ import {
   deleteSavedShowItem,
 } from "~/features/saved/delete";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
-import { db } from "~/db.server";
+import { titleize } from "~/utils/capitalize";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { ContextMenuItem } from "./$username._index";
 
@@ -165,13 +165,12 @@ export default function Saved() {
           <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
             <div className="flex">
               <PageHeader>
-                <ClockIcon className="mr-3 h-8 w-8 fill-blue-600" />
+                <ClockIcon className="mr-3 h-8 w-8 fill-primary-500" />
                 Saved For Later
               </PageHeader>
-              <NavLink to="add">
-                <button className="ml-auto flex items-center justify-center gap-2 rounded border px-2 py-1 bg-gray-100 border-slate-600 hover:bg-gray-200 active:bg-gray-300 md:ml-4">
+              <NavLink to="add" className="flex items-center">
+                <button className="text-sm text-white ml-auto flex items-center justify-center gap-2 rounded px-2 py-1 bg-primary-800 hover:bg-primary-700 active:bg-primary-600 md:ml-4">
                   <PlusIcon className="h-4 w-4" />
-                  <span>Add</span>
                 </button>
               </NavLink>
             </div>
