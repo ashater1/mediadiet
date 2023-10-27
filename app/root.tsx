@@ -39,9 +39,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getUserDetails({ request, response });
 
   if (user) {
-    const { username, firstName, lastName, avatar } = user;
+    const { username, firstName, lastName, avatar, soderberghMode } = user;
     return json(
-      { username, firstName, lastName, avatar },
+      { username, firstName, lastName, avatar, soderberghMode },
       { headers: request.headers }
     );
   }

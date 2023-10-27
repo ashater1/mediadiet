@@ -17,8 +17,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Settings() {
   return (
     <PageFrame>
-      <div className="flex gap-16">
-        <div className="flex flex-col gap-4 w-32">
+      <div className="flex md:gap-16 sm:flex-row flex-col w-full sm:w-auto">
+        <div className="mb-8 flex flex-row sm:flex-col gap-4 w-full sm:w-32">
           <SettingsNavLink to="profile">
             <AdjustmentsHorizontalIcon className="w-5 h-5" />
             <span>Profile</span>

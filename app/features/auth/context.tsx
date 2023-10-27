@@ -7,7 +7,6 @@ export const UserContext = createContext<User | null>(null);
 
 export function useUserContext() {
   const context = useContext(UserContext);
-
   return context;
 }
 

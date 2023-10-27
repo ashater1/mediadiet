@@ -1,6 +1,7 @@
 import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Link, NavLink } from "@remix-run/react";
@@ -10,10 +11,12 @@ import { useMemo, useState } from "react";
 import { NewEntryModal } from "~/features/add/entryModal";
 import { useUserContext } from "~/features/auth/context";
 import { Logo } from "../brand/logo";
+import { useAddNewContext } from "../add/context";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const user = useUserContext();
+  const { openModal } = useAddNewContext();
 
   const navigation = useMemo(
     () => [
@@ -135,10 +138,20 @@ export default function Navbar() {
                 </Link>
               </div>
             ) : (
-              <div className="w-full px-2 flex flex-col gap-2">
+              <div className="w-full px-2 flex flex-col gap-2 items-center">
+                <button
+                  onClick={() => {
+                    openModal();
+                    setOpen(false);
+                  }}
+                  className="gap-2 rounded w-full bg-primary-800 hover:bg-primary-700 active:bg-primary-600 text-white flex items-center whitespace-nowrap py-1.5 justify-center flex-0"
+                >
+                  <PlusIcon className="stroke-4 h-4 w-4" />
+                  <span>Add</span>
+                </button>
                 <Link
                   to="/logout"
-                  className="rounded w-full bg-primary-800 hover:bg-primary-700 active:bg-primary-600 text-white flex items-center whitespace-nowrap py-1.5 justify-center flex-0"
+                  className="inline-flex items-center whitespace-nowrap font-medium text-primary-800 hover:text-primary-700 active:text-primary-600"
                 >
                   Sign out
                 </Link>
