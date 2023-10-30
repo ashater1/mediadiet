@@ -60,6 +60,8 @@ export async function action({ request }: ActionFunctionArgs) {
     response,
   });
 
+  console.log({ success, signUpResult });
+
   if (success) {
     throw redirect("/login", { headers: request.headers });
   }
