@@ -24,8 +24,6 @@ export async function addNewBookEntry({
   stars,
   review,
   userId,
-  request,
-  response,
 }: AddNewBookEntryArgs) {
   const book = await openlibrary.getBook(bookId);
 
@@ -39,7 +37,7 @@ export async function addNewBookEntry({
     ? book.authors.map(({ key, name }) => ({ key, name }))
     : [{ key: "unknown", name: "unknown" }];
 
-  const newReview = db.bookReview.create({
+  const newReview = await db.bookReview.create({
     data: {
       audiobook,
       consumedDate,
@@ -58,7 +56,9 @@ export async function addNewBookEntry({
             id: book.id,
             title: book.title ?? "",
             publishedDate,
-            coverId: book.covers,
+            isbn10: book.isbn_10,
+            isbn13: book.isbn_13,
+            olCoverId: book.covers,
             authors: {
               connectOrCreate: [
                 ...authors.map((author) => ({

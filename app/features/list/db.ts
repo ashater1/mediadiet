@@ -152,8 +152,8 @@ export function normalizeBookEntry(item: GetBooksListItem) {
     favorited: item.favorited ?? undefined,
     hasReview: !!item.review,
     img:
-      item.book.coverId &&
-      `https://covers.openlibrary.org/b/id/${item.book.coverId}-L.jpg`,
+      item.book.olCoverId &&
+      `https://covers.openlibrary.org/b/id/${item.book.olCoverId}-L.jpg`,
     mediaType: "book" as const,
     releaseYear: item.book.publishedDate?.toISOString().slice(0, 4),
     review: item.review,

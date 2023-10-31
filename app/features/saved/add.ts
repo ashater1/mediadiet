@@ -144,7 +144,7 @@ export async function addSavedBook({
             id: book.id,
             title: book.title ?? "",
             publishedDate,
-            coverId: book.covers,
+            olCoverId: book.covers,
             authors: {
               connectOrCreate: [
                 ...authors.map((author) => ({
@@ -161,40 +161,6 @@ export async function addSavedBook({
       },
     },
   });
-
-  // const savedBook = await db.bookForLater.create({
-  //   data: {
-  //     user: {
-  //       connect: {
-  //         id: userId,
-  //       },
-  //     },
-  //     book: {
-  //       connectOrCreate: {
-  //         where: { id: bookId },
-  //         create: {
-  //           id: book.id,
-  //           title: book.title ?? "",
-  //           publishedDate,
-  //           coverId: book.covers,
-  //           authors: {
-  //             connectOrCreate: [
-  //               ...authors.map((author) => ({
-  //                 create: {
-  //                   name: author.name ?? "",
-  //                   id: author.key,
-  //                 },
-  //                 where: { id: author.key },
-  //               })),
-  //             ],
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
-
-  // return savedBook;
 
   return upsertedBook;
 }

@@ -76,10 +76,10 @@ model Book {
   publishedDate DateTime?      @map("published_date") @db.Date
   isbn10        String?        @map("isbn_10")
   isbn13        String?        @map("isbn_13")
-  coverId       String?        @map("cover_id")
   BookForLater  BookForLater[]
   BookReview    BookReview[]
   authors       Author[]       @relation("AuthorToBook")
+  olCoverId     String?        @map("ol_cover_id")
 
   @@map("book")
 }
