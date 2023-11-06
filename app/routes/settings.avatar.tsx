@@ -1,5 +1,5 @@
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Form, useActionData, useSubmit } from "@remix-run/react";
+import { Form, useSubmit } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -69,7 +69,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-  const actionData = useActionData<typeof action>();
   const submit = useSubmit();
   const user = useUserContext();
   const ref = useRef<HTMLInputElement>(null);

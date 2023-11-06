@@ -26,6 +26,15 @@ export const meta: MetaFunction = () => {
   return [
     { name: "viewport", content: "width=device-width, initial-scale=1" },
     { charSet: "utf-8" },
+    { title: "Mediadiet" },
+    {
+      property: "og:title",
+      content: "Very cool app",
+    },
+    {
+      name: "description",
+      content: "Track everything you've watched and read!",
+    },
   ];
 };
 
