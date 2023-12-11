@@ -62,9 +62,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
   console.log({ success, signUpResult });
 
-  if (success) {
-    throw redirect("/login", { headers: request.headers });
-  }
+  // if (success) {
+  //   throw redirect("/login", { headers: request.headers });
+  // }
 
   return signUpResult;
 }
@@ -193,6 +193,7 @@ export default function SignUp() {
           </Link>
         </p>
       </div>
+      {JSON.stringify(data, null, 2)}
     </div>
   );
 }

@@ -5,7 +5,7 @@ export function Logo({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
     <div
       className={classNames(
         size === "lg" ? "text-3xl font-bold" : "text-xl font-semibold",
-        "tracking-tight "
+        "tracking-tight"
       )}
     >
       <span>media</span>

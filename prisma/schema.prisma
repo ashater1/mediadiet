@@ -93,7 +93,7 @@ model MovieReview {
   inTheater    Boolean?  @default(false) @map("in_theater")
   onPlane      Boolean?  @default(false) @map("on_plane")
   createdAt    DateTime? @default(now()) @map("created_date")
-  userId       String    @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
   stars        Int?
   movie        Movie     @relation(fields: [movieId], references: [id])
   user         User      @relation(fields: [userId], references: [id])
@@ -128,7 +128,7 @@ model TvReview {
   review       String?
   tvSeasonId   String
   createdAt    DateTime? @default(now()) @map("created_date")
-  userId       String    @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
   stars        Int?
   tvSeason     TvSeason  @relation(fields: [tvSeasonId], references: [id])
   user         User      @relation(fields: [userId], references: [id])

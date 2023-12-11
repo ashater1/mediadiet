@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/auth-helpers-remix";
+import { createClient } from "@supabase/supabase-js";
 import { redirect } from "@vercel/remix";
 import { z } from "zod";
 import { db } from "~/db.server";
@@ -6,6 +7,13 @@ import { db } from "~/db.server";
 type RequestResponse = {
   request: Request;
   response: Response;
+};
+
+export const getAdminClient = () => {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 };
 
 export const getServerClient = ({ request, response }: RequestResponse) => {
@@ -128,10 +136,12 @@ export async function signUp({
   request: Request;
   response: Response;
 }) {
-  const serverClient = getServerClient({
-    request,
-    response,
-  });
+  // const serverClient = getServerClient({
+  //   request,
+  //   response,
+  // });
+
+  const adminClient = getAdminClient();
 
   // convert username to lowercase
   let _username = username.toLowerCase();
@@ -161,7 +171,8 @@ export async function signUp({
     };
   }
 
-  const { data, error } = await serverClient.auth.signUp({
+  const { data, error } = await adminClient.auth.admin.generateLink({
+    type: "signup",
     email,
     password,
   });
