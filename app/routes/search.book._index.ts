@@ -12,8 +12,8 @@ export type BookSearchResults = (ComboboxOption & {
 export async function loader({ request }: LoaderFunctionArgs) {
   const searchTerm = getSearchTerm(request.url);
 
-  const { docs: books } = await openlibrary.search({
-    queryType: "title",
+  const books = await openlibrary.search({
+    queryType: "q",
     searchTerm,
   });
 

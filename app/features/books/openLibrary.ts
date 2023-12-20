@@ -1,6 +1,7 @@
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { safeFilter } from "~/utils/funcs";
+import _ from "lodash";
 
 const apiUrl = "https://openlibrary.org/search.json";
 
@@ -67,20 +68,40 @@ class OpenLibrary {
   async search({
     queryType = "q",
     searchTerm,
+    removeDuplicates = true,
   }: {
     queryType: string;
     searchTerm: string;
+    removeDuplicates?: boolean;
   }) {
     invariant(searchTerm.trim(), "A blank or empty string was provided");
 
     const url = new URL("search.json", OpenLibrary.url);
     url.searchParams.append(queryType, searchTerm);
-    url.searchParams.append("limit", "10");
+    url.searchParams.append("limit", "6");
 
     const response = await fetch(url);
     const body = await response.json();
     const result = searchResultSchema.parse(body);
-    return result;
+    if (!removeDuplicates) return result.docs;
+    else {
+      const dupeCheck = (
+        bookOne: searchDocumentType,
+        bookTwo: searchDocumentType
+      ) => {
+        console.log(
+          bookOne.author_name,
+          bookTwo.author_name,
+          bookOne.author_name === bookTwo.author_name
+        );
+        return (
+          bookOne.title?.trim() === bookTwo.title?.trim() &&
+          _.isEqual(bookOne.author_name, bookTwo.author_name)
+        );
+      };
+
+      return _.uniqWith(result.docs, dupeCheck);
+    }
   }
 
   async getBookWithAuthors(id: string) {
@@ -89,6 +110,7 @@ class OpenLibrary {
     const response = await fetch(url);
     const body = await response.json();
     const result = getBookSchema.parse(body);
+    return result;
   }
 
   async getBook(id: string) {

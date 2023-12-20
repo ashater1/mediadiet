@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/remix";
+
 import {
   json,
   MetaFunction,
@@ -80,7 +80,6 @@ export default function App() {
                 <Scripts />
                 <LiveReload />
                 <Analytics />
-                <SpeedInsights />
               </UserContextProvider>
             </AddNewContext>
           </ToastContext>
