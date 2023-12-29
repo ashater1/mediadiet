@@ -58,6 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Login() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
+
   const loading =
     navigation.state !== "idle" &&
     navigation.formData?.get("actionId") === "login";

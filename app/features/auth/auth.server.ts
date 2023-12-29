@@ -127,14 +127,10 @@ export async function signUp({
   email,
   password,
   username,
-  request,
-  response,
 }: {
   email: string;
   password: string;
   username: string;
-  request: Request;
-  response: Response;
 }) {
   // const serverClient = getServerClient({
   //   request,
@@ -191,5 +187,5 @@ export async function signUp({
     });
   }
 
-  return { success: true, data };
+  return { success: true, link: data.properties.action_link };
 }
