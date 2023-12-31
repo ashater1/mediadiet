@@ -1,6 +1,5 @@
 import { ClockIcon } from "@heroicons/react/20/solid";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import * as ContextMenu from "@radix-ui/react-context-menu";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
 import { format } from "date-fns";
@@ -22,7 +21,6 @@ import {
 import { PageFrame, PageHeader } from "~/features/ui/frames";
 import { titleize } from "~/utils/capitalize";
 import { listToString, safeFilter } from "~/utils/funcs";
-import { ContextMenuItem } from "./$username._index";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -189,53 +187,30 @@ export default function Saved() {
 
           <ul className="mt-6 flex flex-col gap-4 md:gap-8">
             {data.items.map((d) => (
-              <ContextMenu.Root key={d.id}>
-                <ContextMenu.Trigger asChild>
-                  <li key={d.id} className="flex items-center gap-6 md:gap-8">
-                    <div>
-                      {d.mediaType === "book" ? (
-                        <BookIcon />
-                      ) : d.mediaType === "movie" ? (
-                        <MovieIcon />
-                      ) : d.mediaType === "tv" ? (
-                        <TvShowIcon />
-                      ) : null}
+              <li key={d.id} className="flex items-center gap-6 md:gap-8">
+                <div>
+                  {d.mediaType === "book" ? (
+                    <BookIcon />
+                  ) : d.mediaType === "movie" ? (
+                    <MovieIcon />
+                  ) : d.mediaType === "tv" ? (
+                    <TvShowIcon />
+                  ) : null}
+                </div>
+                <div className="flex flex-col">
+                  <div className="text-sm font-semibold line-clamp-2 md:text-base">
+                    {d.title}
+                  </div>
+                  <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
+                    {d.creators?.length && (
+                      <div className="text-sm">{d.creators}</div>
+                    )}
+                    <div className="text-xs text-gray-500">
+                      Added on {d.formattedAddedAt}
                     </div>
-                    <div className="flex flex-col">
-                      <div className="text-sm font-semibold line-clamp-2 md:text-base">
-                        {d.title}
-                      </div>
-                      <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
-                        {d.creators?.length && (
-                          <div className="text-sm">{d.creators}</div>
-                        )}
-                        <div className="text-xs text-gray-500">
-                          Added on {d.formattedAddedAt}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ContextMenu.Trigger>
-                <ContextMenu.Portal>
-                  <ContextMenu.Content
-                    alignOffset={5}
-                    className="min-w-[220px] overflow-hidden rounded-md bg-white p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]"
-                  >
-                    <ContextMenuItem
-                      onClick={() =>
-                        handleDelete({
-                          mediaType: d.mediaType,
-                          itemId: d.id,
-                        })
-                      }
-                      className="gap-3"
-                    >
-                      <TrashIcon className="h-5 w-5 stroke-1" />
-                      <span>Delete</span>
-                    </ContextMenuItem>
-                  </ContextMenu.Content>
-                </ContextMenu.Portal>
-              </ContextMenu.Root>
+                  </div>
+                </div>
+              </li>
             ))}
           </ul>
         </div>
