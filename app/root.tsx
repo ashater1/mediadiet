@@ -82,7 +82,6 @@ export default function App() {
                 <Scripts />
                 <LiveReload />
                 <Analytics />
-                <SpeedInsights />
               </UserContextProvider>
             </AddNewContext>
           </ToastContext>

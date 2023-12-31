@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { UserItemsCountAndFilter } from "~/features/list/components/listUserHeaderBar";
+import { ItemsCountAndFilter } from "~/features/list/components/listUserHeaderBar";
 import {
   bookReviewInclude,
   movieReviewInclude,
@@ -174,11 +174,14 @@ export default function Saved() {
             </div>
 
             <div className="md:ml-auto">
-              <UserItemsCountAndFilter
-                movieCount={data.movieCount}
-                bookCount={data.bookCount}
-                tvCount={data.tvCount}
-                labels={["movies", "books", "shows"]}
+              <ItemsCountAndFilter
+                paramName="type"
+                counts={[data.movieCount, data.bookCount, data.tvCount]}
+                labels={[
+                  { label: "movie" },
+                  { label: "book" },
+                  { label: "show" },
+                ]}
               />
             </div>
           </div>

@@ -5,7 +5,10 @@ import { z } from "zod";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";
-import { UserHeaderBar } from "~/features/list/components/listUserHeaderBar";
+import {
+  ItemsCountAndFilter,
+  UserHeaderBar,
+} from "~/features/list/components/listUserHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getUserEntriesAndCounts } from "~/features/list/db/entries";
 
@@ -61,15 +64,23 @@ export default function UserIndex() {
 
   return (
     <div className="flex w-full flex-col">
-      <UserHeaderBar
-        avatar={getAvatarUrl(data.user.avatar) ?? undefined}
-        username={data.user.username}
-        firstName={data.user?.firstName}
-        lastName={data.user?.lastName}
-        moiveCount={data.counts.movies}
-        bookCount={data.counts.books}
-        tvCount={data.counts.tv}
-      />
+      <div className="flex">
+        <UserHeaderBar
+          avatar={getAvatarUrl(data.user.avatar) ?? undefined}
+          primaryText={`${data.user?.firstName} ${data.user?.lastName}`}
+          secondaryText={`@${data.user.username}`}
+        />
+
+        <ItemsCountAndFilter
+          paramName="type"
+          counts={[data.counts.movies, data.counts.books, data.counts.tv]}
+          labels={[
+            { label: "movies", searchParam: "movie" },
+            { label: "books", searchParam: "book" },
+            { label: "seasons", searchParam: "tv" },
+          ]}
+        />
+      </div>
 
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 

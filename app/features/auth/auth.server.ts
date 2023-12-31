@@ -53,8 +53,6 @@ export async function getUserOrRedirect({
   request,
   response,
 }: RequestResponse & { to?: string }) {
-  const serverClient = getServerClient({ request, response });
-
   const user = await getUser({ request, response });
 
   if (!user) {
