@@ -13,6 +13,7 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import classNames from "classnames";
 import React, { useMemo } from "react";
 import invariant from "tiny-invariant";
+import { z } from "zod";
 import DataCell from "~/components/table/DataCell";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { getAvatarUrl } from "~/features/auth/context";
@@ -32,18 +33,33 @@ import { MediaType } from "~/features/list/types";
 
 type UserData = SerializeFrom<typeof loader>;
 
+const entryTypesSchema = z.array(z.enum(["book", "movie", "tv"]));
+
+function getEntryTypesFromUrl(url: string) {
+  //   Check if url has filters & filter data if it does
+  const _url = new URL(url);
+  const entryTypes = _url.searchParams.getAll("type");
+  const parsedEntryTypes = entryTypesSchema.parse(entryTypes);
+  return parsedEntryTypes;
+}
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
+
   //   Get username from URL and fetch the users entries and counts
   const username = params.username;
   invariant(username, "userId is required");
 
-  //   Get the data for the user's page & throw if user not found
+  //   Check if url has filters & filter data if it does
+  const entryTypes = getEntryTypesFromUrl(request.url);
+
+  //   Get the data for the user's page
   const [data, user] = await Promise.all([
-    getUserEntriesAndCounts({ username }),
+    getUserEntriesAndCounts({ username, entryTypes }),
     getUserDetails({ request, response }),
   ]);
 
+  //  If the user doesn't exist, throw a 404
   if (!data.userFound) {
     throw new Response(null, {
       status: 404,
@@ -51,24 +67,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
   }
 
+  // If the user that is logged in is the same as the user that is being viewed, isSelf is true
   const isSelf = user?.username === username;
-
-  //   Check if url has filters & filter data if it does
-  const url = new URL(request.url);
-  const filterTypes = url.searchParams.getAll("type");
-
-  if (filterTypes.length && filterTypes.length !== 3) {
-    const filteredEntries = data.entries.filter((d) =>
-      filterTypes.includes(d.mediaType)
-    );
-
-    return json({
-      counts: data.counts,
-      entries: filteredEntries,
-      isSelf,
-      user: data.userInfo,
-    });
-  }
 
   return json({
     counts: data.counts,

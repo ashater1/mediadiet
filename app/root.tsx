@@ -8,10 +8,9 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
-
 import {
-  json,
   MetaFunction,
+  json,
   type LinksFunction,
   type LoaderFunctionArgs,
 } from "@vercel/remix";
@@ -27,10 +26,10 @@ export const meta: MetaFunction = () => {
   return [
     { name: "viewport", content: "width=device-width, initial-scale=1" },
     { charSet: "utf-8" },
-    { title: "Mediadiet" },
+    { title: "mediadiet" },
     {
       property: "og:title",
-      content: "Very cool app",
+      content: "mediadiet",
     },
     {
       name: "description",
@@ -46,6 +45,8 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
+
+  // get user details to pass to root's UserContextProvider
   const user = await getUserDetails({ request, response });
 
   if (user) {

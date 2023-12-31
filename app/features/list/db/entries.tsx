@@ -137,8 +137,10 @@ function normalizeBookEntry(item: BookEntry) {
 
 export async function getUserEntriesAndCounts({
   username,
+  entryTypes,
 }: {
   username: string;
+  entryTypes?: ("movie" | "tv" | "book")[];
 }) {
   const entriesAndUser = await db.user.findFirst({
     where: { username },
@@ -175,8 +177,13 @@ export async function getUserEntriesAndCounts({
 
   const combinedEntries = [...bookEntries, ...movieEntries, ...tvEntries];
 
+  const filteredEntries =
+    entryTypes && entryTypes.length > 0
+      ? combinedEntries.filter((d) => entryTypes.includes(d.mediaType))
+      : combinedEntries;
+
   const orderedEntries = _.orderBy(
-    combinedEntries,
+    filteredEntries,
     ["consumedDateTime", "createdAt"],
     ["desc", "desc"]
   );
