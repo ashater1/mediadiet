@@ -73,8 +73,6 @@ export async function action({ request }: ActionFunctionArgs) {
         />
       ),
     });
-
-    console.log({ emailResult });
   }
 
   return signUpResult;
@@ -106,8 +104,6 @@ export default function SignUp() {
   const loading =
     navigation.state !== "idle" &&
     navigation.formData?.get("actionId") === "signup";
-
-  console.log({ loading });
 
   return (
     <div className="flex max-h-full flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
