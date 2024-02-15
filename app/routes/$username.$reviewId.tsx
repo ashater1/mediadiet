@@ -105,7 +105,7 @@ export default function Review() {
             <div className="flex items-center gap-3">
               <img
                 className="h-10 w-10 rounded-full"
-                src={getAvatarUrl(user.avatar) ?? undefined}
+                src={getAvatarUrl(user?.avatar) ?? undefined}
               />
 
               <div className="flex flex-col text-sm gap-0.5">
