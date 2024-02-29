@@ -1,6 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, redirect } from "@vercel/remix";
 import { getUserDetails } from "~/features/auth/auth.server";
+import { motion } from "framer-motion";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
