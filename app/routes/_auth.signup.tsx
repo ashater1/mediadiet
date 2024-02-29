@@ -15,7 +15,8 @@ import { Logo } from "~/features/brand/logo";
 import { resend } from "~/features/emails/resend.server";
 import { json } from "@vercel/remix";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { Button } from "~/components/button";
+
+export const config = { runtime: "edge" };
 
 const SignUpSchema = z
   .object({
