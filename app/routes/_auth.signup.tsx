@@ -16,8 +16,6 @@ import { resend } from "~/features/emails/resend.server";
 import { json } from "@vercel/remix";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 
-export const config = { runtime: "edge" };
-
 const SignUpSchema = z
   .object({
     username: z

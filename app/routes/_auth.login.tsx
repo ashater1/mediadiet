@@ -17,8 +17,6 @@ import {
 } from "~/features/auth/auth.server";
 import { Logo } from "~/features/brand/logo";
 
-export const config = { runtime: "edge" };
-
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
   const user = await getUserDetails({ request, response });
