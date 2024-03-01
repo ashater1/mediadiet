@@ -1,6 +1,7 @@
 import { PlusIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { useAddNewContext } from "~/features/add/context";
 import { BookIcon, MovieIcon, TvShowIcon } from "../icons/icons";
+import { Button } from "~/components/button";
 
 type EmptyStateProps =
   | {
@@ -36,14 +37,19 @@ export function EmptyState({
         </div>
 
         {isSelf && (
-          <button
-            onClick={openModal}
-            type="button"
-            className="flex h-10 items-center justify-center rounded border px-3 text-sm font-medium active:bg-primary-600 bg-primary-800 hover:bg-primary-700 text-gray-50"
-          >
+          // <button
+          //   onClick={openModal}
+          //   type="button"
+          //   className="flex h-10 items-center justify-center rounded border px-3 text-sm font-medium active:bg-primary-600 bg-primary-800 hover:bg-primary-700 text-gray-50"
+          // >
+          //   <PlusIcon className="stroke-4 h-5 w-5" />
+          //   <span className="ml-2">Start adding to your list</span>
+          // </button>
+
+          <Button type="button" onClick={openModal} className="px-6">
             <PlusIcon className="stroke-4 h-5 w-5" />
             <span className="ml-2">Start adding to your list</span>
-          </button>
+          </Button>
         )}
       </div>
     </div>

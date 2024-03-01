@@ -16,6 +16,7 @@ import {
   EntryFormRoot,
 } from "./components/entryForm";
 import { useAddNewContext } from "./context";
+import { Button } from "~/components/button";
 
 type NewEntryFormProps = {
   id: string;
@@ -246,13 +247,9 @@ export function NewEntryForm({
             hiddenInputs={[...(hiddenIds ?? []), { name: "id", value: id }]}
             mediaType={mediaType}
           />
-
-          <button
-            type="submit"
-            className="flex h-10 flex-shrink-0 items-center justify-center rounded border text-sm font-medium text-gray-500 hover:bg-indigo-500 hover:text-gray-50"
-          >
+          <Button className="py-4" type="submit">
             {loading ? <Spinner diameter={4} /> : "Submit"}
-          </button>
+          </Button>
         </Form>
       </div>
     </EntryFormRoot>

@@ -12,8 +12,10 @@ import {
   json,
   redirect,
 } from "@vercel/remix";
+import classNames from "classnames";
 import invariant from "tiny-invariant";
 import { z } from "zod";
+import { Button } from "~/components/button";
 import { Spinner } from "~/components/login/Spinner";
 import {
   EntryFormHeader,
@@ -134,7 +136,7 @@ export default function Edit() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg" />
       </Link>
 
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded bg-white p-4 md:w-auto">
+      <div className="left-1/2 top-1/2 z-50 w-full max-w-2xl fixed -translate-x-1/2 -translate-y-1/2 rounded bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 p-4 md:w-auto">
         <div>
           <EntryFormRoot>
             <EntryFormImageRoot>
@@ -165,14 +167,9 @@ export default function Edit() {
                   stars={entry.stars ?? null}
                 />
                 <div className="flex gap-3">
-                  <button
-                    name="intent"
-                    value="update"
-                    type="submit"
-                    className="flex h-10 flex-1 flex-shrink-0 items-center justify-center rounded border text-sm font-medium text-gray-500 hover:bg-indigo-500 hover:text-gray-50"
-                  >
+                  <Button name="intent" value="update" type="submit">
                     {updating ? <Spinner diameter={4} /> : "Submit"}
-                  </button>
+                  </Button>
                 </div>
               </Form>
             </div>

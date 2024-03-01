@@ -1,18 +1,19 @@
-import classNames from "classnames";
-import { forwardRef } from "react";
+import { cn } from "~/components/utils";
 
-type ButtonProps = React.ComponentPropsWithoutRef<"button">;
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (props, ref) => (
+export function Button({
+  className,
+  children,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
     <button
-      {...props}
-      className={classNames(
-        "rounded-md border border-gray-500 bg-slate-600 bg-opacity-20 px-4 py-2 text-sm font-medium text-white outline-none ring-0 hover:bg-slate-800 hover:bg-opacity-30 focus:border-white/90 active:bg-slate-900",
-        props.className
+      className={cn(
+        "flex h-10 items-center justify-center rounded-md active:bg-primary-600 hover:bg-primary-700 bg-primary-800 text-sm font-semibold leading-6 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800",
+        className
       )}
+      {...props}
     >
-      {props.children}
+      {children}
     </button>
-  )
-);
+  );
+}

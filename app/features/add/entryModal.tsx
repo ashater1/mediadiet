@@ -6,6 +6,7 @@ import { SearchCombobox } from "../search";
 import { SelectMediaType } from "./SelectMediaType";
 import { useAddNewContext } from "./context";
 import { ReviewForm } from "./entryForm";
+import { Button } from "~/components/button";
 
 export function NewEntryModal() {
   const {
@@ -17,14 +18,10 @@ export function NewEntryModal() {
 
   return (
     <>
-      <button
-        onClick={openModal}
-        type="button"
-        className="flex h-10 items-center justify-center rounded border bg-primary-800 px-3 text-sm font-medium text-gray-100 hover:bg-primary-700 hover:text-gray-50 active:bg-primary-600"
-      >
+      <Button className="h-10 px-3" onClick={openModal} type="button">
         <PlusIcon className="stroke-4 h-5 w-5" />
         <span className="ml-2">Add</span>
-      </button>
+      </Button>
 
       <Dialog.Root
         open={isModalOpen}
