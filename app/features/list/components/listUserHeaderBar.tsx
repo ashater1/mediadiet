@@ -16,7 +16,7 @@ export function UserHeaderBar({
   secondaryText,
 }: {
   avatar?: string;
-  primaryText?: string;
+  primaryText: string | null;
   secondaryText?: string;
 }) {
   return (

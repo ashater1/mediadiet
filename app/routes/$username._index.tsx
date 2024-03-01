@@ -62,12 +62,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
 
+  const userName =
+    !data.user?.firstName && !data.user?.lastName
+      ? null
+      : !data.user?.lastName
+      ? data.user.firstName
+      : `${data.user?.firstName} ${data.user?.lastName}`;
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex">
         <UserHeaderBar
           avatar={getAvatarUrl(data.user.avatar) ?? undefined}
-          primaryText={`${data.user?.firstName} ${data.user?.lastName}`}
+          primaryText={userName}
           secondaryText={`@${data.user.username}`}
         />
 
