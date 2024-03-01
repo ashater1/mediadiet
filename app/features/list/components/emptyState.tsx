@@ -1,7 +1,6 @@
-import { PlusIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { useAddNewContext } from "~/features/add/context";
-import { BookIcon, MovieIcon, TvShowIcon } from "../icons/icons";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "~/components/button";
+import { useAddNewContext } from "~/features/add/context";
 
 type EmptyStateProps =
   | {
