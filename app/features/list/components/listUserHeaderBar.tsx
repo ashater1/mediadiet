@@ -79,7 +79,7 @@ export function ItemsCountAndFilter({
         onChange={(e) => {
           submit(e.currentTarget);
         }}
-        className="relative flex divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
+        className="relative flex  divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
       >
         {counts.map((count, i) => (
           <div
@@ -89,7 +89,7 @@ export function ItemsCountAndFilter({
                   labels[i].searchParam ?? labels[i].label
                 ) &&
                 "opacity-40",
-              "flex transition-opacity duration-200 ease-in-out px-4"
+              "flex transition-opacity duration-200 ease-in-out first:pl-0 px-4"
             )}
           >
             <label

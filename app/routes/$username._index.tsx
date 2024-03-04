@@ -63,22 +63,24 @@ export default function UserIndex() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex">
+      <div className="flex-col md:flex-row md:flex">
         <UserHeaderBar
           avatar={getAvatarUrl(data.user.avatar) ?? undefined}
           primaryText={userName}
           secondaryText={`@${data.user.username}`}
         />
 
-        <ItemsCountAndFilter
-          paramName="type"
-          counts={[data.counts.movies, data.counts.books, data.counts.tv]}
-          labels={[
-            { label: "movies", searchParam: "movie" },
-            { label: "books", searchParam: "book" },
-            { label: "seasons", searchParam: "tv" },
-          ]}
-        />
+        <div className="ml-auto self-end mt-2 md:mt-0">
+          <ItemsCountAndFilter
+            paramName="type"
+            counts={[data.counts.movies, data.counts.books, data.counts.tv]}
+            labels={[
+              { label: "movies", searchParam: "movie" },
+              { label: "books", searchParam: "book" },
+              { label: "seasons", searchParam: "tv" },
+            ]}
+          />
+        </div>
       </div>
 
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
