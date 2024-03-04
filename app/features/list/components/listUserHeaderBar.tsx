@@ -77,7 +77,6 @@ export function ItemsCountAndFilter({
 
       <Form
         onChange={(e) => {
-          console.log(e);
           submit(e.currentTarget);
         }}
         className="relative flex divide-x divide-slate-300 md:ml-auto self-auto md:self-end"

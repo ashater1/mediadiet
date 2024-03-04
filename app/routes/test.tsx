@@ -32,8 +32,6 @@ export default function Test() {
   // const data = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
-  console.log({ data });
-
   return (
     <div className="w-full items-center flex justify-center">
       <motion.div initial={{ opacity: 1 }} animate={{ opacity: data ? 0 : 1 }}>

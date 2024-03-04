@@ -22,6 +22,7 @@ export async function getEntriesAndUserDetails({
   response: Response;
 }) {
   let entryTypes = getEntryTypesFromUrl(request.url);
+
   const [data, user] = await Promise.all([
     getUserEntriesAndCounts({ username, entryTypes }),
     getUserDetails({ request, response }),

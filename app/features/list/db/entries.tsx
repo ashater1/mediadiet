@@ -65,6 +65,7 @@ function normalizeMovieEntry(
     id: item.id,
     consumedDateTime: item.consumedDate,
     consumedDate: formatDate(item.consumedDate, "M/d"),
+    createdAt: item.createdAt,
     creators: listToString(safeFilter(item.movie.directors.map((d) => d.name))),
     favorited: item.favorited ?? undefined,
     hasReview: !!item.review,
@@ -95,6 +96,7 @@ function normalizeTvEntry(item: TvEntry, imgSize: MovieDbImageSizes = "sm") {
     id: item.id,
     consumedDateTime: item.consumedDate,
     consumedDate: formatDate(item.consumedDate, "M/d"),
+    createdAt: item.createdAt,
     creators: listToString(
       safeFilter(item.tvSeason.tvShow.studio.map((s) => s.name))
     ),
@@ -121,6 +123,7 @@ function normalizeBookEntry(item: BookEntry) {
     consumedDateTime: item.consumedDate,
     consumedDate: formatDate(item.consumedDate, "M/d"),
     creators: listToString(safeFilter(item.book.authors.map((a) => a.name))),
+    createdAt: item.createdAt,
     favorited: item.favorited ?? undefined,
     hasReview: !!item.review,
     img:
