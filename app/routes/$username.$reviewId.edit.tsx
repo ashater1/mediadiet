@@ -12,7 +12,7 @@ import {
   json,
   redirect,
 } from "@vercel/remix";
-import classNames from "classnames";
+
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { Button } from "~/components/button";
@@ -167,7 +167,12 @@ export default function Edit() {
                   stars={entry.stars ?? null}
                 />
                 <div className="flex gap-3">
-                  <Button name="intent" value="update" type="submit">
+                  <Button
+                    name="intent"
+                    value="update"
+                    type="submit"
+                    className="w-full"
+                  >
                     {updating ? <Spinner diameter={4} /> : "Submit"}
                   </Button>
                 </div>
