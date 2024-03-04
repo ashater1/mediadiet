@@ -1,8 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import invariant from "tiny-invariant";
-import { z } from "zod";
-import { getUserDetails } from "~/features/auth/auth.server";
 import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";
 import {
@@ -10,19 +8,12 @@ import {
   UserHeaderBar,
 } from "~/features/list/components/listUserHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
-import { getUserEntriesAndCounts } from "~/features/list/db/entries";
+import {
+  getEntriesAndUserDetails,
+  getEntryTypesFromUrl,
+} from "~/features/list/utils";
 
 export type UserData = SerializeFrom<typeof loader>;
-
-const entryTypesSchema = z.array(z.enum(["book", "movie", "tv"]));
-
-function getEntryTypesFromUrl(url: string) {
-  //   Check if url has filters & filter data if it does
-  const _url = new URL(url);
-  const entryTypes = _url.searchParams.getAll("type");
-  const parsedEntryTypes = entryTypesSchema.parse(entryTypes);
-  return parsedEntryTypes;
-}
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
@@ -35,10 +26,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const entryTypes = getEntryTypesFromUrl(request.url);
 
   //   Get the data for the user's page
-  const [data, user] = await Promise.all([
-    getUserEntriesAndCounts({ username, entryTypes }),
-    getUserDetails({ request, response }),
-  ]);
+  const { data, user } = await getEntriesAndUserDetails({
+    username,
+    request,
+    response,
+  });
 
   //  If the user doesn't exist, throw a 404
   if (!data.userFound) {
