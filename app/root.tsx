@@ -13,6 +13,7 @@ import {
   type LoaderFunctionArgs,
 } from "@vercel/remix";
 import stylesheet from "~/tailwind.css";
+import toastStylesheet from "~/toaststyle.css";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { AddNewContext } from "./features/add/context";
 import { getUserDetails } from "./features/auth/auth.server";
@@ -40,6 +41,7 @@ export const meta: MetaFunction = () => {
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: toastStylesheet },
   { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
 ];
 
@@ -55,10 +57,7 @@ export default function App() {
   const isAuthPage = useIsAuthPage();
 
   if (toastData) {
-    toast.success(toastData.title, {
-      id: toastData.id,
-      description: toastData.description,
-    });
+    toast.success(toastData.title, { id: toastData.id });
   }
 
   return (
@@ -80,7 +79,7 @@ export default function App() {
             </UserContextProvider>
           </AddNewContext>
         </div>
-        <Toaster richColors position="bottom-right" duration={4000} />
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );
