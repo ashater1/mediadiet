@@ -1,11 +1,5 @@
-import {
-  Form,
-  useActionData,
-  useFetcher,
-  useLoaderData,
-} from "@remix-run/react";
-import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { getUserDetails } from "~/features/auth/auth.server";
+import { useActionData, useFetcher } from "@remix-run/react";
+import { json } from "@vercel/remix";
 import { motion } from "framer-motion";
 
 // export async function loader({ request }: LoaderFunctionArgs) {

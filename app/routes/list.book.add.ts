@@ -43,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
       response,
     }),
 
-    await deleteSavedBook({
+    deleteSavedBook({
       bookId: review.id,
       userId: user.id,
     }),
@@ -53,6 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
     request,
     response,
     toast: {
+      type: "success",
       title: "Nice!",
       description: `You've added ${book.title ?? ""} to your list!`,
     },

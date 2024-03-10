@@ -1,6 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
-import { Toaster } from "sonner";
 import invariant from "tiny-invariant";
 import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";

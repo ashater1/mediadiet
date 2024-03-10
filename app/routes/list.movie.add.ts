@@ -3,6 +3,7 @@ import { NewMovieSchema } from "~/features/add/types";
 import { addNewMovieEntry } from "~/features/tvAndMovies/db";
 import { deleteSavedMovie } from "~/features/saved/delete";
 import { convertStringToBool, createSupabaseClient } from "~/utils/supabase";
+import { setToast } from "~/features/toasts/toast.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
@@ -28,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
     favorited,
   });
 
-  await Promise.all([
+  let [{ movie }] = await Promise.all([
     addNewMovieEntry({
       onPlane: result.onPlane,
       inTheater: result.inTheater,
@@ -41,12 +42,21 @@ export async function action({ request }: ActionFunctionArgs) {
       request,
       response,
     }),
-    ,
     deleteSavedMovie({
       movieId: result.id,
       userId: user.data.user.id,
     }),
   ]);
 
-  return json({ success: true });
+  await setToast({
+    request,
+    response,
+    toast: {
+      type: "success",
+      title: "Nice!",
+      description: `You've added ${movie.title ?? ""} to your list!`,
+    },
+  });
+
+  return json({ success: true }, { headers: response.headers });
 }

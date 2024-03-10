@@ -2,8 +2,9 @@ import { getSession, commitSession } from "~/sessions.server";
 
 export type Toast = {
   id: string;
-  title: string;
+  type: "success" | "neutral" | "error" | "warning";
   description: string;
+  title: string;
 };
 
 export async function setToast({
@@ -19,6 +20,7 @@ export async function setToast({
 
   session.flash("toast", {
     id: new Date().toISOString(),
+    type: toast.type,
     title: toast.title,
     description: toast.description,
   });

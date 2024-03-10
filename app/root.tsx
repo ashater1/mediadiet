@@ -22,6 +22,7 @@ import { useIsAuthPage } from "./features/auth/hooks";
 import Navbar from "./features/nav/Navbar";
 import { getToast } from "./features/toasts/toast.server";
 import { Toaster, toast } from "sonner";
+import { useEffect } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -56,9 +57,21 @@ export default function App() {
   const { user, toastData } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
 
-  if (toastData) {
-    toast.success(toastData.title, { id: toastData.id });
-  }
+  useEffect(() => {
+    switch (toastData?.type) {
+      case "success":
+        toast.success(toastData.title, { description: toastData.description });
+        break;
+      case "error":
+        toast.error(toastData.title, { description: toastData.description });
+        break;
+      case "warning":
+        toast.warning(toastData.title, { description: toastData.description });
+        break;
+      default:
+        break;
+    }
+  }, [toastData]);
 
   return (
     <html lang="en">

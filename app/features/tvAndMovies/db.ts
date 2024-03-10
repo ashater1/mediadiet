@@ -43,7 +43,7 @@ export async function addNewMovieEntry({
     ? getDirectors(movie.credits?.crew)
     : [{ id: "unknown", name: "unknown" }];
 
-  const newReview = db.movieReview.create({
+  const newReview = await db.movieReview.create({
     data: {
       onPlane,
       inTheater,
@@ -83,7 +83,7 @@ export async function addNewMovieEntry({
     },
   });
 
-  return newReview;
+  return { newReview, movie };
 }
 
 export async function addNewTvEntry({
@@ -104,7 +104,7 @@ export async function addNewTvEntry({
   if (!season)
     throw new Error(`Season id ${seasonId} not found in show ${showId}`);
 
-  const newReview = db.tvReview.create({
+  const newReview = await db.tvReview.create({
     data: {
       consumedDate,
       favorited,
@@ -148,5 +148,5 @@ export async function addNewTvEntry({
     },
   });
 
-  return newReview;
+  return { newReview, show, season };
 }

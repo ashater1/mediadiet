@@ -3,6 +3,7 @@ import { NewTvSchema } from "~/features/add/types";
 import { addNewTvEntry } from "~/features/tvAndMovies/db";
 import { convertStringToBool, createSupabaseClient } from "~/utils/supabase";
 import { deleteSavedShow } from "~/features/saved/delete";
+import { setToast } from "~/features/toasts/toast.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
@@ -26,7 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
     favorited,
   });
 
-  await Promise.all([
+  let [{ show, season }] = await Promise.all([
     addNewTvEntry({
       consumedDate: result.consumedDate,
       favorited: result.favorited,
@@ -38,11 +39,23 @@ export async function action({ request }: ActionFunctionArgs) {
       request,
       response,
     }),
-    await deleteSavedShow({
+    deleteSavedShow({
       showId: result.id,
       userId: user.data.user.id,
     }),
   ]);
 
-  return json({ success: true as const });
+  await setToast({
+    request,
+    response,
+    toast: {
+      type: "success",
+      title: "Nice!",
+      description: `You've added ${show.original_name ?? ""} ${
+        season.name && " - "
+      } ${season.name ?? ""} to your list!`,
+    },
+  });
+
+  return json({ success: true }, { headers: response.headers });
 }
