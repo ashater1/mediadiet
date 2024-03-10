@@ -89,11 +89,6 @@ class OpenLibrary {
         bookOne: searchDocumentType,
         bookTwo: searchDocumentType
       ) => {
-        console.log(
-          bookOne.author_name,
-          bookTwo.author_name,
-          bookOne.author_name === bookTwo.author_name
-        );
         return (
           bookOne.title?.trim() === bookTwo.title?.trim() &&
           _.isEqual(bookOne.author_name, bookTwo.author_name)

@@ -13,7 +13,7 @@ export async function setToast({
 }: {
   request: Request;
   response: Response;
-  toast: Toast;
+  toast: Omit<Toast, "id">;
 }) {
   const session = await getSession(request.headers.get("Cookie"));
 

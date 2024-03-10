@@ -76,5 +76,5 @@ export async function addNewBookEntry({
     },
   });
 
-  return newReview;
+  return { book, newReview };
 }

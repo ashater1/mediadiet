@@ -8,7 +8,7 @@ import { MediaType } from "../list/types";
 import { loader as bookLoader } from "~/routes/search.book.$id";
 import { loader as movieLoader } from "~/routes/search.movie.$id";
 import { loader as tvLoader } from "~/routes/search.tv.$id";
-import { useToastsContext } from "~/components/toasts/context";
+
 import { SerializeFrom } from "@vercel/remix";
 
 type ModalCloses = "default" | "success" | "draft";
@@ -126,8 +126,6 @@ function reducer(state: State, action: Action) {
 }
 
 export function useAddNew() {
-  const { createToast } = useToastsContext();
-
   let {
     data: searchData,
     load: searchLoad,
@@ -211,15 +209,6 @@ export function useAddNew() {
 
   const closeModal = ({ type = "default" }: { type?: ModalCloses }) => {
     dispatch({ type: "CLOSE_MODAL", closeType: type });
-
-    if (type === "success") {
-      createToast({
-        type: "success",
-        title: "Nice!",
-        description: `Added ${mediaItemData!.title} to your list!`,
-        duration: 4000,
-      });
-    }
   };
 
   const openModal = () => {

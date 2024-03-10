@@ -54,6 +54,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // get user details to pass to root's UserContextProvider
   const user = await getUserDetails({ request, response });
   const toast = await getToast({ request, response });
+  console.log("toast", toast);
 
   return typedjson({ user, toastData: toast }, { headers: response.headers });
 }
@@ -74,19 +75,17 @@ export default function App() {
       </head>
       <body className="flex bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 h-full min-h-screen">
         <div className="h-full w-full">
-          <ToastContext>
-            <AddNewContext>
-              <UserContextProvider user={user}>
-                {!isAuthPage && <Navbar />}
-                <Outlet />
-                <ScrollRestoration />
-                <Scripts />
-                <LiveReload />
-                <Analytics />
-              </UserContextProvider>
-            </AddNewContext>
-          </ToastContext>
           <Toaster richColors />
+          <AddNewContext>
+            <UserContextProvider user={user}>
+              {!isAuthPage && <Navbar />}
+              <Outlet />
+              <ScrollRestoration />
+              <Scripts />
+              <LiveReload />
+              <Analytics />
+            </UserContextProvider>
+          </AddNewContext>
         </div>
       </body>
     </html>

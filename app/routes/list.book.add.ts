@@ -3,6 +3,7 @@ import { NewBookSchema } from "~/features/add/types";
 import { getUser } from "~/features/auth/auth.server";
 import { addNewBookEntry } from "~/features/books";
 import { deleteSavedBook } from "~/features/saved/delete";
+import { setToast } from "~/features/toasts/toast.server";
 import { convertStringToBool } from "~/utils/funcs";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -28,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
     favorited,
   });
 
-  await Promise.all([
+  const [{ book }] = await Promise.all([
     addNewBookEntry({
       audiobook: review.audiobook,
       firstPublishedYear: review.firstPublishedYear ?? undefined,
@@ -41,11 +42,21 @@ export async function action({ request }: ActionFunctionArgs) {
       request,
       response,
     }),
+
     await deleteSavedBook({
       bookId: review.id,
       userId: user.id,
     }),
   ]);
 
-  return json({ success: true });
+  await setToast({
+    request,
+    response,
+    toast: {
+      title: "Nice!",
+      description: `You've added ${book.title ?? ""} to your list!`,
+    },
+  });
+
+  return json({ success: true }, { headers: response.headers });
 }
