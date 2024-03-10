@@ -1,44 +1,54 @@
-import { useActionData, useFetcher } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { json } from "@vercel/remix";
-import { motion } from "framer-motion";
+import { db } from "~/db.server";
 
-// export async function loader({ request }: LoaderFunctionArgs) {
-//   const response = new Response();
-//   // const user = await getUserDetails({ request, response });
-//   // if (user?.username !== "adam") {
-//   //   throw redirect("/login", { headers: response.headers });
-//   // }
+export async function loader() {
+  const movieItems = await db.movieReview.findMany({
+    where: {
+      userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
+    },
+    take: 10,
+    orderBy: {
+      consumedDate: "desc",
+    },
+    include: {
+      movie: {
+        include: {
+          MovieReview: {
+            select: {
+              consumedDate: true,
+            },
+            orderBy: {
+              consumedDate: "asc",
+            },
+            where: {
+              userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
+            },
+            take: 1,
+          },
+          _count: {
+            select: {
+              MovieReview: {
+                where: {
+                  userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
+                },
+              },
+            },
+          },
+          directors: true,
+        },
+      },
+    },
+  });
 
-//   const data = await fetch(
-//     "https://api.letterboxd.com/api/v0/search?input=the+matrix&searchMethod=Autocomplete&include=FilmSearchItem"
-//   );
-
-//   return await data.json();
-// }
-
-export async function action() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return json({ data: "data" });
+  return json(movieItems);
 }
 
 export default function Test() {
-  const { Form, data } = useFetcher();
-  // const data = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+  const data = useLoaderData<typeof loader>();
   return (
-    <div className="w-full items-center flex justify-center">
-      <motion.div initial={{ opacity: 1 }} animate={{ opacity: data ? 0 : 1 }}>
-        Before
-      </motion.div>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: data ? 1 : 0 }}>
-        After
-      </motion.div>
-
-      <Form method="POST">
-        <button type="submit">Submit</button>
-      </Form>
+    <div className="p-20">
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }
