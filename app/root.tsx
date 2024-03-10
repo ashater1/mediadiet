@@ -54,11 +54,12 @@ export default function App() {
   const { user, toastData } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
 
-  toastData &&
+  if (toastData) {
     toast.success(toastData.title, {
       id: toastData.id,
       description: toastData.description,
     });
+  }
 
   return (
     <html lang="en">
@@ -78,8 +79,8 @@ export default function App() {
               <Analytics />
             </UserContextProvider>
           </AddNewContext>
-          <Toaster richColors position="bottom-right" duration={4000} />
         </div>
+        <Toaster richColors position="bottom-right" duration={4000} />
       </body>
     </html>
   );
