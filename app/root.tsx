@@ -8,7 +8,6 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/remix";
 import {
   MetaFunction,
   json,
@@ -22,6 +21,11 @@ import { getUserDetails } from "./features/auth/auth.server";
 import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
 import Navbar from "./features/nav/Navbar";
+import { Toaster, toast } from "sonner";
+import { getToast } from "./features/toasts/toast.server";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -49,21 +53,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // get user details to pass to root's UserContextProvider
   const user = await getUserDetails({ request, response });
+  const toast = await getToast({ request, response });
 
-  if (user) {
-    const { username, firstName, lastName, avatar, soderberghMode } = user;
-    return json(
-      { username, firstName, lastName, avatar, soderberghMode },
-      { headers: request.headers }
-    );
-  }
-
-  return null;
+  return typedjson({ user, toastData: toast }, { headers: response.headers });
 }
 
 export default function App() {
-  const data = useLoaderData<typeof loader>();
+  const { user, toastData } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
+
+  if (toastData) {
+    toast.success(toastData.title, { id: toastData.id });
+  }
 
   return (
     <html lang="en">
@@ -75,7 +76,7 @@ export default function App() {
         <div className="h-full w-full">
           <ToastContext>
             <AddNewContext>
-              <UserContextProvider user={data}>
+              <UserContextProvider user={user}>
                 {!isAuthPage && <Navbar />}
                 <Outlet />
                 <ScrollRestoration />
@@ -85,6 +86,7 @@ export default function App() {
               </UserContextProvider>
             </AddNewContext>
           </ToastContext>
+          <Toaster richColors />
         </div>
       </body>
     </html>

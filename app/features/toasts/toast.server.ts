@@ -1,6 +1,7 @@
 import { getSession, commitSession } from "~/sessions.server";
 
 export type Toast = {
+  id: string;
   title: string;
   description: string;
 };
@@ -17,6 +18,7 @@ export async function setToast({
   const session = await getSession(request.headers.get("Cookie"));
 
   session.flash("toast", {
+    id: new Date().toISOString(),
     title: toast.title,
     description: toast.description,
   });

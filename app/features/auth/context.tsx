@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
-import { Prisma } from "@prisma/client";
+import { getUserById } from "./auth.server";
 
-type User = Partial<Prisma.UserGetPayload<{}>>;
+type User = Awaited<ReturnType<typeof getUserById>>;
 
 export const UserContext = createContext<User | null>(null);
 
