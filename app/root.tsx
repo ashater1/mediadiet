@@ -5,27 +5,22 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
 import {
   MetaFunction,
-  json,
   type LinksFunction,
   type LoaderFunctionArgs,
 } from "@vercel/remix";
 import stylesheet from "~/tailwind.css";
-import { ToastContext } from "./components/toasts/context";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { AddNewContext } from "./features/add/context";
 import { getUserDetails } from "./features/auth/auth.server";
 import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
 import Navbar from "./features/nav/Navbar";
-import { Toaster, toast } from "sonner";
 import { getToast } from "./features/toasts/toast.server";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export const meta: MetaFunction = () => {
   return [
@@ -50,22 +45,14 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
-
-  // get user details to pass to root's UserContextProvider
   const user = await getUserDetails({ request, response });
   const toast = await getToast({ request, response });
-  console.log("toast", toast);
-
   return typedjson({ user, toastData: toast }, { headers: response.headers });
 }
 
 export default function App() {
   const { user, toastData } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
-
-  if (toastData) {
-    toast.success(toastData.title, { id: toastData.id });
-  }
 
   return (
     <html lang="en">
@@ -75,7 +62,6 @@ export default function App() {
       </head>
       <body className="flex bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 h-full min-h-screen">
         <div className="h-full w-full">
-          <Toaster richColors />
           <AddNewContext>
             <UserContextProvider user={user}>
               {!isAuthPage && <Navbar />}
@@ -87,6 +73,7 @@ export default function App() {
             </UserContextProvider>
           </AddNewContext>
         </div>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
