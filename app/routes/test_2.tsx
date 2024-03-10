@@ -1,11 +1,10 @@
 import { Form } from "@remix-run/react";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@vercel/remix";
-import { Toast, getToast, setToast } from "~/features/toasts/toast.server";
+import { getToast, setToast } from "~/features/toasts/toast.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
   const toast = await getToast({ request, response });
-  console.log("Toast: ", toast);
   return json(null, { headers: response.headers });
 }
 
@@ -18,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (intent === "do-nothing") {
     return json({ data: "data" }, { headers: response.headers });
   } else if (intent === "set-toast") {
-    let toast: Toast = {
+    let toast = {
       title: new Date().toISOString(),
       description: new Date().toISOString(),
     };

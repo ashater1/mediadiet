@@ -20,7 +20,7 @@ import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
 import Navbar from "./features/nav/Navbar";
 import { getToast } from "./features/toasts/toast.server";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "sonner";
 
 export const meta: MetaFunction = () => {
   return [
@@ -54,6 +54,12 @@ export default function App() {
   const { user, toastData } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
 
+  toastData &&
+    toast.success(toastData.title, {
+      id: toastData.id,
+      description: toastData.description,
+    });
+
   return (
     <html lang="en">
       <head>
@@ -72,8 +78,8 @@ export default function App() {
               <Analytics />
             </UserContextProvider>
           </AddNewContext>
+          <Toaster richColors position="bottom-right" duration={4000} />
         </div>
-        <Toaster position="bottom-right" />
       </body>
     </html>
   );
