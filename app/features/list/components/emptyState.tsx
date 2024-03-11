@@ -1,20 +1,11 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "~/components/button";
 import { useAddNewContext } from "~/features/add/context";
+import { useListOwnerContext } from "~/routes/$username";
 
-type EmptyStateProps =
-  | {
-      isSelf: false;
-      name: string;
-    }
-  | { isSelf: true; name?: string };
-
-export function EmptyState({
-  isSelf,
-  name,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & EmptyStateProps) {
+export function EmptyState({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const { openModal } = useAddNewContext();
+  const { listOwner, isSelf } = useListOwnerContext();
 
   return (
     <div {...props} className="mx-auto flex max-w-lg flex-col gap-4">
@@ -24,7 +15,9 @@ export function EmptyState({
             <h2 className="mt-2 text-base font-semibold leading-6 text-gray-900">
               {isSelf
                 ? "You don't have anything in your list yet"
-                : `${name} doesn't have anything on their list yet`}
+                : `${
+                    listOwner.firstName ?? listOwner.username
+                  } doesn't have anything on their list yet`}
             </h2>
           </div>
 

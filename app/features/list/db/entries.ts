@@ -11,7 +11,7 @@ import {
   normalizeTvEntry,
 } from "./normalizeEntries";
 
-export async function getEntriesAndListOwner({
+export async function getEntries({
   username,
   entryTypes = ["book", "movie", "tv"],
 }: {
@@ -20,8 +20,8 @@ export async function getEntriesAndListOwner({
 }) {
   const data = await db.user.findFirst({
     where: { username },
-    include: {
-      // id: true,
+    select: {
+      id: true,
       MovieReviews: {
         ...getMovieReviewQuery(username),
         where: { user: { username } },
@@ -41,7 +41,7 @@ export async function getEntriesAndListOwner({
     return { userFound: false };
   }
 
-  let { MovieReviews, BookReviews, TvReviews, ...user } = data;
+  let { MovieReviews, BookReviews, TvReviews } = data;
 
   let entries = [
     ...(entryTypes.includes("movie")
@@ -57,7 +57,6 @@ export async function getEntriesAndListOwner({
 
   return {
     userFound: true,
-    user,
     entries: entries.sort(
       (a, b) =>
         b.createdAt!.getTime() - a.createdAt!.getTime() ||
@@ -92,7 +91,7 @@ export async function getEntryCounts({ username }: { username: string }) {
   };
 }
 
-export async function getEntriesOwnerAndCounts({
+export async function getEntriesAndCounts({
   username,
   entryTypes,
 }: {
@@ -105,7 +104,7 @@ export async function getEntriesOwnerAndCounts({
       : entryTypes;
 
   const [entriesAndListUser, counts] = await Promise.all([
-    getEntriesAndListOwner({ username, entryTypes: _entryTypes }),
+    getEntries({ username, entryTypes: _entryTypes }),
     getEntryCounts({ username }),
   ]);
 

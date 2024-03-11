@@ -21,6 +21,7 @@ import {
 import { UserData } from "~/routes/$username._index";
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "../types";
+import { ListOwnerContextType, useListOwnerContext } from "~/routes/$username";
 
 function TableRow({
   isSelf,
@@ -53,8 +54,9 @@ function TableRow({
   );
 }
 
-export function UserEntriesTable({ data }: { data: UserData }) {
-  const columns: ColumnDef<UserData["entries"]>[] = useMemo(
+export function UserEntriesTable({ entries }: { entries: UserData }) {
+  const { listOwner, isSelf } = useListOwnerContext();
+  const columns: ColumnDef<UserData>[] = useMemo(
     () => [
       {
         accessorKey: "consumedDate",
@@ -179,12 +181,12 @@ export function UserEntriesTable({ data }: { data: UserData }) {
   );
 
   const table = useReactTable({
-    data: data.entries as any,
+    data: entries as any,
     columns,
     groupedColumnMode: "remove",
     initialState: {
       columnVisibility: {
-        stars: !data.user.soderberghMode,
+        stars: !listOwner.soderberghMode,
         creators: false,
         id: false,
       },
@@ -224,7 +226,7 @@ export function UserEntriesTable({ data }: { data: UserData }) {
         {table.getRowModel().rows.map((row) => {
           return (
             <TableRow
-              isSelf={data.isSelf}
+              isSelf={isSelf}
               mediaType={row.getValue("mediaType")}
               reviewId={row.getValue("id")}
               key={row.id}

@@ -9,10 +9,11 @@ import {
   UserHeaderBar,
 } from "~/features/list/components/listUserHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
-import { getEntriesOwnerAndCounts } from "~/features/list/db/entries";
+import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
+import { useListOwnerContext } from "./$username";
 
-export type UserData = SerializeFrom<typeof loader>;
+export type UserData = SerializeFrom<typeof loader>["entries"];
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
@@ -25,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const entryTypes = getEntryTypesFromUrl(request.url);
 
   const [entriesOwnerAndCounts, user] = await Promise.all([
-    getEntriesOwnerAndCounts({
+    getEntriesAndCounts({
       username,
       entryTypes,
     }),
@@ -44,28 +45,27 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({
     counts: entriesOwnerAndCounts.counts,
     entries: entriesOwnerAndCounts.entriesAndListUser.entries,
-    isSelf: user?.username === username,
-    user: entriesOwnerAndCounts.entriesAndListUser.user,
   });
 }
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
+  const { listOwner, isSelf } = useListOwnerContext();
 
   const userName =
-    !data.user?.firstName && !data.user?.lastName
+    !listOwner?.firstName && !listOwner?.lastName
       ? null
-      : !data.user?.lastName
-      ? data.user.firstName
-      : `${data.user?.firstName} ${data.user?.lastName}`;
+      : !listOwner?.lastName
+      ? listOwner.firstName
+      : `${listOwner?.firstName} ${listOwner?.lastName}`;
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-col md:flex-row md:flex">
         <UserHeaderBar
-          avatar={getAvatarUrl(data.user?.avatar) ?? undefined}
+          avatar={getAvatarUrl(listOwner?.avatar) ?? undefined}
           primaryText={userName}
-          secondaryText={`@${data.user?.username}`}
+          secondaryText={`@${listOwner?.username}`}
         />
 
         <div className="ml-auto self-end mt-2 md:mt-0">
@@ -89,12 +89,9 @@ export default function UserIndex() {
 
       <div>
         {data.entries?.length ? (
-          <UserEntriesTable data={data} />
+          <UserEntriesTable entries={data.entries} />
         ) : (
-          <EmptyState
-            isSelf={data.isSelf}
-            name={data.user?.firstName ?? data.user?.username ?? ""}
-          />
+          <EmptyState />
         )}
       </div>
     </div>
