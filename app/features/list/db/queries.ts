@@ -12,7 +12,6 @@ export function getTvReviewQuery(username: string) {
             },
           },
           TvReview: {
-            take: 1,
             select: {
               consumedDate: true,
             },

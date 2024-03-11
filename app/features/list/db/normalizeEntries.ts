@@ -8,6 +8,10 @@ const formatDate = (date: Date, format: string) => {
   return formatInTimeZone(date, "utc", format);
 };
 
+export type NormalizedMovieEntry = ReturnType<typeof normalizeMovieEntry>;
+export type NormalizedBookEntry = ReturnType<typeof normalizeBookEntry>;
+export type NormalizedTvEntry = ReturnType<typeof normalizeTvEntry>;
+
 export function normalizeMovieEntry(
   item: MovieEntry,
   imgSize: "sm" | "md" | "lg" | number = "sm"

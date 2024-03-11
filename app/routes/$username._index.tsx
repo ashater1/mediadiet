@@ -41,7 +41,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   // If the user that is logged in is the same as the user that is being viewed, isSelf is true
-
   return json({
     counts: entriesOwnerAndCounts.counts,
     entries: entriesOwnerAndCounts.entriesAndListUser.entries,

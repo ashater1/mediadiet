@@ -24,17 +24,14 @@ export async function getEntriesAndListOwner({
       // id: true,
       MovieReviews: {
         ...getMovieReviewQuery(username),
-        take: 1,
         where: { user: { username } },
       },
       BookReviews: {
         ...getBookReviewQuery(username),
-        take: 1,
         where: { user: { username } },
       },
       TvReviews: {
         ...getTvReviewQuery(username),
-        take: 1,
         where: { user: { username } },
       },
     },
@@ -45,10 +42,17 @@ export async function getEntriesAndListOwner({
   }
 
   let { MovieReviews, BookReviews, TvReviews, ...user } = data;
+
   let entries = [
-    ...data.MovieReviews.map((m) => normalizeMovieEntry(m)),
-    ...data.BookReviews.map((b) => normalizeBookEntry(b)),
-    ...data.TvReviews.map((t) => normalizeTvEntry(t)),
+    ...(entryTypes.includes("movie")
+      ? MovieReviews.map(normalizeMovieEntry)
+      : []),
+
+    ...(entryTypes.includes("book") ? BookReviews.map(normalizeBookEntry) : []),
+
+    ...(entryTypes.includes("tv")
+      ? TvReviews.map((t) => normalizeTvEntry(t))
+      : []),
   ];
 
   return {
