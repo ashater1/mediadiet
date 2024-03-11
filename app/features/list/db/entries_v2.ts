@@ -5,8 +5,13 @@ import {
   getBookReviewQuery,
   getTvReviewQuery,
 } from "./queries";
+import {
+  normalizeBookEntry,
+  normalizeMovieEntry,
+  normalizeTvEntry,
+} from "./normalizeEntries";
 
-export async function getEntries({
+export async function getEntriesAndListOwner({
   username,
   entryTypes = ["book", "movie", "tv"],
 }: {
@@ -15,39 +20,51 @@ export async function getEntries({
 }) {
   const data = await db.user.findFirst({
     where: { username },
-    select: {
-      id: true,
+    include: {
+      // id: true,
       MovieReviews: {
         ...getMovieReviewQuery(username),
+        take: 1,
         where: { user: { username } },
       },
       BookReviews: {
         ...getBookReviewQuery(username),
+        take: 1,
         where: { user: { username } },
       },
       TvReviews: {
         ...getTvReviewQuery(username),
+        take: 1,
         where: { user: { username } },
       },
     },
   });
 
   if (!data?.id) {
-    throw new Error("User not found");
+    return { userFound: false };
   }
 
-  let entries = [...data.MovieReviews, ...data.BookReviews, ...data.TvReviews];
+  let { MovieReviews, BookReviews, TvReviews, ...user } = data;
+  let entries = [
+    ...data.MovieReviews.map((m) => normalizeMovieEntry(m)),
+    ...data.BookReviews.map((b) => normalizeBookEntry(b)),
+    ...data.TvReviews.map((t) => normalizeTvEntry(t)),
+  ];
 
-  return entries.sort(
-    (a, b) =>
-      b.createdAt!.getTime() - a.createdAt!.getTime() ||
-      b.consumedDate!.getTime() - a.consumedDate!.getTime()
-  );
+  return {
+    userFound: true,
+    user,
+    entries: entries.sort(
+      (a, b) =>
+        b.createdAt!.getTime() - a.createdAt!.getTime() ||
+        b.consumedDateTime.getTime() - a.consumedDateTime.getTime()
+    ),
+  };
 }
 
 export async function getEntryCounts({ username }: { username: string }) {
   const counts = await db.user.findFirst({
-    where: { username: username },
+    where: { username },
     select: {
       id: true,
       _count: {
@@ -71,15 +88,22 @@ export async function getEntryCounts({ username }: { username: string }) {
   };
 }
 
-export async function getEntriesAndCounts({
+export async function getEntriesOwnerAndCounts({
   username,
   entryTypes,
 }: {
   username: string;
-  entryTypes: EntryType[];
+  entryTypes?: EntryType[];
 }) {
-  const [entries, counts] = await Promise.all([
-    getEntries({ username: "test", entryTypes: ["movie", "book", "tv"] }),
-    getEntryCounts({ username: "test" }),
+  let _entryTypes: EntryType[] =
+    !entryTypes || entryTypes?.length === 0
+      ? ["book", "movie", "tv"]
+      : entryTypes;
+
+  const [entriesAndListUser, counts] = await Promise.all([
+    getEntriesAndListOwner({ username, entryTypes: _entryTypes }),
+    getEntryCounts({ username }),
   ]);
+
+  return { entriesAndListUser, counts };
 }

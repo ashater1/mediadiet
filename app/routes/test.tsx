@@ -1,10 +1,13 @@
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@vercel/remix";
-import { getEntries, getEntryCounts } from "~/features/list/db/entries_v2";
+import {
+  getEntriesOwnerAndCounts,
+  getEntryCounts,
+} from "~/features/list/db/entries_v2";
 
 export async function loader() {
   let [entries, counts] = await Promise.all([
-    getEntries({ username: "adam" }),
+    getEntriesOwnerAndCounts({ username: "adam" }),
     getEntryCounts({ username: "adam" }),
   ]);
 

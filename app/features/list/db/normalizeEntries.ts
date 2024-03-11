@@ -1,7 +1,8 @@
 import { listToString, safeFilter } from "~/utils/funcs";
-import { BookEntry, MovieDbImageSizes, MovieEntry, TvEntry } from "./types";
+import { MovieDbImageSizes } from "./types";
 import { formatInTimeZone } from "date-fns-tz";
 import { format } from "date-fns";
+import { BookEntry, MovieEntry, TvEntry } from "./queries";
 
 const formatDate = (date: Date, format: string) => {
   return formatInTimeZone(date, "utc", format);
