@@ -103,10 +103,10 @@ export async function getEntriesAndCounts({
       ? ["book", "movie", "tv"]
       : entryTypes;
 
-  const [entriesAndListUser, counts] = await Promise.all([
+  const [entries, counts] = await Promise.all([
     getEntries({ username, entryTypes: _entryTypes }),
     getEntryCounts({ username }),
   ]);
 
-  return { entriesAndListUser, counts };
+  return { entries, counts };
 }

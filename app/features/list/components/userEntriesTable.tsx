@@ -1,3 +1,4 @@
+import { Link, useFetcher } from "@remix-run/react";
 import {
   ColumnDef,
   flexRender,
@@ -7,7 +8,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import classNames from "classnames";
-import { Link, useFetcher } from "@remix-run/react";
 import { useMemo } from "react";
 import DataCell from "~/components/table/DataCell";
 import {
@@ -18,10 +18,10 @@ import {
   StarsDisplay,
   TvShowIcon,
 } from "~/features/list/icons/icons";
+import { useListOwnerContext } from "~/routes/$username";
 import { UserData } from "~/routes/$username._index";
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "../types";
-import { ListOwnerContextType, useListOwnerContext } from "~/routes/$username";
 
 function TableRow({
   isSelf,

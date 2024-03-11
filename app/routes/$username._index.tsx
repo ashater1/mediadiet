@@ -1,7 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import invariant from "tiny-invariant";
-import { getUserDetails } from "~/features/auth/auth.server";
 import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/emptyState";
 import {
@@ -25,32 +24,28 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   //   Check if url has filters & filter data if it does
   const entryTypes = getEntryTypesFromUrl(request.url);
 
-  const [entriesOwnerAndCounts, user] = await Promise.all([
-    getEntriesAndCounts({
-      username,
-      entryTypes,
-    }),
-    getUserDetails({ request, response }),
-  ]);
+  const { entries, counts } = await getEntriesAndCounts({
+    username,
+    entryTypes,
+  });
 
-  //  If the user doesn't exist, throw a 404
-  if (!entriesOwnerAndCounts.entriesAndListUser.userFound) {
+  if (!entries.userFound) {
     throw new Response(null, {
       status: 404,
-      statusText: "Not Found",
+      statusText: "User not Found",
     });
   }
 
   // If the user that is logged in is the same as the user that is being viewed, isSelf is true
   return json({
-    counts: entriesOwnerAndCounts.counts,
-    entries: entriesOwnerAndCounts.entriesAndListUser.entries,
+    counts,
+    entries: entries.entries,
   });
 }
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
-  const { listOwner, isSelf } = useListOwnerContext();
+  const { listOwner } = useListOwnerContext();
 
   const userName =
     !listOwner?.firstName && !listOwner?.lastName
@@ -88,7 +83,7 @@ export default function UserIndex() {
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 
       <div>
-        {data.entries?.length ? (
+        {data.entries ? (
           <UserEntriesTable entries={data.entries} />
         ) : (
           <EmptyState />
