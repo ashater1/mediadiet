@@ -1,54 +1,21 @@
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@vercel/remix";
-import { db } from "~/db.server";
+import { getEntries, getEntryCounts } from "~/features/list/db/entries_v2";
 
 export async function loader() {
-  const movieItems = await db.movieReview.findMany({
-    where: {
-      userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
-    },
-    take: 10,
-    orderBy: {
-      consumedDate: "desc",
-    },
-    include: {
-      movie: {
-        include: {
-          MovieReview: {
-            select: {
-              consumedDate: true,
-            },
-            orderBy: {
-              consumedDate: "asc",
-            },
-            where: {
-              userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
-            },
-            take: 1,
-          },
-          _count: {
-            select: {
-              MovieReview: {
-                where: {
-                  userId: "5369ff92-0b32-4c72-8da4-6eb805226326",
-                },
-              },
-            },
-          },
-          directors: true,
-        },
-      },
-    },
-  });
+  let [entries, counts] = await Promise.all([
+    getEntries({ username: "adam" }),
+    getEntryCounts({ username: "adam" }),
+  ]);
 
-  return json(movieItems);
+  return json({ entries, counts });
 }
 
 export default function Test() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="p-20">
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre>{JSON.stringify(data.counts, null, 2)}</pre>
     </div>
   );
 }
