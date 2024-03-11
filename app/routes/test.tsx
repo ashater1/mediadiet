@@ -3,7 +3,7 @@ import { json } from "@vercel/remix";
 import {
   getEntriesOwnerAndCounts,
   getEntryCounts,
-} from "~/features/list/db/entries_v2";
+} from "~/features/list/db/entries";
 
 export async function loader() {
   let [entries, counts] = await Promise.all([

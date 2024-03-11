@@ -10,7 +10,7 @@ import { ItemsCountAndFilter } from "~/features/list/components/listUserHeaderBa
 import {
   bookReviewInclude,
   movieReviewInclude,
-} from "~/features/list/db/entries";
+} from "~/features/list/db/entries_old";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { MediaType } from "~/features/list/types";
 import {

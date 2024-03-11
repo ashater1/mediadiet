@@ -9,7 +9,7 @@ import {
   UserHeaderBar,
 } from "~/features/list/components/listUserHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
-import { getEntriesOwnerAndCounts } from "~/features/list/db/entries_v2";
+import { getEntriesOwnerAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
 
 export type UserData = SerializeFrom<typeof loader>;
