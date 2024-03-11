@@ -15,7 +15,7 @@ export default function Test() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="p-20">
-      <pre>{JSON.stringify(data.counts, null, 2)}</pre>
+      <pre>{JSON.stringify(data.entries, null, 2)}</pre>
     </div>
   );
 }

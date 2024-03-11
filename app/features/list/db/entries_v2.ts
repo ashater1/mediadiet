@@ -13,7 +13,7 @@ export async function getEntries({
   username: string;
   entryTypes?: EntryType[];
 }) {
-  const entries = await db.user.findFirst({
+  const data = await db.user.findFirst({
     where: { username },
     select: {
       id: true,
@@ -22,21 +22,27 @@ export async function getEntries({
         where: { user: { username } },
       },
       BookReviews: {
-        ...getBookReviewQuery,
+        ...getBookReviewQuery(username),
         where: { user: { username } },
       },
       TvReviews: {
-        ...getTvReviewQuery,
+        ...getTvReviewQuery(username),
         where: { user: { username } },
       },
     },
   });
 
-  if (!entries?.id) {
+  if (!data?.id) {
     throw new Error("User not found");
   }
 
-  return entries;
+  let entries = [...data.MovieReviews, ...data.BookReviews, ...data.TvReviews];
+
+  return entries.sort(
+    (a, b) =>
+      b.createdAt!.getTime() - a.createdAt!.getTime() ||
+      b.consumedDate!.getTime() - a.consumedDate!.getTime()
+  );
 }
 
 export async function getEntryCounts({ username }: { username: string }) {
