@@ -3,7 +3,7 @@ import { getUserOrRedirect } from "~/features/auth/auth.server";
 import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import {
   ItemsCountAndFilter,
-  UserHeaderBar,
+  ListOwnerHeaderBar,
 } from "~/features/list/components/listOwnerHeaderBar";
 import { PageFrame } from "~/features/ui/frames";
 
@@ -20,11 +20,7 @@ export default function Friends() {
     <PageFrame>
       <div className="w-full flex flex-col">
         <div className="flex">
-          <UserHeaderBar
-            avatar={getAvatarUrl(userContext?.avatar) ?? undefined}
-            primaryText="Friends"
-            secondaryText={`@${userContext?.username}`}
-          />
+          <ListOwnerHeaderBar />
           <ItemsCountAndFilter
             paramName="type"
             counts={[1, 2]}

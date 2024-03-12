@@ -41,7 +41,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     isSelf: user?.username === username,
     listOwner: {
       ...listOwner,
-      avatar: listOwner.avatar ? getAvatarUrl(listOwner.avatar) : null,
+      avatar: listOwner.avatar && listOwner.avatar,
     },
   };
 }

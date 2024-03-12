@@ -92,10 +92,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function Review() {
   const review = useLoaderData<typeof loader>();
+  const { listOwner, isSelf } = useListOwnerContext();
+
   const params = useParams();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const { listOwner, isSelf } = useListOwnerContext();
 
   const deleting =
     navigation.state !== "idle" &&
