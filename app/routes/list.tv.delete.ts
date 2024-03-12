@@ -12,7 +12,22 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const deletedEntry = await db.tvReview.delete({
     where: { id: id },
+    select: {
+      tvSeason: {
+        select: {
+          title: true,
+          tvShow: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      },
+    },
   });
 
-  return deletedEntry;
+  return {
+    show: deletedEntry.tvSeason.tvShow.title,
+    season: deletedEntry.tvSeason.title,
+  };
 }

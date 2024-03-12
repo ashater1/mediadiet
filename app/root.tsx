@@ -23,6 +23,7 @@ import Navbar from "./features/nav/Navbar";
 import { getToast } from "./features/toasts/toast.server";
 import { Toaster, toast } from "sonner";
 import { useEffect } from "react";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export const meta: MetaFunction = () => {
   return [
@@ -61,6 +62,12 @@ export default function App() {
     switch (toastData?.type) {
       case "success":
         toast.success(toastData.title, { description: toastData.description });
+        break;
+      case "deleted":
+        toast.info(toastData.title, {
+          description: toastData.description,
+          icon: <TrashIcon />,
+        });
         break;
       case "error":
         toast.error(toastData.title, { description: toastData.description });

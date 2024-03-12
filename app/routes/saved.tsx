@@ -18,6 +18,7 @@ import {
   deleteSavedMovieItem,
   deleteSavedShowItem,
 } from "~/features/saved/delete";
+import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
 import { titleize } from "~/utils/capitalize";
 import { listToString, safeFilter } from "~/utils/funcs";
@@ -112,6 +113,7 @@ const deleteSavedSchema = z.object({
 
 export async function action({ request }: LoaderFunctionArgs) {
   const response = new Response();
+
   const user = await getUserDetails({ request, response });
   if (!user) throw redirect("/login", { headers: response.headers });
 
@@ -122,24 +124,31 @@ export async function action({ request }: LoaderFunctionArgs) {
     await deleteSavedBookItem({
       itemId: itemId,
     });
-    throw redirect("/saved", { headers: response.headers });
   }
 
   if (mediaType === "movie") {
     await deleteSavedMovieItem({
       itemId: itemId,
     });
-    throw redirect("/saved", { headers: response.headers });
   }
 
   if (mediaType === "tv") {
     await deleteSavedShowItem({
       itemId: itemId,
     });
-    throw redirect("/saved", { headers: response.headers });
   }
 
-  return null;
+  await setToast({
+    request,
+    response,
+    toast: {
+      type: "deletedFromSaved",
+      title: "Deleted from saved",
+      description: "Item has been deleted from your saved list",
+    },
+  });
+
+  throw redirect("/saved", { headers: response.headers });
 }
 
 export default function Saved() {

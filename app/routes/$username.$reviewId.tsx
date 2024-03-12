@@ -22,6 +22,7 @@ import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import { deleteEntry } from "~/features/list/db/entry";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 import { getReview } from "~/features/reviews/db";
+import { setToast } from "~/features/toasts/toast.server";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -57,7 +58,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const isSelf = isAuthed && user.username === username;
 
   if (!isSelf) {
-    throw redirect("/login");
+    throw redirect("/login", {
+      headers: response.headers,
+    });
   }
 
   const submission = Object.fromEntries(await request.formData());
@@ -68,8 +71,22 @@ export async function action({ params, request }: ActionFunctionArgs) {
     })
     .parse(submission);
 
-  await deleteEntry({ id: reviewId, mediaType });
-  throw redirect(`/${username}`);
+  let result = await deleteEntry({ id: reviewId, mediaType });
+
+  if (result?.success) {
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "deleted",
+        title: `Deleted your review of ${result.title}`,
+      },
+    });
+  }
+
+  throw redirect(`/${username}`, {
+    headers: response.headers,
+  });
 }
 
 export default function Review() {

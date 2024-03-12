@@ -2,8 +2,8 @@ import { getSession, commitSession } from "~/sessions.server";
 
 export type Toast = {
   id: string;
-  type: "success" | "neutral" | "error" | "warning";
-  description: string;
+  type: "success" | "neutral" | "error" | "warning" | "deleted";
+  description?: string;
   title: string;
 };
 

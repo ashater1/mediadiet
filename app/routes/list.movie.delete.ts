@@ -12,6 +12,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const deletedEntry = await db.movieReview.delete({
     where: { id: id },
+    select: {
+      movie: {
+        select: {
+          title: true,
+        },
+      },
+    },
   });
 
   return deletedEntry;

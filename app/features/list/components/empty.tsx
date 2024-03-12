@@ -1,93 +1,40 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { useParams } from "@remix-run/react";
-import classNames from "classnames";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "~/components/button";
 import { useAddNewContext } from "~/features/add/context";
+import { useListOwnerContext } from "~/routes/$username";
 
-export default function EmptyList({ isSelf }: { isSelf?: boolean }) {
-  const params = useParams();
-  const addNew = useAddNewContext();
+export function EmptyState({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  const { openModal } = useAddNewContext();
+  const { listOwner, isSelf } = useListOwnerContext();
 
   return (
-    <div className="flex gap-6 text-center">
-      <img
-        src="https://i.gifer.com/7VE.gif"
-        alt="your list is empty!"
-        className="hidden h-40 w-auto lg:block"
-      />
-      <div className="mt-2">
-        <EmptyListTitle>
-          {`Looks like ${
-            isSelf ? "you haven't" : `@${params.username} hasn't`
-          } added anything yet`}
-        </EmptyListTitle>
+    <div {...props} className="mx-auto flex max-w-lg flex-col gap-4">
+      <div className="flex flex-col items-center gap-5">
+        <div className="text-center">
+          <div className="flex gap-4 items-center justify-center">
+            <h2 className="mt-2 text-base font-semibold leading-6 text-gray-900">
+              {isSelf
+                ? "You don't have anything in your list yet"
+                : `${
+                    listOwner.firstName ?? listOwner.username
+                  } doesn't have anything on their list yet`}
+            </h2>
+          </div>
 
-        {isSelf ? (
-          <>
-            <EmptyListDescription className="mt-1">
-              Get started by adding something to your list!
-            </EmptyListDescription>
+          <p className="mt-1 text-sm text-gray-500">
+            {isSelf
+              ? "Start adding to your list so you can show others what you've been watching & reading!"
+              : "Check back later to see if they've starting adding things!"}
+          </p>
+        </div>
 
-            <div className="mt-6 flex justify-center">
-              <Button
-                onClick={() => addNew?.openModal()}
-                className="flex items-center justify-center gap-2"
-              >
-                <PlusIcon
-                  className="-ml-0.5 mr-1.5 h-5 w-5"
-                  aria-hidden="true"
-                />
-                Add to your list
-              </Button>
-            </div>
-          </>
-        ) : (
-          <EmptyListDescription className="mt-1">
-            Check back later to see if they've added to their list!
-          </EmptyListDescription>
+        {isSelf && (
+          <Button type="button" onClick={openModal} className="px-6">
+            <PlusIcon className="stroke-4 h-5 w-5" />
+            <span className="ml-2">Start adding to your list</span>
+          </Button>
         )}
       </div>
-      <img
-        src="https://i.gifer.com/7VE.gif"
-        alt="your list is empty!"
-        className="hidden h-40 w-auto lg:block"
-      />
     </div>
-  );
-}
-
-export function EmptyListTitle({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"h3">) {
-  return (
-    <h3
-      {...props}
-      className={classNames(
-        "whitespace-normal font-semibold text-gray-200",
-        className && className
-      )}
-    >
-      {children}
-    </h3>
-  );
-}
-
-export function EmptyListDescription({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"p">) {
-  return (
-    <p
-      {...props}
-      className={classNames(
-        "mt-1 text-base text-gray-400",
-        className && className
-      )}
-    >
-      {children}
-    </p>
   );
 }

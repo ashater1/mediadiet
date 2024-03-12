@@ -39,11 +39,20 @@ export async function getBookEntry({ id }: { id: string }) {
 }
 
 export async function deleteBookEntry({ id }: { id: string }) {
-  await db.bookReview.delete({
+  let book = await db.bookReview.delete({
     where: {
       id,
     },
+    select: {
+      book: {
+        select: {
+          title: true,
+        },
+      },
+    },
   });
+
+  return book;
 }
 
 export async function updateBookEntry({
@@ -78,11 +87,20 @@ export async function getMovieEntry({ id }: { id: string }) {
 }
 
 export async function deleteMovieEntry({ id }: { id: string }) {
-  await db.movieReview.delete({
+  let movie = await db.movieReview.delete({
     where: {
       id,
     },
+    select: {
+      movie: {
+        select: {
+          title: true,
+        },
+      },
+    },
   });
+
+  return movie;
 }
 
 export async function updateMovieEntry({
@@ -119,11 +137,28 @@ export async function getTvEntry({ id }: { id: string }) {
 }
 
 export async function deleteTvEntry({ id }: { id: string }) {
-  await db.tvReview.delete({
+  let show = await db.tvReview.delete({
     where: {
       id,
     },
+    select: {
+      tvSeason: {
+        select: {
+          title: true,
+          tvShow: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      },
+    },
   });
+
+  return {
+    show: show.tvSeason.tvShow.title,
+    season: show.tvSeason.title,
+  };
 }
 
 export async function updateTvEntry({
@@ -164,18 +199,18 @@ export async function deleteEntry({
 }) {
   try {
     if (mediaType === "book") {
-      await deleteBookEntry({ id });
-      return { success: true };
+      let { book } = await deleteBookEntry({ id });
+      return { success: true, title: book.title };
     }
 
     if (mediaType === "movie") {
-      await deleteMovieEntry({ id });
-      return { success: true };
+      let { movie } = await deleteMovieEntry({ id });
+      return { success: true, title: movie.title };
     }
 
     if (mediaType === "tv") {
-      await deleteTvEntry({ id });
-      return { success: true };
+      let { season, show } = await deleteTvEntry({ id });
+      return { success: true, title: `${show}${season ? ` - ${season}` : ""}` };
     }
   } catch (e) {
     return { success: false, error: e };

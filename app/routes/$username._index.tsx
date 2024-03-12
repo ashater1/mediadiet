@@ -2,7 +2,7 @@ import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import invariant from "tiny-invariant";
 import { getAvatarUrl } from "~/features/auth/context";
-import { EmptyState } from "~/features/list/components/emptyState";
+import { EmptyState } from "~/features/list/components/empty";
 import {
   ItemsCountAndFilter,
   UserHeaderBar,
@@ -83,7 +83,7 @@ export default function UserIndex() {
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 
       <div>
-        {data.entries ? (
+        {data.entries?.length ? (
           <UserEntriesTable entries={data.entries} />
         ) : (
           <EmptyState />
