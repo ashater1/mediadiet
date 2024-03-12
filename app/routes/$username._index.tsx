@@ -1,16 +1,14 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import invariant from "tiny-invariant";
-import { getAvatarUrl } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/empty";
 import {
   ItemsCountAndFilter,
-  UserHeaderBar,
-} from "~/features/list/components/listUserHeaderBar";
+  ListOwnerHeaderBar,
+} from "~/features/list/components/listOwnerHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
-import { useListOwnerContext } from "./$username";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -36,32 +34,24 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
   }
 
-  // If the user that is logged in is the same as the user that is being viewed, isSelf is true
-  return json({
-    counts,
-    entries: entries.entries,
-  });
+  return json(
+    {
+      counts,
+      entries: entries.entries,
+    },
+    {
+      headers: response.headers,
+    }
+  );
 }
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
-  const { listOwner } = useListOwnerContext();
-
-  const userName =
-    !listOwner?.firstName && !listOwner?.lastName
-      ? null
-      : !listOwner?.lastName
-      ? listOwner.firstName
-      : `${listOwner?.firstName} ${listOwner?.lastName}`;
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-col md:flex-row md:flex">
-        <UserHeaderBar
-          avatar={getAvatarUrl(listOwner?.avatar) ?? undefined}
-          primaryText={userName}
-          secondaryText={`@${listOwner?.username}`}
-        />
+        <ListOwnerHeaderBar />
 
         <div className="ml-auto self-end mt-2 md:mt-0">
           <ItemsCountAndFilter

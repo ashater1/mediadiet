@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { ItemsCountAndFilter } from "~/features/list/components/listUserHeaderBar";
+import { ItemsCountAndFilter } from "~/features/list/components/listOwnerHeaderBar";
 import {
   bookReviewInclude,
   movieReviewInclude,

@@ -23,6 +23,7 @@ import { deleteEntry } from "~/features/list/db/entry";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 import { getReview } from "~/features/reviews/db";
 import { setToast } from "~/features/toasts/toast.server";
+import { useListOwnerContext } from "./$username";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -94,7 +95,7 @@ export default function Review() {
   const params = useParams();
   const submit = useSubmit();
   const navigation = useNavigation();
-  const user = useUserContext();
+  const { listOwner, isSelf } = useListOwnerContext();
 
   const deleting =
     navigation.state !== "idle" &&
@@ -122,7 +123,7 @@ export default function Review() {
             <div className="flex items-center gap-3">
               <img
                 className="h-10 w-10 rounded-full"
-                src={getAvatarUrl(user?.avatar) ?? undefined}
+                src={listOwner.avatar ?? undefined}
               />
 
               <div className="flex flex-col text-sm gap-0.5">
@@ -136,7 +137,8 @@ export default function Review() {
                   {review.formattedDate}
                 </p>
               </div>
-              {review.isSelf && (
+
+              {isSelf && (
                 <div className="ml-auto flex items-center justify-center gap-2">
                   <button
                     disabled={deleting}

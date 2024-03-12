@@ -4,7 +4,7 @@ import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import {
   ItemsCountAndFilter,
   UserHeaderBar,
-} from "~/features/list/components/listUserHeaderBar";
+} from "~/features/list/components/listOwnerHeaderBar";
 import { PageFrame } from "~/features/ui/frames";
 
 export async function loader({ request }: LoaderFunctionArgs) {

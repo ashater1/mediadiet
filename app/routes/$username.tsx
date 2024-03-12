@@ -3,6 +3,7 @@ import { LoaderFunctionArgs, SerializeFrom } from "@vercel/remix";
 import invariant from "tiny-invariant";
 import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
+import { getAvatarUrl } from "~/features/auth/context";
 import { PageFrame } from "~/features/ui/frames";
 
 export type ListOwnerContextType = {
@@ -38,7 +39,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return {
     isSelf: user?.username === username,
-    listOwner,
+    listOwner: {
+      ...listOwner,
+      avatar: listOwner.avatar ? getAvatarUrl(listOwner.avatar) : null,
+    },
   };
 }
 

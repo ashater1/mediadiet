@@ -8,22 +8,24 @@ import classNames from "classnames";
 import { useSpinDelay } from "spin-delay";
 import { FallbackAvatar } from "~/components/avatar";
 import Spinner from "~/components/spinner";
+import { useListOwnerContext } from "~/routes/$username";
 import { useIsLoading } from "~/utils/useIsLoading";
 
-export function UserHeaderBar({
-  avatar,
-  primaryText,
-  secondaryText,
-}: {
-  avatar?: string;
-  primaryText: string | null;
-  secondaryText?: string;
-}) {
+export function ListOwnerHeaderBar() {
+  const { listOwner, isSelf } = useListOwnerContext();
+
+  const listOwnerName =
+    !listOwner?.firstName && !listOwner?.lastName
+      ? null
+      : !listOwner?.lastName
+      ? listOwner.firstName
+      : `${listOwner?.firstName} ${listOwner?.lastName}`;
+
   return (
     <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
       <div className="hidden h-16 w-16 overflow-hidden rounded-full bg-gray-100 md:block">
-        {avatar ? (
-          <img className="h-full w-full" src={avatar} />
+        {listOwner.avatar ? (
+          <img className="h-full w-full" src={listOwner.avatar} />
         ) : (
           <FallbackAvatar />
         )}
@@ -31,11 +33,11 @@ export function UserHeaderBar({
 
       <div className="flex flex-col">
         <h2 className="text-lg font-bold tracking-tight text-gray-900 md:text-xl">
-          {primaryText ? primaryText : secondaryText}
+          {listOwnerName ? listOwnerName : `@${listOwner.username}`}
         </h2>
 
-        {primaryText && (
-          <span className="text-sm text-gray-500">{secondaryText}</span>
+        {listOwnerName && (
+          <span className="text-sm text-gray-500">{`@${listOwner.username}`}</span>
         )}
       </div>
     </div>

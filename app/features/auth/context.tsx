@@ -10,8 +10,7 @@ export function useUserContext() {
   return context;
 }
 
-export function getAvatarUrl(avatar: string | null | undefined) {
-  if (!avatar) return null;
+export function getAvatarUrl(avatar: string) {
   return `https://cgoipxithucvtnbvyypv.supabase.co/storage/v1/object/public/public/avatars/${avatar}`;
 }
 
