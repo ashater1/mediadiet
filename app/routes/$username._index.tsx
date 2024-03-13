@@ -1,14 +1,14 @@
-import { useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import invariant from "tiny-invariant";
+import { CountsWithParams } from "~/components/headerbar/count";
+import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
-import {
-  ItemsCountAndFilter,
-  UserHeaderBar,
-} from "~/features/list/components/listOwnerHeaderBar";
+import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
+import { useOptimisticParams } from "~/utils/useOptimistic";
 import { useListOwnerContext } from "./$username";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
@@ -48,6 +48,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+  const { isLoading, getAll } = useOptimisticParams();
+
+  const mediaTypes = getAll("type");
   const { listOwner, isSelf } = useListOwnerContext();
 
   return (
@@ -61,19 +65,49 @@ export default function UserIndex() {
         />
 
         <div className="ml-auto self-end mt-2 md:mt-0">
-          <ItemsCountAndFilter
-            paramName="type"
-            counts={[
-              data.counts.movieCount,
-              data.counts.bookCount,
-              data.counts.tvCount,
-            ]}
-            labels={[
-              { label: "movies", searchParam: "movie" },
-              { label: "books", searchParam: "book" },
-              { label: "seasons", searchParam: "tv" },
-            ]}
-          />
+          <Form
+            onChange={(e) => {
+              submit(e.currentTarget);
+            }}
+            className="w-min flex md:ml-auto self-auto md:self-end"
+          >
+            <div className="relative w-min flex">
+              <div className="flex divide-x divide-slate-300">
+                <CountsWithParams
+                  count={data.counts.movieCount}
+                  label="movies"
+                  active={!mediaTypes.length || mediaTypes.includes("movie")}
+                  defaultChecked={mediaTypes.includes("movie")}
+                  name="type"
+                  value="movie"
+                />
+
+                <CountsWithParams
+                  count={data.counts.bookCount}
+                  label="books"
+                  defaultChecked={mediaTypes.includes("book")}
+                  active={!mediaTypes.length || mediaTypes.includes("book")}
+                  name="type"
+                  value="book"
+                />
+
+                <CountsWithParams
+                  count={data.counts.tvCount}
+                  label="seasons"
+                  defaultChecked={mediaTypes.includes("tv")}
+                  active={!mediaTypes.length || mediaTypes.includes("tv")}
+                  name="type"
+                  value="tv"
+                />
+              </div>
+
+              {isLoading && (
+                <div className="absolute right-0 translate-x-full">
+                  <Spinner className="w-6 h-6" />
+                </div>
+              )}
+            </div>
+          </Form>
         </div>
       </div>
 

@@ -99,22 +99,25 @@ export function ItemsCountAndFilter({
           count={counts[0]}
           label="movies"
           active={checkedTypes.includes("movie")}
+          defaultChecked={checkedTypes.includes("movie")}
           name="type"
           value="movie"
         />
 
         <CountsWithParams
+          active={checkedTypes.includes("book")}
+          defaultChecked={checkedTypes.includes("book")}
           count={counts[1]}
           label="books"
-          active={checkedTypes.includes("book")}
           name="type"
           value="book"
         />
 
         <CountsWithParams
+          active={checkedTypes.includes("tv")}
+          defaultChecked={checkedTypes.includes("tv")}
           count={counts[2]}
           label="seasons"
-          active={checkedTypes.includes("tv")}
           name="type"
           value="tv"
         />

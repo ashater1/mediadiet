@@ -17,8 +17,7 @@ export default function Test() {
   const [searchParams] = useSearchParams();
   const mediaTypes = searchParams.getAll("type");
 
-  console.log(JSON.stringify(mediaTypes));
-
+  console.log(searchParams.getAll("poop"));
   return (
     <div className="p-20">
       <Form

@@ -72,7 +72,7 @@ export default function Profile() {
   const submit = useSubmit();
   const user = useUserContext();
   const ref = useRef<HTMLInputElement>(null);
-  const isLoading = useIsLoading({});
+  const isLoading = useIsLoading();
 
   const onAvatarChange = (e: React.FormEvent<HTMLFormElement>) => {
     submit(e.currentTarget, {
