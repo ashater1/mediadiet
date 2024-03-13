@@ -17,7 +17,6 @@ export function useListOwnerContext() {
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
-  //   Get username from URL and fetch the users entries and counts
   const username = params.username;
   invariant(username, "userId is required");
 
@@ -37,11 +36,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
   }
 
+  const displayName = listOwner.firstName
+    ? `${listOwner.firstName}${listOwner.lastName && " " + listOwner.lastName}`
+    : null;
+
   return {
     isSelf: user?.username === username,
     listOwner: {
       ...listOwner,
-      avatar: listOwner.avatar && listOwner.avatar,
+      avatar: listOwner.avatar && getAvatarUrl(listOwner.avatar),
+      displayName,
     },
   };
 }

@@ -4,11 +4,12 @@ import invariant from "tiny-invariant";
 import { EmptyState } from "~/features/list/components/empty";
 import {
   ItemsCountAndFilter,
-  ListOwnerHeaderBar,
+  UserHeaderBar,
 } from "~/features/list/components/listOwnerHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
+import { useListOwnerContext } from "./$username";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -47,11 +48,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
+  const { listOwner, isSelf } = useListOwnerContext();
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-col md:flex-row md:flex">
-        <ListOwnerHeaderBar />
+        <UserHeaderBar
+          isSelf={isSelf}
+          avatar={listOwner.avatar}
+          primaryName={listOwner.displayName}
+          secondaryName={listOwner.username}
+        />
 
         <div className="ml-auto self-end mt-2 md:mt-0">
           <ItemsCountAndFilter

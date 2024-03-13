@@ -7,37 +7,49 @@ import {
 import classNames from "classnames";
 import { useSpinDelay } from "spin-delay";
 import { FallbackAvatar } from "~/components/avatar";
+import { Button } from "~/components/button";
 import Spinner from "~/components/spinner";
 import { useListOwnerContext } from "~/routes/$username";
 import { useIsLoading } from "~/utils/useIsLoading";
 
-export function ListOwnerHeaderBar() {
-  const { listOwner, isSelf } = useListOwnerContext();
+type UserHeaderBarProps = {
+  isSelf: boolean;
+  avatar: string | null;
+  primaryName: string | null;
+  secondaryName: string;
+};
 
-  const listOwnerName =
-    !listOwner?.firstName && !listOwner?.lastName
-      ? null
-      : !listOwner?.lastName
-      ? listOwner.firstName
-      : `${listOwner?.firstName} ${listOwner?.lastName}`;
-
+export function UserHeaderBar({
+  isSelf,
+  avatar,
+  primaryName,
+  secondaryName,
+}: UserHeaderBarProps) {
   return (
     <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
       <div className="hidden h-16 w-16 overflow-hidden rounded-full bg-gray-100 md:block">
-        {listOwner.avatar ? (
-          <img className="h-full w-full" src={listOwner.avatar} />
+        {avatar ? (
+          <img className="h-full w-full" src={avatar} />
         ) : (
           <FallbackAvatar />
         )}
       </div>
 
       <div className="flex flex-col">
-        <h2 className="text-lg font-bold tracking-tight text-gray-900 md:text-xl">
-          {listOwnerName ? listOwnerName : `@${listOwner.username}`}
-        </h2>
+        <div className="flex items-center">
+          <h2 className="text-lg font-bold tracking-tight text-gray-900 md:text-xl">
+            {primaryName ? primaryName : secondaryName}
+          </h2>
 
-        {listOwnerName && (
-          <span className="text-sm text-gray-500">{`@${listOwner.username}`}</span>
+          {!isSelf && (
+            <Button className="ml-3 font-normal text-sm h-auto py-1 px-3">
+              Follow
+            </Button>
+          )}
+        </div>
+
+        {primaryName && (
+          <span className="text-sm text-gray-500">{secondaryName}</span>
         )}
       </div>
     </div>

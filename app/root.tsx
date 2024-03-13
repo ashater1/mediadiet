@@ -61,19 +61,29 @@ export default function App() {
   useEffect(() => {
     switch (toastData?.type) {
       case "success":
-        toast.success(toastData.title, { description: toastData.description });
+        toast.success(toastData.title, {
+          description: toastData.description,
+          id: toastData.id,
+        });
         break;
       case "deleted":
         toast.info(toastData.title, {
           description: toastData.description,
+          id: toastData.id,
           icon: <TrashIcon />,
         });
         break;
       case "error":
-        toast.error(toastData.title, { description: toastData.description });
+        toast.error(toastData.title, {
+          description: toastData.description,
+          id: toastData.id,
+        });
         break;
       case "warning":
-        toast.warning(toastData.title, { description: toastData.description });
+        toast.warning(toastData.title, {
+          description: toastData.description,
+          id: toastData.id,
+        });
         break;
       default:
         break;

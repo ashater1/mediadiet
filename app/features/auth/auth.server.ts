@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { redirect } from "@vercel/remix";
 import { z } from "zod";
 import { db } from "~/db.server";
+import { getAvatarUrl } from "./context";
 
 type RequestResponse = {
   request: Request;
@@ -99,6 +100,8 @@ export async function signOut({
   throw redirect("/login", { headers: response.headers });
 }
 
+export type UserDetails = Awaited<ReturnType<typeof getUserDetails>>;
+
 export async function getUserDetails({
   request,
   response,
@@ -110,7 +113,10 @@ export async function getUserDetails({
   if (!user) return null;
 
   const userDetails = await getUserById(user.id);
-  return userDetails;
+  return {
+    ...userDetails,
+    avatar: userDetails.avatar && getAvatarUrl(userDetails.avatar),
+  };
 }
 
 export async function getUserById(id: string) {
