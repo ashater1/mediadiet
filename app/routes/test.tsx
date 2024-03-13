@@ -1,36 +1,30 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { Form, Link, useSubmit } from "@remix-run/react";
+import { CountsWithParams } from "~/components/headerbar/count";
+
+function Count({ count, label }: { count: number; label: string }) {
+  return (
+    <label htmlFor={"a"} className="cursor-pointer">
+      <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
+        {count}
+      </span>
+      <span className="ml-2">{label}</span>
+    </label>
+  );
+}
 
 export default function Test() {
-  useEffect(
-    () => {
-      let timer1 = setTimeout(
-        () =>
-          toast.info("Hello world!", {
-            icon: <TrashIcon />,
-          }),
-        1000
-      );
-
-      // this will clear Timeout
-      // when component unmount like in willComponentUnmount
-      // and show will not change to true
-      return () => {
-        clearTimeout(timer1);
-      };
-    },
-    // useEffect will run only one time with empty []
-    // if you pass a value to array,
-    // like this - [data]
-    // than clearTimeout will run every time
-    // this value changes (useEffect re-run)
-    []
-  );
+  const submit = useSubmit();
 
   return (
     <div className="p-20">
-      <h1 className="text-4xl font-bold">Hello world!</h1>
+      <Form
+        onChange={(e) => {
+          submit(e.currentTarget);
+        }}
+        className="relative flex  divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
+      >
+        <CountsWithParams count={1} label={"you"} active={false} param="fuck" />
+      </Form>
     </div>
   );
 }

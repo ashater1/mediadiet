@@ -6,54 +6,8 @@ import {
 } from "@remix-run/react";
 import classNames from "classnames";
 import { useSpinDelay } from "spin-delay";
-import { FallbackAvatar } from "~/components/avatar";
-import { Button } from "~/components/button";
 import Spinner from "~/components/spinner";
 import { useIsLoading } from "~/utils/useIsLoading";
-
-type UserHeaderBarProps = {
-  isSelf: boolean;
-  avatar: string | null;
-  primaryName: string | null;
-  secondaryName: string;
-};
-
-export function UserHeaderBar({
-  isSelf,
-  avatar,
-  primaryName,
-  secondaryName,
-}: UserHeaderBarProps) {
-  return (
-    <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-      <div className="hidden h-16 w-16 overflow-hidden rounded-full bg-gray-100 md:block">
-        {avatar ? (
-          <img className="h-full w-full" src={avatar} />
-        ) : (
-          <FallbackAvatar />
-        )}
-      </div>
-
-      <div className="flex flex-col">
-        <div className="flex items-center">
-          <h2 className="text-lg font-bold tracking-tight text-gray-900 md:text-xl">
-            {primaryName ? primaryName : secondaryName}
-          </h2>
-
-          {!isSelf && (
-            <Button className="ml-3 font-normal text-sm h-auto py-1 px-3">
-              Follow
-            </Button>
-          )}
-        </div>
-
-        {primaryName && (
-          <span className="text-sm text-gray-500">{secondaryName}</span>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export function ItemsCountAndFilter({
   paramName,
