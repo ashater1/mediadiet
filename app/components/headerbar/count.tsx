@@ -6,7 +6,8 @@ type CountComponentProps = {
 };
 
 type CountsWithParamsProps = CountComponentProps & {
-  param: string;
+  name: string;
+  value: string;
   active: boolean;
 };
 
@@ -24,7 +25,8 @@ export function Count({ count, label }: CountComponentProps) {
 export function CountsWithParams({
   count,
   label,
-  param,
+  name,
+  value,
   active,
 }: CountsWithParamsProps) {
   return (
@@ -34,15 +36,15 @@ export function CountsWithParams({
         "flex transition-opacity duration-200 ease-in-out first:pl-0 px-4"
       )}
     >
-      <label htmlFor={param} className="cursor-pointer">
+      <label htmlFor={name} className="cursor-pointer">
         <Count count={count} label={label} />
       </label>
       <input
         hidden
         type="checkbox"
-        name={"type"}
-        id={param}
-        value={param}
+        name={name}
+        id={name}
+        value={value}
         defaultChecked={active}
       />
     </div>

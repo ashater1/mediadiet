@@ -23,7 +23,13 @@ export default function Test() {
         }}
         className="relative flex  divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
       >
-        <CountsWithParams count={1} label={"you"} active={false} param="fuck" />
+        <CountsWithParams
+          count={1}
+          label={"you"}
+          active={false}
+          name="fuck"
+          value="you"
+        />
       </Form>
     </div>
   );

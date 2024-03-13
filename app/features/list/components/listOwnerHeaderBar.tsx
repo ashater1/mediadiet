@@ -8,6 +8,7 @@ import classNames from "classnames";
 import { useSpinDelay } from "spin-delay";
 import { FallbackAvatar } from "~/components/avatar";
 import { Button } from "~/components/button";
+import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { useIsLoading } from "~/utils/useIsLoading";
 
@@ -94,39 +95,45 @@ export function ItemsCountAndFilter({
         }}
         className="relative flex  divide-x divide-slate-300 md:ml-auto self-auto md:self-end"
       >
-        {counts.map((count, i) => (
-          <div
-            className={classNames(
-              checkedTypes.length &&
-                !checkedTypes.includes(
-                  labels[i].searchParam ?? labels[i].label
-                ) &&
-                "opacity-40",
-              "flex transition-opacity duration-200 ease-in-out first:pl-0 px-4"
-            )}
-          >
-            <label
-              htmlFor={labels[i].searchParam ?? labels[i].label}
-              className="cursor-pointer"
-            >
-              <span className="text-lg font-semibold tracking-tight text-gray-900 md:text-xl">
-                {count}
-              </span>
-              <span className="ml-2">{labels[i].label}</span>
-            </label>
+        <CountsWithParams
+          count={counts[0]}
+          label="movies"
+          active={checkedTypes.includes("movie")}
+          name="type"
+          value="movie"
+        />
 
-            <input
-              hidden
-              type="checkbox"
-              name={paramName}
-              id={labels[i].searchParam ?? labels[i].label}
-              value={labels[i].searchParam ?? labels[i].label}
-              defaultChecked={checkedTypes.includes(
+        <CountsWithParams
+          count={counts[1]}
+          label="books"
+          active={checkedTypes.includes("book")}
+          name="type"
+          value="book"
+        />
+
+        <CountsWithParams
+          count={counts[2]}
+          label="seasons"
+          active={checkedTypes.includes("tv")}
+          name="type"
+          value="tv"
+        />
+
+        {/* {counts.map((count, i) => {
+          console.log(labels[i].searchParam ?? labels[i].label);
+
+          return (
+            <CountsWithParams
+              count={count}
+              label={labels[i].label}
+              active={checkedTypes.includes(
                 labels[i].searchParam ?? labels[i].label
               )}
+              name="type"
+              value="book"
             />
-          </div>
-        ))}
+          );
+        })} */}
       </Form>
     </div>
   );
