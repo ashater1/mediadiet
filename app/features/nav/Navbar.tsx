@@ -21,7 +21,7 @@ export default function Navbar() {
   const navigation = useMemo(
     () => [
       { name: "Activity", to: user?.username || "" },
-      // { name: "Friends", to: "friends" },
+      { name: "Friends", to: "friends" },
       // { name: "Lists", to: "lists" },
       { name: "Saved", to: "saved" },
       { name: "Settings", to: "settings" },

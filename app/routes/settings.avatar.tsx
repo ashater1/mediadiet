@@ -18,7 +18,7 @@ import {
 } from "~/features/auth/auth.server";
 import { getAvatarUrl, useUserContext } from "~/features/auth/context";
 import asyncIterableToStream from "~/utils/asyncIterableToStream";
-import { useIsLoading } from "~/utils/useIsLoading";
+import { useOptimisticParams } from "~/utils/useOptimisticParams";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -72,7 +72,7 @@ export default function Profile() {
   const submit = useSubmit();
   const user = useUserContext();
   const ref = useRef<HTMLInputElement>(null);
-  const isLoading = useIsLoading();
+  const { isLoading, getParam } = useOptimisticParams();
 
   const onAvatarChange = (e: React.FormEvent<HTMLFormElement>) => {
     submit(e.currentTarget, {
@@ -87,14 +87,12 @@ export default function Profile() {
       <div className="flex flex-col items-center gap-4">
         <div className="w-56 h-56 rounded-full overflow-hidden border-2 border-primary-800">
           {user?.avatar ? (
-            <img
-              className="w-full h-full"
-              src={getAvatarUrl(user.avatar) ?? undefined}
-            />
+            <img className="w-full h-full" src={user.avatar ?? undefined} />
           ) : (
             <UserIcon className="w-full h-full" />
           )}
         </div>
+
         <Form onChange={onAvatarChange}>
           <button
             name="actionId"
@@ -103,12 +101,13 @@ export default function Profile() {
             onClick={() => ref.current?.click()}
             className="flex items-center justify-center text-sm bg-primary-800 active:bg-primary-600 hover:bg-primary-700 py-2 text-slate-50 rounded w-40"
           >
-            {isLoading ? (
+            {isLoading && getParam("files") ? (
               <Spinner className="h-5 w-5 self-center" />
             ) : (
               "Replace"
             )}
           </button>
+
           <input ref={ref} className="hidden" name="files" type="file" />
         </Form>
       </div>

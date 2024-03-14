@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { ItemsCountAndFilter } from "~/features/list/components/listOwnerHeaderBar";
+
 import {
   bookReviewInclude,
   movieReviewInclude,
@@ -142,7 +142,7 @@ export async function action({ request }: LoaderFunctionArgs) {
     request,
     response,
     toast: {
-      type: "deletedFromSaved",
+      type: "deleted",
       title: "Deleted from saved",
       description: "Item has been deleted from your saved list",
     },
@@ -183,7 +183,7 @@ export default function Saved() {
             </div>
 
             <div className="md:ml-auto">
-              <ItemsCountAndFilter
+              {/* <ItemsCountAndFilter
                 paramName="type"
                 counts={[data.movieCount, data.bookCount, data.tvCount]}
                 labels={[
@@ -191,7 +191,7 @@ export default function Saved() {
                   { label: "book" },
                   { label: "show" },
                 ]}
-              />
+              /> */}
             </div>
           </div>
 

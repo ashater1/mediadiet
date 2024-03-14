@@ -4,12 +4,13 @@ import invariant from "tiny-invariant";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
-import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
-import { useOptimisticParams } from "~/utils/useOptimistic";
+
 import { useListOwnerContext } from "./$username";
+import { useOptimisticParams } from "~/utils/useOptimisticParams";
+import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -49,9 +50,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function UserIndex() {
   const data = useLoaderData<typeof loader>();
   const submit = useSubmit();
-  const { isLoading, getAll } = useOptimisticParams();
+  const { isLoading, getAllParams } = useOptimisticParams();
 
-  const mediaTypes = getAll("type");
+  const mediaTypes = getAllParams("type");
   const { listOwner, isSelf } = useListOwnerContext();
 
   return (
@@ -64,7 +65,7 @@ export default function UserIndex() {
           secondaryName={listOwner.username}
         />
 
-        <div className="ml-auto self-end mt-2 md:mt-0">
+        <div className="md:ml-auto self-end mt-2 md:mt-0">
           <Form
             onChange={(e) => {
               submit(e.currentTarget);

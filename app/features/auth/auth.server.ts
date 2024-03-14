@@ -193,3 +193,8 @@ export async function signUp({
 
   return { success: true, link: data.properties.action_link };
 }
+
+export async function getUserByUsername(username: string) {
+  const user = await db.user.findFirst({ where: { username } });
+  return user;
+}

@@ -7,10 +7,10 @@ export function useOptimisticParams() {
   return {
     isLoading: navigation.state !== "idle" && !!navigation.formData,
 
-    get: (name: string) =>
+    getParam: (name: string) =>
       navigation.formData?.get(name) ?? searchParams.get(name),
 
-    getAll: (name: string) =>
+    getAllParams: (name: string) =>
       navigation.formData?.getAll(name) ?? searchParams.getAll(name),
   };
 }

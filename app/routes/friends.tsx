@@ -1,14 +1,11 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { redirect } from "remix-typedjson";
-import { db } from "~/db.server";
-import { getUserDetails, getUserOrRedirect } from "~/features/auth/auth.server";
-import { getAvatarUrl, useUserContext } from "~/features/auth/context";
-import { getFollowers } from "~/features/friends/db";
-import {
-  ItemsCountAndFilter,
-  UserHeaderBar,
-} from "~/features/list/components/listOwnerHeaderBar";
+import { Count } from "~/components/headerbar/count";
+import { getUserDetails } from "~/features/auth/auth.server";
+import { useUserContext } from "~/features/auth/context";
+import { getCounts } from "~/features/friends/counts";
+import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { PageFrame } from "~/features/ui/frames";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -19,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/login");
   }
 
-  let followers = await getFollowers(user.username);
+  let followers = await getCounts(user.username);
   return followers;
 }
 
@@ -34,18 +31,26 @@ export default function Friends() {
           <UserHeaderBar
             isSelf={true}
             avatar={user?.avatar ?? null}
-            primaryName={user?.firstName ?? null}
+            primaryName={
+              user?.firstName ? `${user.firstName} ${user.lastName}` : null
+            }
             secondaryName={user?.username ?? ""}
           />
 
-          <ItemsCountAndFilter
-            paramName="type"
-            counts={[1, 2]}
-            labels={[{ label: "following" }, { label: "followers" }]}
-          />
-        </div>
+          <div className="md:ml-auto self-end mt-2 md:mt-0">
+            <div className="relative w-min flex">
+              <div className="flex divide-x divide-slate-300">
+                <Link to="followers" className="px-4 pl:0">
+                  <Count count={data.followedBy} label="followers" />
+                </Link>
 
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+                <Link to="following" className="px-4">
+                  <Count count={data.following} label="following" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
         <Outlet />

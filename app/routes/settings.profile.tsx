@@ -6,7 +6,6 @@ import { z } from "zod";
 import Spinner from "~/components/spinner";
 import { db } from "~/db.server";
 import { getUserDetails, getUserOrRedirect } from "~/features/auth/auth.server";
-import { useIsLoading } from "~/utils/useIsLoading";
 
 const profileSchema = z.object({
   firstName: z.string(),
@@ -40,7 +39,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Profile() {
   const data = useLoaderData<typeof loader>();
-  const loading = useIsLoading({ value: "settings" });
+  // TODO: Fix loading state
+  const loading = false;
 
   return (
     <div className="flex">

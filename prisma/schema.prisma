@@ -31,13 +31,13 @@ model User {
 }
 
 model Follows {
-  createdAt    DateTime @default(now()) @map("created_date")
-  followedBy   User     @relation("followedBy", fields: [followedById], references: [id])
-  followedById String   @db.Uuid
-  following    User     @relation("following", fields: [followingId], references: [id])
-  followingId  String   @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_date")
+  followed   User     @relation("followedBy", fields: [followedId], references: [id])
+  followedId String   @db.Uuid
+  follower   User     @relation("following", fields: [followerId], references: [id])
+  followerId String   @db.Uuid
 
-  @@id([followingId, followedById])
+  @@id([followedId, followerId])
 }
 
 model BookReview {
