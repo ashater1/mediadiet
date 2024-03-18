@@ -12,10 +12,13 @@ import { getAvatarUrl } from "~/features/auth/context";
 import { followUserById, unfollowUserById } from "~/features/friends/follow";
 import { PageFrame } from "~/features/ui/frames";
 
-export type ListOwnerContextType = {
-  listOwner: SerializeFrom<typeof loader>["listOwner"];
-  isSelf: SerializeFrom<typeof loader>["isSelf"];
-};
+// export type ListOwnerContextType = {
+//   listOwner: SerializeFrom<typeof loader>["listOwner"];
+//   isSelf: SerializeFrom<typeof loader>["isSelf"];
+//   isFollowing: SerializeFrom<typeof loader>["isFollowing"];
+// };
+
+export type ListOwnerContextType = SerializeFrom<typeof loader>;
 
 export function useListOwnerContext() {
   return useOutletContext<ListOwnerContextType>();
@@ -26,14 +29,20 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const username = params.username;
   invariant(username, "userId is required");
 
-  const [listOwner, user] = await Promise.all([
-    db.user.findFirst({
-      where: {
-        username,
+  const user = await getUserDetails({ request, response });
+
+  const listOwner = await db.user.findFirst({
+    where: {
+      username,
+    },
+    include: {
+      followedBy: {
+        where: {
+          followerId: user?.id,
+        },
       },
-    }),
-    getUserDetails({ request, response }),
-  ]);
+    },
+  });
 
   if (!listOwner) {
     throw new Response(null, {
@@ -48,6 +57,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return {
     isSelf: user?.username === username,
+    isFollowing: listOwner.followedBy.length > 0,
     listOwner: {
       ...listOwner,
       avatar: listOwner.avatar && getAvatarUrl(listOwner.avatar),
@@ -88,18 +98,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (formData.intent === "follow") {
     console.log("Following user");
-    // const follow = await followUserById({
-    //   followerId: user.id,
-    //   followedId: listOwner.id,
-    // });
+    const follow = await followUserById({
+      followerId: user.id,
+      followedId: listOwner.id,
+    });
 
     return true;
   } else if (formData.intent === "unfollow") {
     console.log("Unfollowing user");
-    // const unfollow = await unfollowUserById({
-    //   followerId: user.id,
-    //   followedId: listOwner.id,
-    // });
+    const unfollow = await unfollowUserById({
+      followerId: user.id,
+      followedId: listOwner.id,
+    });
 
     return true;
   }

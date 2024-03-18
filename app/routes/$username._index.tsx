@@ -53,13 +53,14 @@ export default function UserIndex() {
   const { isLoading, getAllParams } = useOptimisticParams();
 
   const mediaTypes = getAllParams("type");
-  const { listOwner, isSelf } = useListOwnerContext();
+  const { listOwner, isSelf, isFollowing } = useListOwnerContext();
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-col md:flex-row md:flex">
         <UserHeaderBar
           isSelf={isSelf}
+          isFollowing={isFollowing}
           avatar={listOwner.avatar}
           primaryName={listOwner.displayName}
           secondaryName={listOwner.username}
