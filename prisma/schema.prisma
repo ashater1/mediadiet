@@ -38,6 +38,7 @@ model Follows {
   followerId String   @db.Uuid
 
   @@id([followedId, followerId])
+  @@map("follows")
 }
 
 model BookReview {

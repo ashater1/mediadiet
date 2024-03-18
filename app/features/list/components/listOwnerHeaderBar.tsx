@@ -51,7 +51,7 @@ export function UserHeaderBar({
                 value={isFollowing ? "unfollow" : "follow"}
                 className={cn(
                   isFollowing
-                    ? "bg-green-500 hover:bg-green-600 active:bg-green-700 group w-24"
+                    ? "bg-green-500 hover:bg-orange-400 active:bg-orange-500 group w-24"
                     : "bg-gray-400 hover:bg-gray-500 active:bg-gray-600 w-20",
                   "ml-3 font-normal text-sm h-7 flex items-center justify-center"
                 )}
