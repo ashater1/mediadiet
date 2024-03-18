@@ -84,12 +84,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await request.formData(),
   ]);
 
-  console.log({
-    user: JSON.stringify(user, null, 2),
-    listOwner: JSON.stringify(listOwner, null, 2),
-    _formData: JSON.stringify(_formData, null, 2),
-  });
-
   if (!listOwner) {
     throw new Response(null, {
       status: 404,
