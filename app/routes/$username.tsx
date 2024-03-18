@@ -80,9 +80,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
   // Get the user submitting the action, the user being followed, and the form data
   const [user, listOwner, _formData] = await Promise.all([
     getUserDetails({ request, response }),
-    getUserByUsername("adam"),
+    getUserByUsername(username),
     await request.formData(),
   ]);
+
+  console.log({
+    user: JSON.stringify(user, null, 2),
+    listOwner: JSON.stringify(listOwner, null, 2),
+    _formData: JSON.stringify(_formData, null, 2),
+  });
 
   if (!listOwner) {
     throw new Response(null, {
@@ -97,21 +103,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = Object.fromEntries(_formData);
 
   if (formData.intent === "follow") {
-    console.log("Following user");
     const follow = await followUserById({
       followerId: user.id,
       followedId: listOwner.id,
     });
 
-    return true;
+    return { success: true as const };
   } else if (formData.intent === "unfollow") {
-    console.log("Unfollowing user");
     const unfollow = await unfollowUserById({
       followerId: user.id,
       followedId: listOwner.id,
     });
 
-    return true;
+    return { success: true as const };
   }
 
   return null;

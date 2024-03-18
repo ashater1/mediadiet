@@ -30,6 +30,7 @@ export default function Friends() {
         <div className="flex">
           <UserHeaderBar
             isSelf={true}
+            isFollowing={false}
             avatar={user?.avatar ?? null}
             primaryName={
               user?.firstName ? `${user.firstName} ${user.lastName}` : null

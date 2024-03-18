@@ -9,6 +9,8 @@ export async function followUserById({
   followerId,
   followedId,
 }: FollowFunctionProps) {
+  console.log({ followerId, followedId });
+
   const followResult = await db.follows.upsert({
     where: {
       followedId_followerId: {
@@ -30,6 +32,8 @@ export async function unfollowUserById({
   followerId,
   followedId,
 }: FollowFunctionProps) {
+  console.log({ followerId, followedId });
+
   const unfollowResult = await db.follows.delete({
     where: {
       followedId_followerId: {

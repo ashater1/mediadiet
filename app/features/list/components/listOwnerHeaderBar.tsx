@@ -1,9 +1,8 @@
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useParams } from "@remix-run/react";
 import { FallbackAvatar } from "~/components/avatar";
 import { Button } from "~/components/button";
 import Spinner from "~/components/spinner";
 import { cn } from "~/components/utils";
-import { AnimatePresence, motion } from "framer-motion";
 
 type UserHeaderBarProps = {
   avatar: string | null;
@@ -20,14 +19,13 @@ export function UserHeaderBar({
   primaryName,
   secondaryName,
 }: UserHeaderBarProps) {
+  const params = useParams();
+
   const { Form, data, formAction, formData } = useFetcher();
 
   const isSubmittingFollow =
     formData?.get("intent") === "follow" ||
     formData?.get("intent") === "unfollow";
-
-  console.log(!!formData && Object.fromEntries(formData));
-  // console.log(formData);
 
   return (
     <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
@@ -46,9 +44,10 @@ export function UserHeaderBar({
           </h2>
 
           {!isSelf && (
-            <Form method="post" action="/adam">
+            <Form method="post" action={`/${params.username}`}>
               <Button
                 name="intent"
+                disabled={isSubmittingFollow}
                 value={isFollowing ? "unfollow" : "follow"}
                 className={cn(
                   isFollowing
