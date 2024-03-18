@@ -15,9 +15,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
         select: {
           followed: {
             select: {
-              MovieReviews: true,
-              BookReviews: true,
-              TvReviews: true,
+              MovieReviews: {
+                take: 10,
+              },
             },
           },
         },
@@ -34,7 +34,9 @@ export default function FriendsIndex() {
   return (
     <div>
       <h2>Friends Index!</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre>
+        {JSON.stringify(data.data?.following[0].followed.MovieReviews, null, 2)}
+      </pre>
     </div>
   );
 }
