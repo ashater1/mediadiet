@@ -237,6 +237,8 @@ model Review {
   stars        Int?
   userId       String    @map("user_id") @db.Uuid
   user         User      @relation(fields: [userId], references: [id])
+  MediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
+  mediaItemId  String    @db.Uuid
 
   @@map("review")
 }
@@ -265,6 +267,7 @@ model MediaItem {
   Details           Details[]
   TvSeries          TvSeries?           @relation(fields: [tvSeriesId], references: [id])
   tvSeriesId        String?             @map("tv_series_id") @db.Uuid
+  review            Review[]
 
   @@map("media_item")
 }
@@ -279,8 +282,9 @@ model TvSeries {
 }
 
 model Creator {
-  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  apiId     String
-  name      String?
-  mediaItem MediaItem[] @relation("MediaItemToCreator")
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  apiId       String
+  creatorType CreatorType @map("creator_type")
+  name        String?
+  mediaItem   MediaItem[] @relation("MediaItemToCreator")
 }
