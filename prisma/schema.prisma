@@ -210,6 +210,12 @@ enum MediaType {
   @@map("mediatype")
 }
 
+enum CreatorType {
+  DIRECTOR
+  AUTHOR
+  STUDIO
+}
+
 model MediaItemForLater {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
