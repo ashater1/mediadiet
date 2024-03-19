@@ -203,9 +203,11 @@ model ShowForLater {
 // NEW SCHEMA
 
 enum MediaType {
-  book
-  movie
-  tv
+  BOOK
+  MOVIE
+  TV
+
+  @@map("mediatype")
 }
 
 model MediaItemForLater {
@@ -246,7 +248,7 @@ model Details {
 
 model MediaItem {
   id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  apiId             String
+  apiId             String              @unique @map("api_id")
   mediaType         MediaType           @map("media_type")
   title             String
   releaseDate       DateTime?           @map("release_date") @db.Date
@@ -256,14 +258,14 @@ model MediaItem {
   MediaItemForLater MediaItemForLater[]
   Details           Details[]
   TvSeries          TvSeries?           @relation(fields: [tvSeriesId], references: [id])
-  tvSeriesId        String?
+  tvSeriesId        String?             @map("tv_series_id") @db.Uuid
 
   @@map("media_item")
 }
 
 model TvSeries {
   id     String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  apiId  String
+  apiId  String      @unique @map("api_id")
   title  String?
   season MediaItem[]
 
