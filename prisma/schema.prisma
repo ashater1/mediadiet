@@ -214,6 +214,8 @@ enum CreatorType {
   DIRECTOR
   AUTHOR
   STUDIO
+
+  @@map("creatortype")
 }
 
 model MediaItemForLater {
@@ -238,7 +240,7 @@ model Review {
   userId       String    @map("user_id") @db.Uuid
   user         User      @relation(fields: [userId], references: [id])
   MediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
-  mediaItemId  String    @db.Uuid
+  mediaItemId  String    @map("media_item_id") @db.Uuid
 
   @@map("review")
 }
@@ -269,6 +271,7 @@ model MediaItem {
   tvSeriesId        String?             @map("tv_series_id") @db.Uuid
   review            Review[]
 
+  @@unique([apiId, mediaType])
   @@map("media_item")
 }
 
@@ -283,8 +286,11 @@ model TvSeries {
 
 model Creator {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  apiId       String
+  apiId       String      @map("api_id")
   creatorType CreatorType @map("creator_type")
   name        String?
   mediaItem   MediaItem[] @relation("MediaItemToCreator")
+
+  @@unique([apiId, creatorType])
+  @@map("creator")
 }
