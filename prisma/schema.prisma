@@ -9,23 +9,25 @@ datasource db {
 }
 
 model User {
-  id             String          @id @db.Uuid
-  createdAt      DateTime?       @default(now()) @map("created_date")
-  bio            String?
-  email          String?
-  firstName      String?         @map("first_name")
-  lastName       String?         @map("last_name")
-  username       String          @unique
-  avatar         String?
-  soderberghMode Boolean         @default(false) @map("soderbergh_mode")
-  BookForLater   BookForLater[]
-  BookReviews    BookReview[]
-  MovieForLater  MovieForLater[]
-  MovieReviews   MovieReview[]
-  ShowForLater   ShowForLater[]
-  TvReviews      TvReview[]
-  followedBy     Follows[]       @relation("followedBy")
-  following      Follows[]       @relation("following")
+  id                String              @id @db.Uuid
+  createdAt         DateTime?           @default(now()) @map("created_date")
+  bio               String?
+  email             String?
+  firstName         String?             @map("first_name")
+  lastName          String?             @map("last_name")
+  username          String              @unique
+  avatar            String?
+  soderberghMode    Boolean             @default(false) @map("soderbergh_mode")
+  BookForLater      BookForLater[]
+  BookReviews       BookReview[]
+  MovieForLater     MovieForLater[]
+  MovieReviews      MovieReview[]
+  ShowForLater      ShowForLater[]
+  TvReviews         TvReview[]
+  followedBy        Follows[]           @relation("followedBy")
+  following         Follows[]           @relation("following")
+  MediaItemForLater MediaItemForLater[]
+  Review            Review[]
 
   @@map("user")
 }
@@ -196,4 +198,81 @@ model ShowForLater {
 
   @@unique([tvShowId, userId])
   @@map("show_for_later")
+}
+
+// NEW SCHEMA
+
+enum MediaType {
+  book
+  movie
+  tv
+}
+
+model MediaItemForLater {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
+  mediaItemId String    @db.Uuid
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@unique([mediaItemId, userId])
+  @@map("media_item_for_later")
+}
+
+model Review {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
+  createdAt    DateTime? @default(now()) @map("created_date")
+  favorited    Boolean?
+  review       String?
+  stars        Int?
+  userId       String    @map("user_id") @db.Uuid
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@map("review")
+}
+
+model Details {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mediaItemId String    @db.Uuid
+  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
+  audiobook   Boolean?  @default(false)
+  onPlane     Boolean?  @default(false) @map("on_plane")
+  inTheater   Boolean?  @default(false) @map("in_theater")
+
+  @@map("details")
+}
+
+model MediaItem {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  apiId             String
+  mediaType         MediaType           @map("media_type")
+  title             String
+  releaseDate       DateTime?           @map("release_date") @db.Date
+  coverArt          String?             @map("cover_art")
+  length            Int?
+  creator           Creator[]           @relation("MediaItemToCreator")
+  MediaItemForLater MediaItemForLater[]
+  Details           Details[]
+  TvSeries          TvSeries?           @relation(fields: [tvSeriesId], references: [id])
+  tvSeriesId        String?
+
+  @@map("media_item")
+}
+
+model TvSeries {
+  id     String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  apiId  String
+  title  String?
+  season MediaItem[]
+
+  @@map("tv_series")
+}
+
+model Creator {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  apiId     String
+  name      String?
+  mediaItem MediaItem[] @relation("MediaItemToCreator")
 }
