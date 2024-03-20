@@ -1,8 +1,9 @@
+import { MediaType } from "@prisma/client";
 import { formatInTimeZone } from "date-fns-tz";
 import { db } from "~/db.server";
 import { listToString } from "~/utils/funcs";
 
-export type Review = Awaited<ReturnType<typeof getEntries>>["Review"][number];
+export type Review = Awaited<ReturnType<typeof getEntries>>[number];
 export type FormattedReview = ReturnType<typeof formatEntries>;
 
 type GetEntriesProps = {
@@ -10,6 +11,7 @@ type GetEntriesProps = {
   orderBy?: "desc" | "asc";
   skip?: number;
   take?: number;
+  mediaTypes: MediaType[];
 };
 
 export function formatEntries(review: Review) {
@@ -44,6 +46,7 @@ export async function getEntries({
   orderBy = "desc",
   skip = 0,
   take = 30,
+  mediaTypes = [MediaType.MOVIE, MediaType.BOOK, MediaType.TV],
 }: GetEntriesProps) {
   const entries = await db.user.findFirstOrThrow({
     where: {
@@ -51,6 +54,13 @@ export async function getEntries({
     },
     select: {
       Review: {
+        where: {
+          MediaItem: {
+            mediaType: {
+              in: [...mediaTypes],
+            },
+          },
+        },
         include: {
           MediaItem: {
             include: {
@@ -71,5 +81,5 @@ export async function getEntries({
     },
   });
 
-  return entries;
+  return entries.Review;
 }

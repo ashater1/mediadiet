@@ -3,12 +3,14 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
-import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
-import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 import { useListOwnerContext } from "./$username";
+import { getEntryListCounts } from "~/features/v2/list/counts.server";
+import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
+import invariant from "tiny-invariant";
+import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -17,36 +19,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   //   Get username from URL and fetch the users entries and counts
   const username = params.username;
-  if (!username) {
-    throw new Response(null, {
-      status: 404,
-      statusText: "User not Found",
-    });
-  }
+  invariant(username, "Username is required");
 
   //   Check if url has filters & filter data if it does
   const entryTypes = getEntryTypesFromUrl(request.url);
 
-  const { entries, counts } = await getEntriesAndCounts({
-    username,
-    entryTypes,
-  });
+  const [counts, entries] = await Promise.all([
+    getEntryListCounts(),
+    getEntries({ username, mediaTypes: entryTypes }),
+  ]);
 
-  if (!entries.userFound) {
-    throw new Response(null, {
-      status: 404,
-      statusText: "User not Found",
-    });
-  }
-
+  const formattedEntries = entries?.map(formatEntries);
+  // TODO: update get entries to return a userFound boolean that can trigger a 404 response
   return json(
-    {
-      counts,
-      entries: entries.entries,
-    },
-    {
-      headers: response.headers,
-    }
+    { counts, entries: formattedEntries },
+    { headers: response.headers }
   );
 }
 
@@ -119,7 +106,7 @@ export default function UserIndex() {
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 
       <div>
-        {data.entries?.length ? (
+        {data.entries.length ? (
           <UserEntriesTable entries={data.entries} />
         ) : (
           <EmptyState />

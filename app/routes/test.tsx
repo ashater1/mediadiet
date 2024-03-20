@@ -2,12 +2,9 @@ import { LoaderFunctionArgs } from "@vercel/remix";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { db } from "~/db.server";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
-import {
-  formatEntries,
-  getEntries,
-} from "~/features/v2/list/entries_v2.server";
+import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
 import { PageFrame } from "~/features/ui/frames";
-import { getEntryListCounts } from "~/features/v2/list/counts";
+import { getEntryListCounts } from "~/features/v2/list/counts.server";
 
 async function getCounts() {
   const counts = await getEntryListCounts();
@@ -16,18 +13,18 @@ async function getCounts() {
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const username = "adam";
-  const counts = await getCounts();
-  return typedjson({ counts });
-  // if (!username) {
-  //   throw new Response(null, {
-  //     status: 404,
-  //     statusText: "User not Found",
-  //   });
-  // }
+  // const counts = await getCounts();
+  // return typedjson({ counts });
+  if (!username) {
+    throw new Response(null, {
+      status: 404,
+      statusText: "User not Found",
+    });
+  }
 
-  // const entries = await getEntries({ username });
-  // const formattedEntries = entries?.Review.map(formatEntries);
-  // return typedjson({ data: formattedEntries });
+  const entries = await getEntries({ username });
+  const formattedEntries = entries?.map(formatEntries);
+  return typedjson({ data: formattedEntries });
 }
 
 export default function Test() {
