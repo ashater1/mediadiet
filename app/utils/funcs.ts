@@ -10,23 +10,26 @@ export function convertStringToBool(value: FormDataEntryValue) {
 }
 
 export function listToString(
-  list: string[] | null | undefined,
+  list: (string | null)[] | null | undefined,
   shrinkAfter: number | null = null
 ) {
   if (!Array.isArray(list) || !list.length) return "";
 
+  let _list = safeFilter(list);
+
   if (!shrinkAfter || shrinkAfter >= list.length) {
-    if (list.length === 1) return list[0];
-    if (list.length === 2) {
-      const listtring = list.join(" & ");
+    if (_list.length === 1) return _list[0];
+
+    if (_list.length === 2) {
+      const listtring = _list.join(" & ");
       return listtring;
     }
-    const allButLast = list.slice(0, -1).join(", ");
-    const last = list.slice(-1);
+    const allButLast = _list.slice(0, -1).join(", ");
+    const last = _list.slice(-1);
     return `${allButLast}, & ${last}`;
   } else {
-    const shownItems = list.slice(0, shrinkAfter);
-    const truncated = list.slice(shrinkAfter, list.length).length;
+    const shownItems = _list.slice(0, shrinkAfter);
+    const truncated = _list.slice(shrinkAfter, _list.length).length;
     return `${shownItems.join(", ")} & ${truncated} ${
       truncated > 1 ? "others" : "other"
     }`;
