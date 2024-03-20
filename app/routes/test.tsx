@@ -1,9 +1,14 @@
 import { Prisma } from "@prisma/client";
+import { LoaderFunctionArgs } from "@vercel/remix";
 import { format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { db } from "~/db.server";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
+import {
+  formatEntries,
+  getEntries,
+} from "~/features/list/db/entries_v2.server";
 import { PageFrame } from "~/features/ui/frames";
 import { listToString } from "~/utils/funcs";
 
@@ -57,15 +62,19 @@ function formatReview(review: Review) {
   };
 }
 
-export async function loader() {
-  const entries = await db.user.findFirst({
-    where: {
-      username: "adam",
-    },
-    ...query,
-  });
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const username = "adam";
 
-  return typedjson({ data: entries?.Review.map(formatReview) ?? [] });
+  if (!username) {
+    throw new Response(null, {
+      status: 404,
+      statusText: "User not Found",
+    });
+  }
+
+  const entries = await getEntries({ username });
+  const formattedEntries = entries?.Review.map(formatEntries);
+  return typedjson({ data: formattedEntries });
 }
 
 export default function Test() {
@@ -73,7 +82,6 @@ export default function Test() {
 
   return (
     <PageFrame>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <UserEntriesTable entries={data.data ?? []} />
     </PageFrame>
   );
