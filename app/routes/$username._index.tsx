@@ -1,16 +1,14 @@
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
-import invariant from "tiny-invariant";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
 import { getEntriesAndCounts } from "~/features/list/db/entries";
 import { getEntryTypesFromUrl } from "~/features/list/utils";
-
-import { useListOwnerContext } from "./$username";
-import { useOptimisticParams } from "~/utils/useOptimisticParams";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
+import { useOptimisticParams } from "~/utils/useOptimisticParams";
+import { useListOwnerContext } from "./$username";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -19,7 +17,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   //   Get username from URL and fetch the users entries and counts
   const username = params.username;
-  invariant(username, "userId is required");
+  if (!username) {
+    throw new Response(null, {
+      status: 404,
+      statusText: "User not Found",
+    });
+  }
 
   //   Check if url has filters & filter data if it does
   const entryTypes = getEntryTypesFromUrl(request.url);
