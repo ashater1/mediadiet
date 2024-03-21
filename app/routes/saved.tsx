@@ -2,17 +2,11 @@ import { ClockIcon } from "@heroicons/react/20/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { format } from "date-fns";
 import { z } from "zod";
-import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/auth.server";
-
-import {
-  bookReviewInclude,
-  movieReviewInclude,
-} from "~/features/list/db/entries_old";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { MediaType } from "~/features/list/types";
+import { getMediaTypesFromUrl } from "~/features/list/utils";
 import {
   deleteSavedBookItem,
   deleteSavedMovieItem,
@@ -20,90 +14,27 @@ import {
 } from "~/features/saved/delete";
 import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
-import { titleize } from "~/utils/capitalize";
-import { listToString, safeFilter } from "~/utils/funcs";
+import {
+  formatSavedItem,
+  getSavedItems,
+} from "~/features/v2/saved/saved.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
   const response = new Response();
   const user = await getUserDetails({ request, response });
-  if (!user) throw redirect("/login", { headers: response.headers });
 
-  const saved = await db.user.findFirst({
-    where: {
-      username: user.username,
-    },
-    include: {
-      BookForLater: { include: bookReviewInclude },
-      MovieForLater: { include: movieReviewInclude },
-      ShowForLater: { include: { tvShow: true } },
-    },
+  if (!user) throw redirect("/login", { headers: response.headers });
+  const mediaTypes = getMediaTypesFromUrl(request.url);
+
+  //   TODO: Migrate supabase db to use MediaItemForLater instead of individual tables
+  const saved = await getSavedItems({
+    username: user.username,
+    mediaTypes,
   });
 
-  if (saved === null) throw redirect("/login", { headers: response.headers });
+  const formattedSaved = saved?.map(formatSavedItem);
 
-  const types = url.searchParams.getAll("type");
-
-  const normalizedBooks = saved.BookForLater.map((d) => ({
-    ...d,
-    formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: titleize(d.book.title),
-    creators: listToString(safeFilter(d.book.authors.map((d) => d.name))),
-    mediaType: "book" as const,
-  }));
-
-  const normalizedMovies = saved.MovieForLater.map((d) => ({
-    ...d,
-    formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: titleize(d.movie.title),
-    creators: listToString(safeFilter(d.movie.directors.map((d) => d.name))),
-    mediaType: "movie" as const,
-  }));
-
-  const normalizedShows = saved.ShowForLater.map((d) => ({
-    ...d,
-    formattedAddedAt: format(d.addedAt, "MMMM d"),
-    title: titleize(d.tvShow.title ?? ""),
-    creators: null,
-    mediaType: "tv" as const,
-  }));
-
-  const items = [
-    ...normalizedBooks,
-    ...normalizedMovies,
-    ...normalizedShows,
-  ].sort((a, b) => b.addedAt.valueOf() - a.addedAt.valueOf());
-
-  if (types.length && types.length < 3) {
-    const filterdItems = items.filter((d) => types.includes(d.mediaType));
-    return json(
-      {
-        items: filterdItems,
-        movieCount: normalizedMovies.length,
-        bookCount: normalizedBooks.length,
-        tvCount: normalizedShows.length,
-      },
-      {
-        headers: {
-          ...response.headers,
-        },
-      }
-    );
-  }
-
-  return json(
-    {
-      items: items,
-      movieCount: normalizedMovies.length,
-      bookCount: normalizedBooks.length,
-      tvCount: normalizedShows.length,
-    },
-    {
-      headers: {
-        ...response.headers,
-      },
-    }
-  );
+  return json({ data: formattedSaved });
 }
 
 const deleteSavedSchema = z.object({
@@ -153,17 +84,6 @@ export async function action({ request }: LoaderFunctionArgs) {
 
 export default function Saved() {
   const data = useLoaderData<typeof loader>();
-  const submit = useSubmit();
-
-  const handleDelete = ({
-    mediaType,
-    itemId,
-  }: {
-    mediaType: MediaType;
-    itemId: string;
-  }) => {
-    submit({ mediaType, itemId }, { method: "post" });
-  };
 
   return (
     <>
@@ -198,27 +118,27 @@ export default function Saved() {
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
           <ul className="mt-6 flex flex-col gap-4 md:gap-8">
-            {data.items.map((d) => (
+            {data.data?.map((d) => (
               <li key={d.id} className="flex items-center gap-6 md:gap-8">
                 <div>
-                  {d.mediaType === "book" ? (
+                  {d.mediaItem.mediaType === "BOOK" ? (
                     <BookIcon />
-                  ) : d.mediaType === "movie" ? (
+                  ) : d.mediaItem.mediaType === "MOVIE" ? (
                     <MovieIcon />
-                  ) : d.mediaType === "tv" ? (
+                  ) : d.mediaItem.mediaType === "TV" ? (
                     <TvShowIcon />
                   ) : null}
                 </div>
                 <div className="flex flex-col">
                   <div className="text-sm font-semibold line-clamp-2 md:text-base">
-                    {d.title}
+                    {d.mediaItem.title}
                   </div>
                   <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
-                    {d.creators?.length && (
-                      <div className="text-sm">{d.creators}</div>
+                    {d.mediaItem.creator?.length && (
+                      <div className="text-sm">{d.mediaItem.creator}</div>
                     )}
                     <div className="text-xs text-gray-500">
-                      Added on {d.formattedAddedAt}
+                      Added on {d.createdAt}
                     </div>
                   </div>
                 </div>
