@@ -3,7 +3,7 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
-import { getEntryTypesFromUrl } from "~/features/list/utils";
+import { getMediaTypesFromUrl } from "~/features/list/utils";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 import { useListOwnerContext } from "./$username";
@@ -22,11 +22,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(username, "Username is required");
 
   //   Check if url has filters & filter data if it does
-  const entryTypes = getEntryTypesFromUrl(request.url);
+  const mediaTypes = getMediaTypesFromUrl(request.url);
 
   const [counts, entries] = await Promise.all([
     getEntryListCounts(),
-    getEntries({ username, mediaTypes: entryTypes }),
+    getEntries({ username, mediaTypes }),
   ]);
 
   const formattedEntries = entries?.map(formatEntries);

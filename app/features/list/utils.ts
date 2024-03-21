@@ -6,7 +6,7 @@ const entryTypesArraySchema = z
   .array(z.string().toUpperCase())
   .pipe(entryTypesEnum);
 
-export function getEntryTypesFromUrl(url: string): MediaType[] {
+export function getMediaTypesFromUrl(url: string): MediaType[] {
   //   Check if url has filters & filter data if it does
   const _url = new URL(url);
   const entryTypes = _url.searchParams.getAll("type");
