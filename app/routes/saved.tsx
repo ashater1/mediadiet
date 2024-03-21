@@ -8,8 +8,7 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { m } from "framer-motion";
-import { Count, CountsWithParams } from "~/components/headerbar/count";
+import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
