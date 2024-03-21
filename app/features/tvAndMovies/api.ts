@@ -100,6 +100,7 @@ export type TvShowType = TvShowsType[0];
 
 export type TvSeasonType = z.infer<typeof TvDetailsSchema>["seasons"];
 
+// TODO - move these to use safeParse to support 404 responses
 class MovieDb {
   constructor() {}
 

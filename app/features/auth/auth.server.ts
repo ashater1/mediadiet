@@ -57,7 +57,7 @@ export async function getUserOrRedirect({
   const user = await getUser({ request, response });
 
   if (!user) {
-    throw redirect(to);
+    throw redirect(to, { headers: response.headers });
   }
 
   return user;

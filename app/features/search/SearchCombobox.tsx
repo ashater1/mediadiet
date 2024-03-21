@@ -8,7 +8,7 @@ import { Spinner } from "~/components/login/Spinner";
 import classNames from "classnames";
 import { useAddNewContext } from "../add/context";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { MediaType } from "../list/types";
+import { MediaType } from "@prisma/client";
 
 export type ComboboxOption = {
   id: string;
@@ -76,10 +76,10 @@ export function SearchCombobox({
               />
               <Combobox.Input
                 placeholder={
-                  mediaType === "tv"
+                  mediaType === "TV"
                     ? "Search for a show"
                     : mediaType
-                    ? `Search for a ${mediaType}`
+                    ? `Search for a ${mediaType.toLowerCase()}`
                     : "Choose a type"
                 }
                 className="z-50 w-full rounded border border-primary-800/50 p-1.5 pl-10 text-gray-800 outline-none focus:ring-0"

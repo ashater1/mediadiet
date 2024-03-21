@@ -61,6 +61,7 @@ export async function addSavedShow({
   userId: string;
 }) {
   const show = await movieDb.getShow(showId);
+
   const networks = show.networks.map((network) => {
     if (network && network.id && network.name) return { ...network };
   }) as { id: number; name: string; logo_path?: string }[];

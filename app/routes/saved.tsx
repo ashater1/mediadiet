@@ -15,12 +15,12 @@ import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
 import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
+import { deleteSavedItem } from "~/features/v2/saved/delete";
 import {
-  deleteSavedItem,
   formatSavedItem,
   getSavedCounts,
   getSavedItems,
-} from "~/features/v2/saved/db";
+} from "~/features/v2/saved/get";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 
 export async function loader({ request }: LoaderFunctionArgs) {

@@ -35,9 +35,13 @@ export function formatSavedItem(item: SavedItem) {
 export async function getSavedItems({
   username,
   mediaTypes,
+  take = 30,
+  skip = 0,
 }: {
   username: string;
   mediaTypes: MediaType[];
+  take?: number;
+  skip?: number;
 }) {
   const saved = await db.user.findFirstOrThrow({
     where: {
@@ -45,6 +49,8 @@ export async function getSavedItems({
     },
     include: {
       MediaItemForLater: {
+        take,
+        skip,
         orderBy: {
           createdAt: "desc",
         },
@@ -96,12 +102,4 @@ export async function getSavedCounts({ username }: { username: string }) {
     bookCount: bookCount._count.MediaItemForLater,
     tvCount: tvCount._count.MediaItemForLater,
   };
-}
-
-export async function deleteSavedItem(id: string) {
-  await db.mediaItemForLater.delete({
-    where: {
-      id,
-    },
-  });
 }

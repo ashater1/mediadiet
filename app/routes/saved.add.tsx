@@ -1,3 +1,4 @@
+import { MediaType } from "@prisma/client";
 import { Link, useFetcher, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
 import debounce from "lodash/debounce.js";
@@ -5,16 +6,10 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
-import { getUser } from "~/features/auth/auth.server";
-import { MediaType } from "~/features/list/types";
-import {
-  addSavedBook,
-  addSavedMovie,
-  addSavedShow,
-  getSavedMovies,
-  getSavedShows,
-} from "~/features/saved/add";
+import { getUserDetails } from "~/features/auth/auth.server";
 import { SearchCombobox } from "~/features/search";
+import { setToast } from "~/features/toasts/toast.server";
+import { addSavedBook, addSavedMovie } from "~/features/v2/saved/add";
 import { loader as bookSearchLoader } from "~/routes/search.book._index";
 import { loader as movieSearchLoader } from "~/routes/search.movie._index";
 import { loader as tvSearchLoader } from "~/routes/search.tv._index";
@@ -27,51 +22,56 @@ const AddToSavedSchema = z.object({
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
-  const user = await getUser({ request, response });
-
+  const user = await getUserDetails({ request, response });
   if (!user) {
-    throw redirect("/login", { headers: request.headers });
+    throw redirect("/login", { headers: response.headers });
   }
 
   const formData = Object.fromEntries(await request.formData());
   const { id, mediaType, releaseYear } = AddToSavedSchema.parse(formData);
 
   if (mediaType === "book") {
-    await addSavedBook({
-      bookId: id,
-      userId: user.id,
+    const savedBook = await addSavedBook({
+      apiId: id,
+      username: user.username,
       firstPublishedYear: releaseYear ?? null,
+    });
+
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "deleted",
+        title: `${savedBook.title} was added to your Saved list`,
+      },
     });
   }
 
   if (mediaType === "movie") {
-    const savedMovies = await getSavedMovies({ userId: user.id });
+    const savedMovie = await addSavedMovie({
+      apiId: id,
+      username: user.username,
+    });
 
-    if (!savedMovies.includes(id)) {
-      await addSavedMovie({
-        movieId: id,
-        userId: user.id,
-      });
-    }
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "deleted",
+        title: `${savedMovie.title} was added to your Saved list`,
+      },
+    });
   }
 
-  if (mediaType === "tv") {
-    const savedShows = await getSavedShows({ userId: user.id });
-    if (!savedShows.includes(id)) {
-      await addSavedShow({
-        showId: id,
-        userId: user.id,
-      });
-    }
-  }
+  // TODO - add saved show
 
   throw redirect("/saved", {
-    headers: request.headers,
+    headers: response.headers,
   });
 }
 
 export default function Add() {
-  const [mediaType, setMediaType] = useState<MediaType>("movie");
+  const [mediaType, setMediaType] = useState<MediaType>("MOVIE");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -89,7 +89,7 @@ export default function Add() {
   const handleSelect = (id: string) => {
     if (!mediaType) return;
 
-    if (mediaType === "book") {
+    if (mediaType === "BOOK") {
       const matchedItem = searchData?.data.filter((d) => d.id === id)[0];
 
       submit(

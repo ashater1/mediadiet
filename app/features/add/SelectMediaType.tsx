@@ -1,6 +1,6 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { MovieIcon, BookIcon, TvShowIcon } from "../list/icons/icons";
-import { MediaType } from "../list/types";
+import { MediaType } from "@prisma/client";
 
 type SelectMediaOptionsType = {
   name: string;
@@ -11,17 +11,17 @@ type SelectMediaOptionsType = {
 const selectMediaOptions: SelectMediaOptionsType[] = [
   {
     name: "Movie",
-    value: "movie",
+    value: MediaType.MOVIE,
     Icon: MovieIcon,
   },
   {
     name: "Book",
-    value: "book",
+    value: MediaType.BOOK,
     Icon: BookIcon,
   },
   {
     name: "Tv",
-    value: "tv",
+    value: MediaType.TV,
     Icon: TvShowIcon,
   },
 ];
