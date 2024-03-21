@@ -5,26 +5,61 @@ import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2
 import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
 import { PageFrame } from "~/features/ui/frames";
 import { getEntryListCounts } from "~/features/v2/list/counts.server";
+import { movieDb } from "~/features/tvAndMovies";
+import invariant from "tiny-invariant";
+import { parse } from "date-fns";
+import { Prisma } from "@prisma/client";
 
-async function getCounts() {
-  const counts = await getEntryListCounts();
-  return counts;
-}
+export async function loader() {
+  let seasonId = "3624";
+  let showId = "1399";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  const username = "adam";
-  // const counts = await getCounts();
-  // return typedjson({ counts });
-  if (!username) {
-    throw new Response(null, {
-      status: 404,
-      statusText: "User not Found",
-    });
-  }
+  const show = await movieDb.getShow(showId);
+  const season = show.seasons?.find((s) => s?.id === seasonId);
+  invariant(season, "No season found");
 
-  const entries = await getEntries({ username });
-  const formattedEntries = entries?.map(formatEntries);
-  return typedjson({ data: formattedEntries });
+  const newShow = await db.mediaItem.upsert({
+    where: {
+      apiId: seasonId,
+    },
+    update: {},
+    create: {
+      apiId: seasonId,
+      mediaType: "TV",
+      title: season.name ?? "",
+      releaseDate: season.air_date,
+      coverArt: season.poster_path,
+      length: season.episode_count,
+      creator: {
+        connectOrCreate: show.networks.map((studio) => ({
+          where: {
+            apiId_creatorType: {
+              apiId: studio?.id ? String(studio.id) : "unknown",
+              creatorType: "STUDIO" as const,
+            },
+          },
+          create: {
+            apiId: studio?.id ? String(studio.id) : "unknown",
+            name: studio?.name ?? "unknown",
+            creatorType: "STUDIO" as const,
+          },
+        })),
+      },
+      TvSeries: {
+        connectOrCreate: {
+          where: {
+            apiId: showId,
+          },
+          create: {
+            apiId: showId,
+            title: show.name ?? "",
+          },
+        },
+      },
+    },
+  });
+
+  return typedjson({ newShow });
 }
 
 export default function Test() {

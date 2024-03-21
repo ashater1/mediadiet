@@ -269,7 +269,7 @@ model MediaItem {
   Details           Details[]
   TvSeries          TvSeries?           @relation(fields: [tvSeriesId], references: [id])
   tvSeriesId        String?             @map("tv_series_id") @db.Uuid
-  review            Review[]
+  Review            Review[]
 
   @@unique([apiId, mediaType])
   @@map("media_item")

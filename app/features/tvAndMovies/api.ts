@@ -62,7 +62,7 @@ const TvSeasonSchema = z.object({
     .string()
     .regex(/(d{4}-d{2}-d{2})?/)
     .nullish()
-    .transform((val) => val && new Date(val)),
+    .transform((val) => (val ? new Date(val) : null)),
   episode_count: z.number().nullish(),
   name: z.string().nullish(),
   poster_path: z.string().nullish(),
