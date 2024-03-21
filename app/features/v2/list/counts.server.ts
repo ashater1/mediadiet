@@ -1,10 +1,10 @@
 import { db } from "~/db.server";
 
-export async function getEntryListCounts() {
+export async function getEntryListCounts({ username }: { username: string }) {
   const [movieCount, bookCount, tvCount] = await db.$transaction([
     db.user.findFirstOrThrow({
       where: {
-        username: "adam",
+        username,
       },
       include: {
         _count: {
@@ -22,7 +22,7 @@ export async function getEntryListCounts() {
     }),
     db.user.findFirstOrThrow({
       where: {
-        username: "adam",
+        username,
       },
       include: {
         _count: {
@@ -40,7 +40,7 @@ export async function getEntryListCounts() {
     }),
     db.user.findFirstOrThrow({
       where: {
-        username: "adam",
+        username,
       },
       include: {
         _count: {

@@ -1,7 +1,16 @@
 import { ClockIcon } from "@heroicons/react/20/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useSubmit,
+} from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
+import { m } from "framer-motion";
+import { Count, CountsWithParams } from "~/components/headerbar/count";
+import Spinner from "~/components/spinner";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
@@ -10,8 +19,10 @@ import { PageFrame, PageHeader } from "~/features/ui/frames";
 import {
   deleteSavedItem,
   formatSavedItem,
+  getSavedCounts,
   getSavedItems,
 } from "~/features/v2/saved/db";
+import { useOptimisticParams } from "~/utils/useOptimisticParams";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -21,14 +32,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const mediaTypes = getMediaTypesFromUrl(request.url);
 
   //   TODO: Migrate supabase db to use MediaItemForLater instead of individual tables
-  const saved = await getSavedItems({
-    username: user.username,
-    mediaTypes,
-  });
+  const [saved, counts] = await Promise.all([
+    getSavedItems({
+      username: user.username,
+      mediaTypes,
+    }),
+    getSavedCounts({ username: user.username }),
+  ]);
 
   const formattedSaved = saved?.map(formatSavedItem);
 
-  return json({ data: formattedSaved });
+  return json({ saved: formattedSaved, counts });
 }
 
 export async function action({ request }: LoaderFunctionArgs) {
@@ -60,7 +74,11 @@ export async function action({ request }: LoaderFunctionArgs) {
 }
 
 export default function Saved() {
+  const submit = useSubmit();
   const data = useLoaderData<typeof loader>();
+
+  const { isLoading, getAllParams } = useOptimisticParams();
+  const mediaTypes = getAllParams("type");
 
   return (
     <>
@@ -79,23 +97,59 @@ export default function Saved() {
               </NavLink>
             </div>
 
-            <div className="md:ml-auto">
-              {/* <ItemsCountAndFilter
-                paramName="type"
-                counts={[data.movieCount, data.bookCount, data.tvCount]}
-                labels={[
-                  { label: "movie" },
-                  { label: "book" },
-                  { label: "show" },
-                ]}
-              /> */}
+            <div className="md:ml-auto self-end mt-2 md:mt-0">
+              <Form
+                onChange={(e) => {
+                  submit(e.currentTarget);
+                }}
+                className="w-min flex md:ml-auto self-auto md:self-end"
+              >
+                <div className="relative w-min flex">
+                  <div className="flex divide-x divide-slate-300">
+                    <CountsWithParams
+                      count={data.counts.movieCount}
+                      label="movies"
+                      active={
+                        !mediaTypes.length || mediaTypes.includes("movie")
+                      }
+                      defaultChecked={mediaTypes.includes("movie")}
+                      name="type"
+                      value="movie"
+                    />
+
+                    <CountsWithParams
+                      count={data.counts.bookCount}
+                      label="books"
+                      defaultChecked={mediaTypes.includes("book")}
+                      active={!mediaTypes.length || mediaTypes.includes("book")}
+                      name="type"
+                      value="book"
+                    />
+
+                    <CountsWithParams
+                      count={data.counts.tvCount}
+                      label="seasons"
+                      defaultChecked={mediaTypes.includes("tv")}
+                      active={!mediaTypes.length || mediaTypes.includes("tv")}
+                      name="type"
+                      value="tv"
+                    />
+                  </div>
+
+                  {isLoading && (
+                    <div className="absolute right-0 translate-x-full">
+                      <Spinner className="w-6 h-6" />
+                    </div>
+                  )}
+                </div>
+              </Form>
             </div>
           </div>
 
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
           <ul className="mt-6 flex flex-col gap-4 md:gap-8">
-            {data.data?.map((d) => (
+            {data.saved?.map((d) => (
               <li key={d.id} className="flex items-center gap-6 md:gap-8">
                 <div>
                   {d.mediaItem.mediaType === "BOOK" ? (

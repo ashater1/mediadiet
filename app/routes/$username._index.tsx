@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const mediaTypes = getMediaTypesFromUrl(request.url);
 
   const [counts, entries] = await Promise.all([
-    getEntryListCounts(),
+    getEntryListCounts({ username }),
     getEntries({ username, mediaTypes }),
   ]);
 
