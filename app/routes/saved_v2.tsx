@@ -7,10 +7,7 @@ import { getUserDetails } from "~/features/auth/auth.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
-import {
-  formatSavedItem,
-  getSavedItems,
-} from "~/features/v2/saved/saved.server";
+import { formatSavedItem, getSavedItems } from "~/features/v2/saved/db";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();

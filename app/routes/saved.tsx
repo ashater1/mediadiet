@@ -1,23 +1,17 @@
 import { ClockIcon } from "@heroicons/react/20/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { NavLink, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
+import { NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { z } from "zod";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
-import { MediaType } from "~/features/list/types";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
-import {
-  deleteSavedBookItem,
-  deleteSavedMovieItem,
-  deleteSavedShowItem,
-} from "~/features/saved/delete";
 import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
 import {
+  deleteSavedItem,
   formatSavedItem,
   getSavedItems,
-} from "~/features/v2/saved/saved.server";
+} from "~/features/v2/saved/db";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -37,37 +31,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ data: formattedSaved });
 }
 
-const deleteSavedSchema = z.object({
-  mediaType: z.enum(["book", "movie", "tv"]),
-  itemId: z.string(),
-});
-
 export async function action({ request }: LoaderFunctionArgs) {
   const response = new Response();
 
   const user = await getUserDetails({ request, response });
   if (!user) throw redirect("/login", { headers: response.headers });
 
-  const formData = Object.fromEntries(await request.formData());
-  const { itemId, mediaType } = deleteSavedSchema.parse(formData);
+  const formData = await request.formData();
+  const id = formData.get("id");
 
-  if (mediaType === "book") {
-    await deleteSavedBookItem({
-      itemId: itemId,
-    });
-  }
+  // TODO - throw Response add status codes & reject messages
+  if (!id || typeof id !== "string") throw new Error("Invalide id provided");
 
-  if (mediaType === "movie") {
-    await deleteSavedMovieItem({
-      itemId: itemId,
-    });
-  }
-
-  if (mediaType === "tv") {
-    await deleteSavedShowItem({
-      itemId: itemId,
-    });
-  }
+  // TODO - add intent & a "Move to top" option
+  await deleteSavedItem(id);
 
   await setToast({
     request,
