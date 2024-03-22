@@ -80,8 +80,8 @@ export function useSearch() {
         searchTerm: string;
       }) => {
         const encodedSearchTerm = encodeURIComponent(searchTerm);
-        setLoadingStatus(true);
         searchLoad(`/search/${mediaType}?searchTerm=${encodedSearchTerm}`);
+        setLoadingStatus(false);
       },
       1000
     );
