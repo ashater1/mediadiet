@@ -1,6 +1,6 @@
 import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
 import { NewBookSchema } from "~/features/add/types";
-import { getUser } from "~/features/auth/auth.server";
+import { getUserOrRedirect } from "~/features/auth/auth.server";
 import { addNewBookEntry } from "~/features/books";
 import { deleteSavedBook } from "~/features/saved/delete";
 import { setToast } from "~/features/toasts/toast.server";
@@ -8,11 +8,8 @@ import { convertStringToBool } from "~/utils/funcs";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
-  const user = await getUser({ request, response });
 
-  if (!user) {
-    throw redirect("/login");
-  }
+  const user = await getUserOrRedirect({ request, response });
 
   const body = await request.formData();
   const newBook = Object.fromEntries(body);

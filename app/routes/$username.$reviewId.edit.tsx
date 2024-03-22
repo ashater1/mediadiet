@@ -30,7 +30,9 @@ import {
   NewTvSchema,
 } from "~/features/add/types";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { deleteEntry, updateEntry } from "~/features/list/db/entry";
+import { updateEntry } from "~/features/list/db/entry";
+import { deleteEntry } from "~/features/v2/list/delete.server";
+
 import { loader as reviewLoader } from "~/routes/$username.$reviewId";
 import { convertStringToBool, safeFilter } from "~/utils/funcs";
 
@@ -93,7 +95,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   if (submission.intent === "delete") {
     const data = DeleteSchema.parse(submission);
-    await deleteEntry({ id: data.reviewId, mediaType: data.mediaType });
+    await deleteEntry(data.reviewId);
     throw redirect(`/${username}`);
   }
 

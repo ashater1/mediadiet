@@ -11,18 +11,7 @@ import { getUserByUsername, getUserDetails } from "~/features/auth/auth.server";
 import { getAvatarUrl } from "~/features/auth/context";
 import { followUserById, unfollowUserById } from "~/features/friends/follow";
 import { PageFrame } from "~/features/ui/frames";
-
-// export type ListOwnerContextType = {
-//   listOwner: SerializeFrom<typeof loader>["listOwner"];
-//   isSelf: SerializeFrom<typeof loader>["isSelf"];
-//   isFollowing: SerializeFrom<typeof loader>["isFollowing"];
-// };
-
-export type ListOwnerContextType = SerializeFrom<typeof loader>;
-
-export function useListOwnerContext() {
-  return useOutletContext<ListOwnerContextType>();
-}
+import { ListOwnerContextType } from "~/features/v2/list/useListOwnerContext";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();

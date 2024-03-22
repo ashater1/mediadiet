@@ -6,11 +6,12 @@ import { EmptyState } from "~/features/list/components/empty";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
-import { useListOwnerContext } from "./$username";
+
 import { getEntryListCounts } from "~/features/v2/list/counts.server";
 import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
 import invariant from "tiny-invariant";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
+import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 

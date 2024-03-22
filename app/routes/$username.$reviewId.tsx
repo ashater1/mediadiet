@@ -21,7 +21,7 @@ import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 import { getReview } from "~/features/reviews/db";
 import { setToast } from "~/features/toasts/toast.server";
 import { deleteEntry } from "~/features/v2/list/delete.server";
-import { useListOwnerContext } from "./$username";
+import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -72,6 +72,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
       toast: {
         type: "deleted",
         title: `Deleted your review of ${result.title}`,
+      },
+    });
+  } else {
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "error",
+        title: `There was an issue trying to delete your review, try again later.`,
       },
     });
   }

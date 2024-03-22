@@ -50,6 +50,7 @@ export async function action({ request }: LoaderFunctionArgs) {
   const user = await getUserDetails({ request, response });
   if (!user) throw redirect("/login", { headers: response.headers });
 
+  // TODO - Authenticate the user owns the saved item being deleted
   const formData = await request.formData();
   const id = formData.get("id");
 
