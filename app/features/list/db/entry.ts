@@ -5,7 +5,6 @@ import {
   normalizeTvEntry,
 } from "../db";
 import { format } from "date-fns";
-import { MediaType } from "../types";
 import { UpdateSchemaType } from "~/routes/$username.$reviewId.edit";
 
 type WithReviewId<T> = T & { reviewId: string };
@@ -38,23 +37,6 @@ export async function getBookEntry({ id }: { id: string }) {
   return normalizeBookEntry(bookReview);
 }
 
-export async function deleteBookEntry({ id }: { id: string }) {
-  let book = await db.bookReview.delete({
-    where: {
-      id,
-    },
-    select: {
-      book: {
-        select: {
-          title: true,
-        },
-      },
-    },
-  });
-
-  return book;
-}
-
 export async function updateBookEntry({
   reviewId,
   mediaType,
@@ -84,23 +66,6 @@ export async function getMovieEntry({ id }: { id: string }) {
 
   if (!movieReview) return null;
   return normalizeMovieEntry(movieReview);
-}
-
-export async function deleteMovieEntry({ id }: { id: string }) {
-  let movie = await db.movieReview.delete({
-    where: {
-      id,
-    },
-    select: {
-      movie: {
-        select: {
-          title: true,
-        },
-      },
-    },
-  });
-
-  return movie;
 }
 
 export async function updateMovieEntry({
@@ -136,31 +101,6 @@ export async function getTvEntry({ id }: { id: string }) {
   return normalizeTvEntry(tvReview);
 }
 
-export async function deleteTvEntry({ id }: { id: string }) {
-  let show = await db.tvReview.delete({
-    where: {
-      id,
-    },
-    select: {
-      tvSeason: {
-        select: {
-          title: true,
-          tvShow: {
-            select: {
-              title: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  return {
-    show: show.tvSeason.tvShow.title,
-    season: show.tvSeason.title,
-  };
-}
-
 export async function updateTvEntry({
   reviewId,
   mediaType,
@@ -188,33 +128,6 @@ export async function getEntry({ id }: { id: string }) {
     ...review,
     consumedDateTime: format(review.consumedDateTime, "yyyy-MM-dd"),
   };
-}
-
-export async function deleteEntry({
-  id,
-  mediaType,
-}: {
-  id: string;
-  mediaType: MediaType;
-}) {
-  try {
-    if (mediaType === "book") {
-      let { book } = await deleteBookEntry({ id });
-      return { success: true, title: book.title };
-    }
-
-    if (mediaType === "movie") {
-      let { movie } = await deleteMovieEntry({ id });
-      return { success: true, title: movie.title };
-    }
-
-    if (mediaType === "tv") {
-      let { season, show } = await deleteTvEntry({ id });
-      return { success: true, title: `${show}${season ? ` - ${season}` : ""}` };
-    }
-  } catch (e) {
-    return { success: false, error: e };
-  }
 }
 
 export async function updateEntry(data: UpdateSchemaType) {

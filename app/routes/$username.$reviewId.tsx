@@ -15,14 +15,12 @@ import {
 } from "@vercel/remix";
 import classNames from "classnames";
 import invariant from "tiny-invariant";
-import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { getUserDetails } from "~/features/auth/auth.server";
-import { getAvatarUrl, useUserContext } from "~/features/auth/context";
-import { deleteEntry } from "~/features/list/db/entry";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 import { getReview } from "~/features/reviews/db";
 import { setToast } from "~/features/toasts/toast.server";
+import { deleteEntry } from "~/features/v2/list/delete.server";
 import { useListOwnerContext } from "./$username";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -58,21 +56,14 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const isAuthed = !!user;
   const isSelf = isAuthed && user.username === username;
 
-  if (!isSelf) {
+  // TODO - update isSelf logic & throw correct status if someone who isn't the user tries to delete
+  if (!isAuthed || !isSelf) {
     throw redirect("/login", {
       headers: response.headers,
     });
   }
 
-  const submission = Object.fromEntries(await request.formData());
-
-  const { mediaType } = z
-    .object({
-      mediaType: z.enum(["book", "movie", "tv"]),
-    })
-    .parse(submission);
-
-  let result = await deleteEntry({ id: reviewId, mediaType });
+  let result = await deleteEntry(reviewId);
 
   if (result?.success) {
     await setToast({
