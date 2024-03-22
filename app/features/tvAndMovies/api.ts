@@ -1,5 +1,6 @@
 import invariant from "tiny-invariant";
 import { z } from "zod";
+import { getDirectors } from ".";
 
 const apiKey = process.env.THE_MOVIE_DB_API_KEY;
 const apiUrl = "https://api.themoviedb.org/3";
@@ -42,6 +43,11 @@ const MovieDetailsCrewSchema = z.object({
 });
 
 export type MovieDetailsCrewType = z.infer<typeof MovieDetailsCrewSchema>;
+export type Movie = Awaited<ReturnType<MovieDb["getMovie"]>>;
+export type Show = Awaited<ReturnType<MovieDb["getShow"]>>;
+export type Season = NonNullable<
+  Awaited<ReturnType<MovieDb["getShow"]>>["seasons"][number]
+>;
 
 const MovieDetailsSchema = z.object({
   id: z.number(),
@@ -132,7 +138,8 @@ class MovieDb {
     let response = await fetch(url);
     let body = await response.json();
     let movie = MovieDetailsSchema.parse(body);
-    return movie;
+    let directors = getDirectors(movie.credits?.crew);
+    return { ...movie, directors };
   }
 
   async getShow(id: string) {

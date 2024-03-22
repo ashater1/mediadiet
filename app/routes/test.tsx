@@ -1,4 +1,5 @@
 import { useTypedLoaderData } from "remix-typedjson";
+import { db } from "~/db.server";
 import { PageFrame } from "~/features/ui/frames";
 import { useSearch } from "~/features/v2/search/useSearch";
 

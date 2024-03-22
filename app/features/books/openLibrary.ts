@@ -3,10 +3,8 @@ import { z } from "zod";
 import { safeFilter } from "~/utils/funcs";
 import _ from "lodash";
 
-const apiUrl = "https://openlibrary.org/search.json";
-
-type searchDocumentType = z.infer<typeof searchDocumentSchema>;
-type searchResultSchema = z.infer<typeof searchResultSchema>;
+type SearchDocumentType = z.infer<typeof searchDocumentSchema>;
+export type Book = Awaited<ReturnType<OpenLibrary["getBook"]>>;
 
 const searchDocumentSchema = z.object({
   title: z.string().nullish(),
@@ -86,8 +84,8 @@ class OpenLibrary {
     if (!removeDuplicates) return result.docs;
     else {
       const dupeCheck = (
-        bookOne: searchDocumentType,
-        bookTwo: searchDocumentType
+        bookOne: SearchDocumentType,
+        bookTwo: SearchDocumentType
       ) => {
         return (
           bookOne.title?.trim() === bookTwo.title?.trim() &&
@@ -97,15 +95,6 @@ class OpenLibrary {
 
       return _.uniqWith(result.docs, dupeCheck);
     }
-  }
-
-  async getBookWithAuthors(id: string) {
-    invariant(id.trim(), "A blank or empty id was provided");
-    const url = `https://openlibrary.org/works/${id}.json`;
-    const response = await fetch(url);
-    const body = await response.json();
-    const result = getBookSchema.parse(body);
-    return result;
   }
 
   async getBook(id: string) {

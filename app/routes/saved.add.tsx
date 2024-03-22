@@ -9,7 +9,7 @@ import {
   AddToSavedSchema,
   addSavedBook,
   addSavedMovie,
-  addSavedSeason,
+  addSavedShow,
 } from "~/features/v2/saved/add.server";
 import { useSearch } from "~/features/v2/search/useSearch";
 
@@ -57,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (result.mediaType === "TV") {
-    const savedTv = await addSavedSeason({
+    const savedTv = await addSavedShow({
       username: user.username,
       showId: result.id,
     });

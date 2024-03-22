@@ -239,7 +239,7 @@ model Review {
   stars        Int?
   userId       String    @map("user_id") @db.Uuid
   user         User      @relation(fields: [userId], references: [id])
-  MediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
+  mediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
   mediaItemId  String    @map("media_item_id") @db.Uuid
 
   @@map("review")

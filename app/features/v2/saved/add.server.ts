@@ -144,7 +144,7 @@ export async function addSavedBook({
   return { id: savedItem.id, title: book.title };
 }
 
-export async function addSavedSeason({
+export async function addSavedShow({
   username,
   showId,
 }: {
