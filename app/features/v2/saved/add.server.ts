@@ -1,11 +1,23 @@
 import { parse } from "date-fns";
 import invariant from "tiny-invariant";
+import { z } from "zod";
 import { db } from "~/db.server";
 import { openlibrary } from "~/features/books/openLibrary";
 import { getDirectors, movieDb } from "~/features/tvAndMovies";
 import { safeFilter } from "~/utils/funcs";
 
-// TODO - add savedTv functionality
+export const AddToSavedSchema = z.discriminatedUnion("mediaType", [
+  z.object({ mediaType: z.literal("MOVIE"), id: z.string() }),
+  z.object({
+    mediaType: z.literal("BOOK"),
+    id: z.string(),
+    releaseYear: z.string().nullish().default(null),
+  }),
+  z.object({
+    mediaType: z.literal("TV"),
+    id: z.string(),
+  }),
+]);
 
 export async function addSavedMovie({
   username,

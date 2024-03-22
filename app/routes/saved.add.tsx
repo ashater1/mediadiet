@@ -1,30 +1,17 @@
 import { Link, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
-import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { SearchCombobox } from "~/features/search";
 import { setToast } from "~/features/toasts/toast.server";
 import {
+  AddToSavedSchema,
   addSavedBook,
   addSavedMovie,
   addSavedSeason,
-} from "~/features/v2/saved/add";
+} from "~/features/v2/saved/add.server";
 import { useSearch } from "~/features/v2/search/useSearch";
-
-const AddToSavedSchema = z.discriminatedUnion("mediaType", [
-  z.object({ mediaType: z.literal("MOVIE"), id: z.string() }),
-  z.object({
-    mediaType: z.literal("BOOK"),
-    id: z.string(),
-    releaseYear: z.string().nullish().default(null),
-  }),
-  z.object({
-    mediaType: z.literal("TV"),
-    id: z.string(),
-  }),
-]);
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
