@@ -3,11 +3,8 @@ import { ArrowLeftCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import { Spinner } from "~/components/login/Spinner";
-import { action as addBookAction } from "~/routes/list.book.add";
-import { action as addMovieAction } from "~/routes/list.movie.add";
-import { action as addTvAction } from "~/routes/list.tv.add";
+import { action as addNewEntryAction } from "~/routes/list.add";
 import { safeFilter } from "~/utils/funcs";
-import { MediaType } from "../list/types";
 import {
   EntryFormHeader,
   EntryFormImage,
@@ -17,6 +14,7 @@ import {
 } from "./components/entryForm";
 import { useAddNewContext } from "./context";
 import { Button } from "~/components/button";
+import { MediaType } from "@prisma/client";
 
 type NewEntryFormProps = {
   id: string;
@@ -36,7 +34,7 @@ export function TVForm() {
     state: addingState,
     data: addSuccess,
     Form,
-  } = useFetcher<typeof addTvAction>();
+  } = useFetcher<typeof addNewEntryAction>();
 
   const {
     state: { selectedItem, selectedSeason },
@@ -138,7 +136,7 @@ export function TVForm() {
         id={selectedItem ?? ""}
         imgSrc={`https://image.tmdb.org/t/p/w500${selectedSeasonData.poster_path}`}
         length={`${selectedSeasonData.episode_count} episodes`}
-        mediaType="tv"
+        mediaType="TV"
         releaseYear={selectedSeasonData.air_date?.slice(0, 4)}
         title={`${mediaItemData?.title} - Season ${selectedSeasonData.season_number}`}
       />
@@ -157,7 +155,7 @@ export function ReviewForm() {
 
   if (mediaItemData?.mediaType === "tv") return <TVForm />;
 
-  if (mediaItemData?.mediaType === "book") {
+  if (mediaItemData?.mediaType === "BOOK") {
     return (
       <div className="relative">
         <EntryFormHeaderBar
@@ -218,7 +216,7 @@ export function NewEntryForm({
     state: addingState,
     data: addSuccess,
     Form,
-  } = useFetcher<typeof addMovieAction | typeof addBookAction>();
+  } = useFetcher<typeof addNewEntryAction>();
 
   const loading = addingState !== "idle" || addSuccess?.success;
   const success = addingState === "idle" && addSuccess?.success;

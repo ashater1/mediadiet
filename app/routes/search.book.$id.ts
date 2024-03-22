@@ -1,3 +1,4 @@
+import { MediaType } from "@prisma/client";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { z } from "zod";
 import { openlibrary } from "~/features/books/openLibrary";
@@ -21,6 +22,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return {
     ...data,
-    mediaType: "book" as const,
+    mediaType: MediaType.BOOK,
   };
 }

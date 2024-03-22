@@ -1,3 +1,4 @@
+import { MediaType } from "@prisma/client";
 import classNames from "classnames";
 import { useFetcher } from "react-router-dom";
 import {
@@ -10,7 +11,6 @@ import {
   ThumbsUp,
   TvShowIcon,
 } from "~/features/list/icons/icons";
-import { MediaType } from "~/features/list/types";
 
 function Dot() {
   return (
@@ -73,9 +73,9 @@ export function ListItem({
       </div>
 
       <div className="flex-shrink-0">
-        {mediaType === "movie" ? (
+        {mediaType === "MOVIE" ? (
           <MovieIcon />
-        ) : mediaType === "tv" ? (
+        ) : mediaType === "TV" ? (
           <TvShowIcon />
         ) : (
           <BookIcon />

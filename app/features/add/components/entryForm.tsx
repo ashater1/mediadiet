@@ -1,4 +1,4 @@
-import { MediaType } from "~/features/list/types";
+import { MediaType } from "@prisma/client";
 import { RatingBar } from "../RatingBar";
 import { BookInputs, MovieInputs } from "./inputs";
 import classNames from "classnames";
@@ -127,9 +127,9 @@ export function EntryFormInputs({
       </div>
 
       <div className="grid grid-cols-[auto_auto] justify-start gap-x-4 gap-y-2 text-gray-500">
-        {mediaType === "movie" ? (
+        {mediaType === "MOVIE" ? (
           <MovieInputs isInTheater={isInTheater} isOnPlane={isOnPlane} />
-        ) : mediaType === "book" ? (
+        ) : mediaType === "BOOK" ? (
           <BookInputs audiobook={audiobook} />
         ) : null}
       </div>

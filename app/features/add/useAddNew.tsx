@@ -150,7 +150,7 @@ export function useAddNew() {
   >(null);
 
   useEffect(() => {
-    if (_mediaItemData?.mediaType === "book") {
+    if (_mediaItemData?.mediaType === "BOOK") {
       const bookInfo = searchResults?.data.filter(
         (i) => i.id === state.selectedItem
       )[0] as any;

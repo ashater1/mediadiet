@@ -1,9 +1,17 @@
-import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
-import { NewBookSchema } from "~/features/add/types";
+import { ActionFunctionArgs } from "@vercel/remix";
 import { getUserOrRedirect } from "~/features/auth/auth.server";
+import { AddToListSchema, addNewEntry } from "~/features/v2/list/add.server";
 
-import { deleteSavedBook } from "~/features/saved/delete";
-import { setToast } from "~/features/toasts/toast.server";
-import { convertStringToBool } from "~/utils/funcs";
+export async function action({ request }: ActionFunctionArgs) {
+  const response = new Response();
+  const user = await getUserOrRedirect({ request, response });
+  const formData = await request.formData();
+  const submission = Object.fromEntries(formData);
+  const result = AddToListSchema.safeParse(submission);
 
-export async function action({ request }: ActionFunctionArgs) {}
+  if (!result.success) {
+    return { success: false };
+  } else {
+    await addNewEntry({ userId: user.id, ...result.data });
+  }
+}

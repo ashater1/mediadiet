@@ -3,6 +3,7 @@ import { getDirectors, movieDb } from "~/features/tvAndMovies";
 
 import { listToString, safeFilter } from "~/utils/funcs";
 import invariant from "tiny-invariant";
+import { MediaType } from "@prisma/client";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const movieId = params.id;
@@ -23,6 +24,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return {
     ...data,
-    mediaType: "movie" as const,
+    mediaType: MediaType.MOVIE,
   };
 }

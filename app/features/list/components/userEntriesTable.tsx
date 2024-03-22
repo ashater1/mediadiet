@@ -18,10 +18,10 @@ import {
   StarsDisplay,
   TvShowIcon,
 } from "~/features/list/icons/icons";
-import { useListOwnerContext } from "~/routes/$username";
+import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
 import { UserData } from "~/routes/$username._index";
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
-import { MediaType } from "../types";
+import { MediaType } from "@prisma/client";
 
 function TableRow({
   isSelf,

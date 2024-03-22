@@ -5,22 +5,21 @@ import { db } from "~/db.server";
 import { Book, openlibrary } from "~/features/books/openLibrary";
 import { Movie, Season, Show, movieDb } from "~/features/tvAndMovies";
 
-export type AddToListArgs = z.infer<typeof AddToListSchema>;
+export type AddToListArgs = z.infer<typeof AddToListSchema> & {
+  userId: string;
+};
 
 export const AddToListSchema = z.discriminatedUnion("mediaType", [
   z.object({
-    userId: z.string(),
     mediaType: z.literal("MOVIE"),
     apiId: z.string(),
   }),
   z.object({
-    userId: z.string(),
     mediaType: z.literal("BOOK"),
     apiId: z.string(),
     releaseYear: z.string().nullish().default(null),
   }),
   z.object({
-    userId: z.string(),
     mediaType: z.literal("TV"),
     apiId: z.string(),
     seasonId: z.string(),

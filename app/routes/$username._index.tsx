@@ -6,12 +6,12 @@ import { EmptyState } from "~/features/list/components/empty";
 import { getMediaTypesFromUrl } from "~/features/list/utils";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
-
 import { getEntryListCounts } from "~/features/v2/list/counts.server";
 import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
 import invariant from "tiny-invariant";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
 import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -32,14 +32,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const formattedEntries = entries?.map(formatEntries);
   // TODO: update get entries to return a userFound boolean that can trigger a 404 response
-  return json(
+  return typedjson(
     { counts, entries: formattedEntries },
     { headers: response.headers }
   );
 }
 
 export default function UserIndex() {
-  const data = useLoaderData<typeof loader>();
+  const data = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const { isLoading, getAllParams } = useOptimisticParams();
 

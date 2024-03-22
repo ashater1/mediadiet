@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import { ComponentProps } from "react";
-import { MediaType } from "../types";
+
 import { Spinner } from "~/components/login/Spinner";
 
 type ComponentPropsType<T> = ComponentProps<

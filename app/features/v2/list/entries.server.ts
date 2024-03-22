@@ -1,5 +1,5 @@
 import { MediaType } from "@prisma/client";
-import { formatInTimeZone } from "date-fns-tz";
+import { format, formatInTimeZone } from "date-fns-tz";
 import { db } from "~/db.server";
 import { listToString } from "~/utils/funcs";
 
@@ -15,7 +15,7 @@ type GetEntriesProps = {
 };
 
 export function formatEntries(review: Review) {
-  let { creator, releaseDate, ...mediaItem } = review.MediaItem;
+  let { creator, releaseDate, ...mediaItem } = review.mediaItem;
   let { review: textReview, consumedDate, createdAt, ..._review } = review;
 
   let _consumedDate = formatInTimeZone(review.consumedDate, "utc", "M/d");
@@ -25,7 +25,7 @@ export function formatEntries(review: Review) {
 
   let releaseYear = releaseDate && formatInTimeZone(releaseDate, "utc", "yyyy");
 
-  let _creator = listToString(review.MediaItem.creator.map((c) => c.name));
+  let _creator = listToString(review.mediaItem.creator.map((c) => c.name));
   let hasReview = !!textReview;
 
   let title = mediaItem.TvSeries
@@ -55,14 +55,14 @@ export async function getEntries({
     select: {
       Review: {
         where: {
-          MediaItem: {
+          mediaItem: {
             mediaType: {
               in: [...mediaTypes],
             },
           },
         },
         include: {
-          MediaItem: {
+          mediaItem: {
             include: {
               TvSeries: true,
               creator: true,
@@ -82,4 +82,42 @@ export async function getEntries({
   });
 
   return entries.Review;
+}
+
+export async function getEntry({ id }: { id: string }) {
+  const entry = await db.review.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      mediaItem: {
+        include: {
+          TvSeries: true,
+          creator: true,
+        },
+      },
+    },
+  });
+
+  if (!entry) return null;
+  const { mediaItem, ..._entry } = entry;
+  const formattedConsumedDate = formatInTimeZone(
+    entry.consumedDate,
+    "utc",
+    "MMM d, yyyy"
+  );
+  const coverArt =
+    mediaItem.mediaType === "BOOK"
+      ? `https://covers.openlibrary.org/b/id/${mediaItem.coverArt}-L.jpg`
+      : `https://image.tmdb.org/t/p/w342${mediaItem.coverArt}`;
+
+  const creator = listToString(entry?.mediaItem?.creator.map((c) => c.name));
+
+  const releaseYear = mediaItem.releaseDate?.getFullYear();
+
+  return {
+    ...entry,
+    formattedConsumedDate,
+    mediaItem: { ...mediaItem, releaseYear, coverArt, creator },
+  };
 }

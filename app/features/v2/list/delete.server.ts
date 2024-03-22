@@ -2,10 +2,10 @@ import { db } from "~/db.server";
 
 export async function deleteEntry(id: string) {
   try {
-    const { MediaItem } = await db.review.delete({
+    const { mediaItem } = await db.review.delete({
       where: { id: id },
       select: {
-        MediaItem: {
+        mediaItem: {
           select: {
             mediaType: true,
             title: true,
@@ -20,11 +20,11 @@ export async function deleteEntry(id: string) {
     });
 
     const title =
-      MediaItem.mediaType === "TV"
-        ? `MediaItem.TvSeries?.title${
-            MediaItem.title ? ` - ${MediaItem.title}` : ""
+      mediaItem.mediaType === "TV"
+        ? `${mediaItem.TvSeries?.title}${
+            mediaItem.title ? ` - ${mediaItem.title}` : ""
           }`
-        : MediaItem.title;
+        : mediaItem.title;
 
     return { title };
   } catch (e) {

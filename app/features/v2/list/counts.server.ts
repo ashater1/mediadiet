@@ -1,3 +1,4 @@
+import { MediaType } from "@prisma/client";
 import { db } from "~/db.server";
 
 export async function getEntryListCounts({ username }: { username: string }) {
@@ -11,8 +12,8 @@ export async function getEntryListCounts({ username }: { username: string }) {
           select: {
             Review: {
               where: {
-                MediaItem: {
-                  mediaType: "MOVIE",
+                mediaItem: {
+                  mediaType: MediaType.MOVIE,
                 },
               },
             },
@@ -29,8 +30,8 @@ export async function getEntryListCounts({ username }: { username: string }) {
           select: {
             Review: {
               where: {
-                MediaItem: {
-                  mediaType: "BOOK",
+                mediaItem: {
+                  mediaType: MediaType.BOOK,
                 },
               },
             },
@@ -47,8 +48,8 @@ export async function getEntryListCounts({ username }: { username: string }) {
           select: {
             Review: {
               where: {
-                MediaItem: {
-                  mediaType: "TV",
+                mediaItem: {
+                  mediaType: MediaType.TV,
                 },
               },
             },

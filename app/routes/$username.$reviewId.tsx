@@ -18,30 +18,27 @@ import invariant from "tiny-invariant";
 import { Spinner } from "~/components/login/Spinner";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
-import { getReview } from "~/features/reviews/db";
+
 import { setToast } from "~/features/toasts/toast.server";
 import { deleteEntry } from "~/features/v2/list/delete.server";
+import { getEntry } from "~/features/v2/list/entries.server";
 import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const response = new Response();
-  const user = await getUserDetails({ request, response });
-
   const username = params.username;
   const reviewId = params.reviewId;
 
   invariant(username, "No username provided");
   invariant(reviewId, "No review ID provided");
 
-  const review = await getReview({ id: reviewId, imgSize: "md" });
+  const review = await getEntry({ id: reviewId });
 
-  if (!review.success) {
-    throw redirect(`/${username}`);
+  if (!review) {
+    throw new Response(null, { status: 404, statusText: "Review not found" });
   }
 
-  const isSelf = user && user.username === username;
-
-  return json({ ...review, isSelf });
+  return json(review, { headers: response.headers });
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {
@@ -103,10 +100,7 @@ export default function Review() {
     navigation.formData?.get("intent") === "delete";
 
   const handleDelete = () => {
-    submit(
-      { intent: "delete", mediaType: review.mediaType },
-      { method: "post" }
-    );
+    submit({ intent: "delete" }, { method: "post" });
   };
 
   return (
@@ -115,7 +109,7 @@ export default function Review() {
         <div className="mt-4 flex gap-10">
           <div className="hidden w-80 rounded md:block">
             <img
-              src={review.img ?? ""}
+              src={review.mediaItem.coverArt ?? ""}
               className="h-auto w-full rounded shadow-lg"
             />
           </div>
@@ -130,12 +124,12 @@ export default function Review() {
               <div className="flex flex-col text-sm gap-0.5">
                 <Link to={`/${params.username}`}>Reviewed by Adam Shater</Link>
                 <p className="text-gray-500">
-                  {review.mediaType === "movie"
+                  {review.mediaItem.mediaType === "MOVIE"
                     ? "Watched on "
-                    : review.mediaType === "tv"
+                    : review.mediaItem.mediaType === "TV"
                     ? "Finished watching on "
                     : "Finished reading on "}
-                  {review.formattedDate}
+                  {review.formattedConsumedDate}
                 </p>
               </div>
 
@@ -177,7 +171,7 @@ export default function Review() {
             <div className="group flex w-full flex-col">
               <div className="flex w-full items-center">
                 <h2 className="min-w-0 text-lg font-semibold text-gray-900 line-clamp-2 md:text-lg">
-                  {review.title}
+                  {review.mediaItem.title}
                 </h2>
 
                 <div className="ml-auto flex items-center">
@@ -190,9 +184,11 @@ export default function Review() {
               </div>
 
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>{review.creators}</span>
-                {review.creators && review.releaseYear && <span>•</span>}
-                <span>{review.releaseYear}</span>
+                <span>{review.mediaItem.creator}</span>
+                {review.mediaItem.creator && review.mediaItem.releaseYear && (
+                  <span>•</span>
+                )}
+                <span>{review.mediaItem.releaseYear}</span>
               </div>
               <div className="mt-5">
                 <p className="mt-1 text-sm leading-5">{review.review}</p>

@@ -19,7 +19,7 @@ import {
   TvShowIcon,
 } from "~/features/list/icons/icons";
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
-import { MediaType } from "../types";
+import { MediaType } from "@prisma/client";
 import { FormattedReview } from "~/features/v2/list/entries.server";
 
 function TableRow({
