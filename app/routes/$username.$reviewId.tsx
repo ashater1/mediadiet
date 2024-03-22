@@ -60,7 +60,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     });
   }
 
-  let result = await deleteEntry(reviewId);
+  let result = await deleteEntry({ id: reviewId, userId: user.id });
 
   if (result?.success) {
     await setToast({

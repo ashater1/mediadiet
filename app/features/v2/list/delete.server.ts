@@ -1,9 +1,15 @@
 import { db } from "~/db.server";
 
-export async function deleteEntry(id: string) {
+export async function deleteEntry({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
   try {
     const { mediaItem } = await db.review.delete({
-      where: { id: id },
+      where: { id: id, userId: userId },
       select: {
         mediaItem: {
           select: {
