@@ -1,12 +1,12 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { MediaType } from "../list/types";
 import { SearchCombobox } from "../search";
 import { SelectMediaType } from "./SelectMediaType";
 import { useAddNewContext } from "./context";
 import { ReviewForm } from "./entryForm";
 import { Button } from "~/components/button";
+import { MediaType } from "@prisma/client";
 
 export function NewEntryModal() {
   const {
@@ -57,9 +57,11 @@ export function NewEntryModal() {
 
 function SelectAndSearch() {
   const {
+    mediaType,
     searchData,
     isSearchLoading,
     state,
+    searchTerm,
     setSearchTerm,
     setSelectedItem,
     setMediaType,
@@ -68,7 +70,7 @@ function SelectAndSearch() {
   return (
     <div className="w-full p-6 md:w-[500px]">
       <SelectMediaType
-        mediaType={state.mediaType}
+        mediaType={mediaType}
         onChange={(value: MediaType) => setMediaType(value)}
       />
       <div className="mt-4">
@@ -78,7 +80,7 @@ function SelectAndSearch() {
           mediaType={state.mediaType}
           onInputChange={(value) => setSearchTerm(value)}
           onSelect={(item) => setSelectedItem(item.id)}
-          searchTerm={state.searchTerm}
+          searchTerm={searchTerm}
           selectedItem={state.selectedItem}
         />
       </div>

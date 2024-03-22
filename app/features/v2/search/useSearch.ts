@@ -63,6 +63,7 @@ export function useSearch() {
   };
 
   const setSearchTerm = (searchTerm: string) => {
+    console.log("searchTerm", searchTerm);
     dispatch({ type: "SET_SEARCH_TERM", payload: searchTerm });
   };
 

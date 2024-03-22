@@ -1,15 +1,12 @@
 import { useFetcher } from "@remix-run/react";
-import debounce from "lodash/debounce.js";
-import { useEffect, useMemo, useReducer, useState } from "react";
-import { loader as bookSearchLoader } from "~/routes/search.book._index";
-import { loader as movieSearchLoader } from "~/routes/search.movie._index";
-import { loader as tvSearchLoader } from "~/routes/search.tv._index";
-import { MediaType } from "../list/types";
+import { useEffect, useReducer, useState } from "react";
 import { loader as bookLoader } from "~/routes/search.book.$id";
 import { loader as movieLoader } from "~/routes/search.movie.$id";
 import { loader as tvLoader } from "~/routes/search.tv.$id";
 
 import { SerializeFrom } from "@vercel/remix";
+import { useSearch } from "../v2/search/useSearch";
+import { MediaType } from "@prisma/client";
 
 type ModalCloses = "default" | "success" | "draft";
 
@@ -52,7 +49,7 @@ const initialState: State = {
   selectedSeason: null,
   selectedItem: null,
   isSearchLoading: false,
-  mediaType: "movie",
+  mediaType: MediaType.MOVIE,
   searchTerm: "",
 };
 
@@ -126,13 +123,15 @@ function reducer(state: State, action: Action) {
 }
 
 export function useAddNew() {
-  let {
-    data: searchData,
-    load: searchLoad,
-    state: searchState,
-  } = useFetcher<
-    typeof bookSearchLoader | typeof tvSearchLoader | typeof movieSearchLoader
-  >();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    isLoading: isSearchLoading,
+    mediaType,
+    results: searchResults,
+    search,
+    searchTerm,
+    setMediaType,
+  } = useSearch();
 
   type Book = SerializeFrom<typeof bookLoader> & {
     imgSrc: string | null;
@@ -152,7 +151,7 @@ export function useAddNew() {
 
   useEffect(() => {
     if (_mediaItemData?.mediaType === "book") {
-      const bookInfo = searchData?.data.filter(
+      const bookInfo = searchResults?.data.filter(
         (i) => i.id === state.selectedItem
       )[0] as any;
 
@@ -169,23 +168,6 @@ export function useAddNew() {
     setMediaItemData(_mediaItemData);
   }, [_mediaItemData]);
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const setLoading = (loading: boolean) => {
-    dispatch({ type: "SET_LOADING", payload: loading });
-  };
-
-  const setMediaType = (mediaType: MediaType) => {
-    if (mediaType === state.mediaType) return;
-    dispatch({ type: "SET_MEDIA_TYPE", payload: mediaType });
-    debouncedSearch.cancel();
-    if (searchData) searchData.data = [];
-  };
-
-  const setSearchTerm = (searchTerm: string) => {
-    dispatch({ type: "SET_SEARCH_TERM", payload: searchTerm });
-  };
-
   const setSelectedItem = (id: string) => {
     dispatch({ type: "SET_SELECTED_ITEM", payload: id });
     mediaItemLoad(`/search/${state.mediaType}/${id}`);
@@ -197,7 +179,7 @@ export function useAddNew() {
   };
 
   const setSeason = (seasonId: string) => {
-    if (state.mediaType !== "tv")
+    if (state.mediaType !== "TV")
       throw new Error("Can't set a season for movie or book");
 
     dispatch({ type: "SET_SEASON", payload: seasonId });
@@ -215,53 +197,21 @@ export function useAddNew() {
     dispatch({ type: "OPEN_MODAL" });
   };
 
-  const debouncedSearch = useMemo(() => {
-    return debounce(
-      ({
-        mediaType,
-        searchTerm,
-      }: {
-        mediaType: MediaType;
-        searchTerm: string;
-      }) => {
-        const encodedSearchTerm = encodeURIComponent(searchTerm);
-        searchLoad(`/search/${mediaType}?searchTerm=${encodedSearchTerm}`);
-        setLoading(false);
-      },
-      1000
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!state.searchTerm.trim() || !state.mediaType) {
-      setLoading(false);
-
-      debouncedSearch.cancel();
-      return;
-    }
-
-    if (state.searchTerm.trim() && state.mediaType) {
-      !state.isSearchLoading && setLoading(true);
-      debouncedSearch({
-        mediaType: state.mediaType,
-        searchTerm: state.searchTerm.trim(),
-      });
-    }
-  }, [state.searchTerm]);
-
   return {
     closeModal,
-    isSearchLoading: state.isSearchLoading || searchState !== "idle",
+    isSearchLoading,
     mediaItemData,
     mediaItemState,
+    mediaType,
     openModal,
     resetSeason,
     resetSelectedItem,
-    searchData,
+    searchData: searchResults,
     setMediaType,
-    setSearchTerm,
+    setSearchTerm: search,
     setSeason,
     setSelectedItem,
+    searchTerm,
     state,
   };
 }

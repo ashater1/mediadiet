@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import classNames from "classnames";
+import { useMemo } from "react";
 import DataCell from "~/components/table/DataCell";
 import {
   BookIcon,
@@ -19,8 +20,7 @@ import {
 } from "~/features/list/icons/icons";
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "../types";
-import { Review, Reivew_V2 } from "~/routes/test";
-import { useEffect, useMemo } from "react";
+import { FormattedReview } from "~/features/v2/list/entries.server";
 
 function TableRow({
   isSelf,
@@ -44,9 +44,9 @@ function TableRow({
   );
 }
 
-const columnHelper = createColumnHelper<Reivew_V2>();
+const columnHelper = createColumnHelper<FormattedReview>();
 
-export function UserEntriesTable({ entries }: { entries: Reivew_V2[] }) {
+export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
   // const { listOwner, isSelf } = useListOwnerContext();
   let isSelf = true;
   let listOwner = {
