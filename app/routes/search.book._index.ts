@@ -3,6 +3,7 @@ import { openlibrary } from "~/features/books/openLibrary";
 import { ComboboxOption, getSearchTerm } from "~/features/search";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { titleize } from "~/utils/capitalize";
+import { MediaType } from "@prisma/client";
 
 export type BookSearchResults = (ComboboxOption & {
   imgSrc: string | null;
@@ -48,5 +49,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     };
   });
 
-  return json({ data, mediaType: "book" as const });
+  return json({ data, mediaType: MediaType.BOOK });
 }

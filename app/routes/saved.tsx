@@ -161,7 +161,9 @@ export default function Saved() {
                 </div>
                 <div className="flex flex-col">
                   <div className="text-sm font-semibold line-clamp-2 md:text-base">
-                    {d.mediaItem.title}
+                    {d.mediaItem.mediaType == "TV"
+                      ? d.mediaItem.TvSeries?.title
+                      : d.mediaItem.title}
                   </div>
                   <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
                     {d.mediaItem.creator?.length && (

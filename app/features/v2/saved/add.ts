@@ -1,4 +1,5 @@
 import { parse } from "date-fns";
+import invariant from "tiny-invariant";
 import { db } from "~/db.server";
 import { openlibrary } from "~/features/books/openLibrary";
 import { getDirectors, movieDb } from "~/features/tvAndMovies";
@@ -129,4 +130,75 @@ export async function addSavedBook({
   });
 
   return { id: savedItem.id, title: book.title };
+}
+
+export async function addSavedSeason({
+  username,
+  showId,
+}: {
+  username: string;
+  showId: string;
+}) {
+  const show = await movieDb.getShow(showId);
+  const season = show.seasons?.at(0);
+  invariant(season, "No season found");
+
+  const savedItem = await db.mediaItemForLater.create({
+    data: {
+      user: {
+        connect: {
+          username,
+        },
+      },
+      mediaItem: {
+        connectOrCreate: {
+          where: {
+            apiId_mediaType: {
+              apiId: season.id,
+              mediaType: "TV",
+            },
+          },
+          create: {
+            apiId: season.id,
+            mediaType: "TV",
+            title: season.name ?? "",
+            releaseDate: season.air_date,
+            coverArt: season.poster_path,
+            length: season.episode_count,
+            creator: {
+              connectOrCreate: show.networks.map((studio) => ({
+                where: {
+                  apiId_creatorType: {
+                    apiId: studio?.id ? String(studio.id) : "unknown",
+                    creatorType: "STUDIO" as const,
+                  },
+                },
+                create: {
+                  apiId: studio?.id ? String(studio.id) : "unknown",
+                  name: studio?.name ?? "unknown",
+                  creatorType: "STUDIO" as const,
+                },
+              })),
+            },
+            TvSeries: {
+              connectOrCreate: {
+                where: {
+                  apiId: showId,
+                },
+                create: {
+                  apiId: showId,
+                  title: show.name ?? "",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return {
+    id: savedItem.id,
+    title: show.name,
+  };
 }

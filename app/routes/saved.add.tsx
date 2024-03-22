@@ -1,24 +1,30 @@
-import { MediaType } from "@prisma/client";
-import { Link, useFetcher, useNavigation, useSubmit } from "@remix-run/react";
+import { Link, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
-import debounce from "lodash/debounce.js";
-import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
 import { getUserDetails } from "~/features/auth/auth.server";
 import { SearchCombobox } from "~/features/search";
 import { setToast } from "~/features/toasts/toast.server";
-import { addSavedBook, addSavedMovie } from "~/features/v2/saved/add";
-import { loader as bookSearchLoader } from "~/routes/search.book._index";
-import { loader as movieSearchLoader } from "~/routes/search.movie._index";
-import { loader as tvSearchLoader } from "~/routes/search.tv._index";
+import {
+  addSavedBook,
+  addSavedMovie,
+  addSavedSeason,
+} from "~/features/v2/saved/add";
+import { useSearch } from "~/features/v2/search/useSearch";
 
-const AddToSavedSchema = z.object({
-  id: z.string(),
-  mediaType: z.enum(["movie", "tv", "book"]),
-  releaseYear: z.string().nullish(),
-});
+const AddToSavedSchema = z.discriminatedUnion("mediaType", [
+  z.object({ mediaType: z.literal("MOVIE"), id: z.string() }),
+  z.object({
+    mediaType: z.literal("BOOK"),
+    id: z.string(),
+    releaseYear: z.string().nullish().default(null),
+  }),
+  z.object({
+    mediaType: z.literal("TV"),
+    id: z.string(),
+  }),
+]);
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
@@ -28,13 +34,13 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   const formData = Object.fromEntries(await request.formData());
-  const { id, mediaType, releaseYear } = AddToSavedSchema.parse(formData);
+  const result = AddToSavedSchema.parse(formData);
 
-  if (mediaType === "book") {
+  if (result.mediaType === "BOOK") {
     const savedBook = await addSavedBook({
-      apiId: id,
+      apiId: result.id,
       username: user.username,
-      firstPublishedYear: releaseYear ?? null,
+      firstPublishedYear: result.releaseYear ?? null,
     });
 
     await setToast({
@@ -47,9 +53,9 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  if (mediaType === "movie") {
+  if (result.mediaType === "MOVIE") {
     const savedMovie = await addSavedMovie({
-      apiId: id,
+      apiId: result.id,
       username: user.username,
     });
 
@@ -63,7 +69,21 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  // TODO - add saved show
+  if (result.mediaType === "TV") {
+    const savedTv = await addSavedSeason({
+      username: user.username,
+      showId: result.id,
+    });
+
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "deleted",
+        title: `${savedTv.title} was added to your Saved list`,
+      },
+    });
+  }
 
   throw redirect("/saved", {
     headers: response.headers,
@@ -71,26 +91,17 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Add() {
-  const [mediaType, setMediaType] = useState<MediaType>("MOVIE");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, mediaType, results, searchTerm, search, setMediaType } =
+    useSearch();
 
   const submit = useSubmit();
   const navigation = useNavigation();
-
-  let {
-    data: searchData,
-    load: searchLoad,
-    state: searchState,
-  } = useFetcher<
-    typeof bookSearchLoader | typeof tvSearchLoader | typeof movieSearchLoader
-  >();
 
   const handleSelect = (id: string) => {
     if (!mediaType) return;
 
     if (mediaType === "BOOK") {
-      const matchedItem = searchData?.data.filter((d) => d.id === id)[0];
+      const matchedItem = results?.data.filter((d) => d.id === id)[0];
 
       submit(
         { id, mediaType, releaseYear: matchedItem?.releaseYear ?? "" },
@@ -102,39 +113,6 @@ export default function Add() {
 
     submit({ id, mediaType }, { method: "post" });
   };
-
-  const debouncedSearch = useMemo(() => {
-    return debounce(
-      ({
-        mediaType,
-        searchTerm,
-      }: {
-        mediaType: MediaType;
-        searchTerm: string;
-      }) => {
-        const encodedSearchTerm = encodeURIComponent(searchTerm);
-        searchLoad(`/search/${mediaType}?searchTerm=${encodedSearchTerm}`);
-        setIsLoading(false);
-      },
-      1000
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!searchTerm.trim() || !mediaType) {
-      setIsLoading(false);
-      debouncedSearch.cancel();
-      return;
-    }
-
-    if (searchTerm.trim() && mediaType) {
-      !isLoading && setIsLoading(true);
-      debouncedSearch({
-        mediaType: mediaType,
-        searchTerm: searchTerm.trim(),
-      });
-    }
-  }, [searchTerm]);
 
   return (
     <>
@@ -153,10 +131,10 @@ export default function Add() {
               <SelectMediaType mediaType={mediaType} onChange={setMediaType} />
               <div className="mt-4">
                 <SearchCombobox
-                  isSearchLoading={isLoading || searchState !== "idle"}
-                  items={searchData}
+                  isSearchLoading={isLoading}
+                  items={results}
                   mediaType={mediaType}
-                  onInputChange={setSearchTerm}
+                  onInputChange={search}
                   onSelect={(item) => handleSelect(item.id)}
                   searchTerm={searchTerm}
                   selectedItem={"abc"}

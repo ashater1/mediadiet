@@ -57,6 +57,7 @@ export async function getSavedItems({
         include: {
           mediaItem: {
             include: {
+              TvSeries: true,
               creator: true,
             },
           },

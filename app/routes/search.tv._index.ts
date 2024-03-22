@@ -1,3 +1,4 @@
+import { MediaType } from "@prisma/client";
 import { json, LoaderFunctionArgs } from "@vercel/remix";
 import { ComboboxOption, getSearchTerm, SearchTypes } from "~/features/search";
 import { movieDb } from "~/features/tvAndMovies";
@@ -17,5 +18,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     };
   });
 
-  return json({ data, mediaType: "tv" as const });
+  return json({ data, mediaType: MediaType.TV });
 }
