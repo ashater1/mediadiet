@@ -30,7 +30,14 @@ export const AddToListSchema = z.discriminatedUnion("mediaType", [
 // export type MediaItem = Prisma.MediaItemCreateInput;
 export type MediaItem = Prisma.MediaItemCreateOrConnectWithoutReviewInput;
 
-export function formatBookToCreateMediaItem(book: Book): MediaItem {
+export function formatBookToCreateMediaItem(
+  book: Book,
+  firstPublishedYear: string | null
+): MediaItem {
+  const releaseDate = firstPublishedYear
+    ? parse(firstPublishedYear, "yyyy", new Date())
+    : null;
+
   return Prisma.validator<MediaItem>()({
     where: {
       apiId_mediaType: {
@@ -43,7 +50,7 @@ export function formatBookToCreateMediaItem(book: Book): MediaItem {
       mediaType: MediaType.BOOK,
       title: book.title ?? "",
       coverArt: book.covers,
-      releaseDate: new Date(),
+      releaseDate,
       creator: {
         connectOrCreate: book.authors.map((author) => ({
           where: {
@@ -149,7 +156,7 @@ export function formatTvShowToCreateMediaItem(
 export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
   if (args.mediaType === "BOOK") {
     const book = await openlibrary.getBook(apiId);
-    const formattedBook = formatBookToCreateMediaItem(book);
+    const formattedBook = formatBookToCreateMediaItem(book, args.releaseYear);
     await db.review.create({
       data: {
         user: {
