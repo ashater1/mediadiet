@@ -50,45 +50,48 @@ export const links: LinksFunction = () => [
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
   const user = await getUserDetails({ request, response });
-  const toast = await getToast({ request, response });
-  return typedjson({ user, toastData: toast }, { headers: response.headers });
+  const toasts = await getToast({ request, response });
+  return typedjson({ user, toasts }, { headers: response.headers });
 }
 
 export default function App() {
-  const { user, toastData } = useTypedLoaderData<typeof loader>();
+  const { user, toasts } = useTypedLoaderData<typeof loader>();
   const isAuthPage = useIsAuthPage();
 
   useEffect(() => {
-    switch (toastData?.type) {
-      case "success":
-        toast.success(toastData.title, {
-          description: toastData.description,
-          id: toastData.id,
-        });
-        break;
-      case "deleted":
-        toast.info(toastData.title, {
-          description: toastData.description,
-          id: toastData.id,
-          icon: <TrashIcon />,
-        });
-        break;
-      case "error":
-        toast.error(toastData.title, {
-          description: toastData.description,
-          id: toastData.id,
-        });
-        break;
-      case "warning":
-        toast.warning(toastData.title, {
-          description: toastData.description,
-          id: toastData.id,
-        });
-        break;
-      default:
-        break;
-    }
-  }, [toastData]);
+    if (toasts && toasts.length > 0)
+      toasts.forEach((t) => {
+        switch (t.type) {
+          case "success":
+            toast.success(t.title, {
+              description: t.description,
+              id: t.id,
+            });
+            break;
+          case "deleted":
+            toast.info(t.title, {
+              description: t.description,
+              id: t.id,
+              icon: <TrashIcon />,
+            });
+            break;
+          case "error":
+            toast.error(t.title, {
+              description: t.description,
+              id: t.id,
+            });
+            break;
+          case "warning":
+            toast.warning(t.title, {
+              description: t.description,
+              id: t.id,
+            });
+            break;
+          default:
+            break;
+        }
+      });
+  }, [toasts]);
 
   return (
     <html lang="en">
