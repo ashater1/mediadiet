@@ -1,6 +1,8 @@
 import { MediaType } from "@prisma/client";
 import { json, LoaderFunctionArgs } from "@vercel/remix";
-import { ComboboxOption, getSearchTerm } from "~/features/search";
+import { ComboboxOption } from "~/features/search/SearchCombobox";
+import { getSearchTerm } from "~/features/search/utils";
+
 import { movieDb } from "~/features/tvAndMovies";
 import { titleize } from "~/utils/capitalize";
 

@@ -3,7 +3,7 @@ import { ActionFunctionArgs, redirect } from "@vercel/remix";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
 import { getUserDetails } from "~/features/v2/auth/user.server";
-import { SearchCombobox } from "~/features/search";
+
 import { setToast } from "~/features/toasts/toast.server";
 import {
   AddToSavedSchema,
@@ -12,6 +12,7 @@ import {
   addSavedShow,
 } from "~/features/v2/saved/add.server";
 import { useSearch } from "~/features/v2/search/useSearch";
+import { SearchCombobox } from "~/features/search/SearchCombobox";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();

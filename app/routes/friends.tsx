@@ -1,8 +1,8 @@
 import { Count } from "~/components/headerbar/count";
-import { getCounts } from "~/features/friends/counts";
+import { getCounts } from "~/features/v2/friends/counts";
 import { getUserDetails } from "~/features/v2/auth/user.server";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import { ListOwnerHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
+import { ListOwnerHeaderBar } from "~/features/v2/list/components/listOwnerHeaderBar";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { PageFrame } from "~/features/ui/frames";
 import { redirect } from "remix-typedjson";

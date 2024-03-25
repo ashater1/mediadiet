@@ -18,7 +18,7 @@ import {
   StarsDisplay,
   TvShowIcon,
 } from "~/features/v2/list/icons/icons";
-import { usePendingDeletions } from "../../v2/list/hooks/useGetPendingDeletions";
+import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
 import { FormattedReview } from "~/features/v2/list/entries.server";
 
