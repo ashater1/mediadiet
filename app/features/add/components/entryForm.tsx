@@ -130,7 +130,12 @@ export function EntryFormInputs({
       </div>
 
       <div className="grid grid-cols-[auto_auto] justify-start gap-x-4 gap-y-2 text-gray-500">
-        <div className={cn(mediaType !== "MOVIE" && "hidden")}>
+        <div
+          className={cn(
+            mediaType !== "MOVIE" && "hidden",
+            "flex flex-col gap-3"
+          )}
+        >
           <MovieInputs isInTheater={isInTheater} isOnPlane={isOnPlane} />
         </div>
         <div className={cn(mediaType !== "BOOK" && "hidden")}>

@@ -74,7 +74,7 @@ export function formatMovieToCreateMediaItem(movie: Movie): MediaItem {
     where: {
       apiId_mediaType: {
         apiId: String(movie.id),
-        mediaType: MediaType.BOOK,
+        mediaType: MediaType.MOVIE,
       },
     },
     create: {
@@ -171,6 +171,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
         },
       },
     });
+    return { success: true, title: book.title };
   } else if (args.mediaType === "MOVIE") {
     const movie = await movieDb.getMovie(apiId);
     const formattedMovie = formatMovieToCreateMediaItem(movie);
@@ -188,6 +189,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
         },
       },
     });
+    return { success: true, title: movie.title };
   } else if (args.mediaType === "TV") {
     const show = await movieDb.getShow(apiId);
     const season = show.seasons.find((s) => s?.id === args.seasonId);
@@ -207,5 +209,10 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
         },
       },
     });
+    return {
+      success: true,
+      title: `${show.name}${season.name ? ` - ${season.name}` : ""}`,
+    };
   }
+  return { success: false, title: null };
 }

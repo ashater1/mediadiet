@@ -2,6 +2,7 @@ import { LoaderFunctionArgs } from "@vercel/remix";
 import { listToString, safeFilter } from "~/utils/funcs";
 import invariant from "tiny-invariant";
 import { movieDb } from "~/features/v2/tvAndMovies/api";
+import { MediaType } from "@prisma/client";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const showId = params.id;
@@ -24,7 +25,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     title: show.name,
     creator: listToString(networkNames),
     releaseDate: years,
-    mediaType: "tv" as const,
+    mediaType: MediaType.TV,
     seasons,
   };
 }

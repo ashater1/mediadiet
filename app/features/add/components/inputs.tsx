@@ -39,37 +39,41 @@ export function MovieInputs({
 
   return (
     <>
-      <label
-        htmlFor="inTheater"
-        className="flex items-center gap-2 whitespace-nowrap"
-      >
-        Watched in a theater
-      </label>
+      <div className="flex gap-4">
+        <label
+          htmlFor="inTheater"
+          className="flex items-center gap-2 whitespace-nowrap"
+        >
+          Watched in a theater
+        </label>
 
-      <input
-        onChange={(e) => onTheaterSelect(e.target.checked)}
-        checked={_isInTheater}
-        id="inTheater"
-        name="inTheater"
-        type="checkbox"
-        className="ml-auto p-1"
-      />
+        <input
+          onChange={(e) => onTheaterSelect(e.target.checked)}
+          checked={_isInTheater}
+          id="inTheater"
+          name="inTheater"
+          type="checkbox"
+          className="ml-auto p-1"
+        />
+      </div>
 
-      <label
-        htmlFor="plane"
-        className="flex items-center gap-2 whitespace-nowrap"
-      >
-        Watched on a plane
-      </label>
+      <div className="flex gap-4">
+        <label
+          htmlFor="plane"
+          className="flex items-center gap-2 whitespace-nowrap"
+        >
+          Watched on a plane
+        </label>
 
-      <input
-        onChange={(e) => onPlaneSelect(e.target.checked)}
-        checked={_isOnPlane}
-        id="plane"
-        name="plane"
-        type="checkbox"
-        className="ml-auto p-1"
-      />
+        <input
+          onChange={(e) => onPlaneSelect(e.target.checked)}
+          checked={_isOnPlane}
+          id="plane"
+          name="plane"
+          type="checkbox"
+          className="ml-auto p-1"
+        />
+      </div>
     </>
   );
 }

@@ -17,7 +17,7 @@ import { Button } from "~/components/button";
 import { MediaType } from "@prisma/client";
 
 type NewEntryFormProps = {
-  id: string;
+  apiId: string;
   imgSrc?: string | null;
   title?: string | null;
   creators?: string | null;
@@ -45,7 +45,7 @@ export function TVForm() {
     closeModal,
   } = useAddNewContext();
 
-  if (mediaItemData?.mediaType !== "tv") {
+  if (mediaItemData?.mediaType !== "TV") {
     throw new Error("mediaItemData.mediaType must be tv");
   }
 
@@ -133,7 +133,7 @@ export function TVForm() {
       <NewEntryForm
         creators={mediaItemData?.creator}
         hiddenIds={[{ name: "seasonId", value: selectedSeasonData.id }]}
-        id={selectedItem ?? ""}
+        apiId={selectedItem ?? ""}
         imgSrc={`https://image.tmdb.org/t/p/w500${selectedSeasonData.poster_path}`}
         length={`${selectedSeasonData.episode_count} episodes`}
         mediaType="TV"
@@ -153,7 +153,7 @@ export function ReviewForm() {
       "Only render this component when mediaItemData is available"
     );
 
-  if (mediaItemData?.mediaType === "tv") return <TVForm />;
+  if (mediaItemData?.mediaType === "TV") return <TVForm />;
 
   if (mediaItemData?.mediaType === "BOOK") {
     return (
@@ -169,7 +169,7 @@ export function ReviewForm() {
               value: mediaItemData.releaseYear as string,
             },
           ]}
-          id={state.selectedItem ?? ""}
+          apiId={state.selectedItem ?? ""}
           imgSrc={mediaItemData.imgSrc}
           title={mediaItemData.title}
           creators={mediaItemData.creators}
@@ -188,7 +188,7 @@ export function ReviewForm() {
         onCloseClick={() => closeModal()}
       />
       <NewEntryForm
-        id={state.selectedItem ?? ""}
+        apiId={state.selectedItem ?? ""}
         imgSrc={mediaItemData.imgSrc}
         title={mediaItemData.title}
         creators={mediaItemData.creators}
@@ -201,7 +201,7 @@ export function ReviewForm() {
 }
 
 export function NewEntryForm({
-  id,
+  apiId,
   imgSrc,
   title,
   hiddenIds,
@@ -239,10 +239,14 @@ export function NewEntryForm({
         <Form
           className="mt-2 flex h-full flex-col gap-4"
           method="post"
-          action={`/list/${mediaType.toLowerCase()}/add`}
+          action={`/list/add`}
         >
           <EntryFormInputs
-            hiddenInputs={[...(hiddenIds ?? []), { name: "id", value: id }]}
+            hiddenInputs={[
+              ...(hiddenIds ?? []),
+              { name: "apiId", value: apiId },
+              { name: "mediaType", value: mediaType },
+            ]}
             mediaType={mediaType}
           />
           <Button className="py-4" type="submit">
