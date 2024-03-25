@@ -4,7 +4,7 @@ import { Button } from "~/components/button";
 import Spinner from "~/components/spinner";
 import { cn } from "~/components/utils";
 
-type UserHeaderBarProps = {
+type ListOwnerHeaderBarProps = {
   avatar: string | null;
   isFollowing: boolean;
   isSelf: boolean;
@@ -12,13 +12,13 @@ type UserHeaderBarProps = {
   secondaryName: string;
 };
 
-export function UserHeaderBar({
+export function ListOwnerHeaderBar({
   avatar,
   isFollowing,
   isSelf,
   primaryName,
   secondaryName,
-}: UserHeaderBarProps) {
+}: ListOwnerHeaderBarProps) {
   const params = useParams();
 
   const { Form, data, formAction, formData } = useFetcher();

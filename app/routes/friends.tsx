@@ -1,12 +1,12 @@
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import { LoaderFunctionArgs } from "@vercel/remix";
-import { redirect } from "remix-typedjson";
 import { Count } from "~/components/headerbar/count";
-import { getUserDetails } from "~/features/v2/auth/user.server";
-import { useUserContext } from "~/features/v2/auth/context";
 import { getCounts } from "~/features/friends/counts";
-import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
+import { getUserDetails } from "~/features/v2/auth/user.server";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { ListOwnerHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
+import { LoaderFunctionArgs } from "@vercel/remix";
 import { PageFrame } from "~/features/ui/frames";
+import { redirect } from "remix-typedjson";
+import { useUserContext } from "~/features/v2/auth/context";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -28,7 +28,7 @@ export default function Friends() {
     <PageFrame>
       <div className="w-full flex flex-col">
         <div className="flex">
-          <UserHeaderBar
+          <ListOwnerHeaderBar
             isSelf={true}
             isFollowing={false}
             avatar={user?.avatar ?? null}
