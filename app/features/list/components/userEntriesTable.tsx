@@ -1,6 +1,6 @@
-import { Link, useFetcher } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import {
-  ColumnDef,
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -18,10 +18,9 @@ import {
   StarsDisplay,
   TvShowIcon,
 } from "~/features/v2/list/icons/icons";
-import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
-import { UserData } from "~/routes/$username._index";
 import { usePendingDeletions } from "../../v2/list/hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
+import { FormattedReview } from "~/features/v2/list/entries.server";
 
 function TableRow({
   isSelf,
@@ -36,15 +35,6 @@ function TableRow({
   const pendingDeletions = usePendingDeletions();
   const isBeingDeleted = pendingDeletions.includes(reviewId);
 
-  const { submit } = useFetcher();
-
-  const onDeleteClick = () => {
-    submit(
-      { id: reviewId },
-      { method: "post", action: `/list/${mediaType}/delete` }
-    );
-  };
-
   return (
     <Link to={`${reviewId}`} prefetch="intent" className="contents">
       <tr className={classNames(isBeingDeleted && "pulse opacity-25")}>
@@ -54,49 +44,53 @@ function TableRow({
   );
 }
 
-export function UserEntriesTable({ entries }: { entries: UserData }) {
-  const { listOwner, isSelf } = useListOwnerContext();
-  const columns: ColumnDef<UserData>[] = useMemo(
+const columnHelper = createColumnHelper<FormattedReview>();
+
+export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
+  // const { listOwner, isSelf } = useListOwnerContext();
+  let isSelf = true;
+  let listOwner = {
+    soderberghMode: false,
+  };
+
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: "consumedDate",
+      columnHelper.accessor("consumedDate", {
+        id: "consumedDate",
         header: "Date",
         cell: (props) => (
           <div className="flex h-full w-full items-center justify-center text-xs md:text-sm">
             {`${props.getValue()}`}
           </div>
         ),
-      },
-      {
-        accessorKey: "mediaType",
+      }),
+      columnHelper.accessor("MediaItem.mediaType", {
+        id: "mediaType",
         header: "Type",
         cell: (props) => (
           <div className="flex h-full w-full items-center justify-center">
-            {props.getValue() === "book" ? (
+            {props.getValue() === "BOOK" ? (
               <BookIcon />
-            ) : props.getValue() === "movie" ? (
+            ) : props.getValue() === "MOVIE" ? (
               <MovieIcon />
-            ) : props.getValue() === "tv" ? (
+            ) : props.getValue() === "TV" ? (
               <TvShowIcon />
             ) : null}
           </div>
         ),
-      },
-      {
-        accessorKey: "title",
+      }),
+      columnHelper.accessor("MediaItem.title", {
+        id: "title",
         header: "Title",
         cell: (props) => {
-          const showDot =
-            props.row.getValue("creators") && props.row.getValue("releaseYear");
-
           return (
             <div className="flex items-center gap-x-5">
               <div className="flex flex-shrink-0 items-center justify-center md:hidden">
-                {props.row.getValue("mediaType") === "book" ? (
+                {props.row.getValue("mediaType") === "BOOK" ? (
                   <BookIcon />
-                ) : props.row.getValue("mediaType") === "movie" ? (
+                ) : props.row.getValue("mediaType") === "MOVIE" ? (
                   <MovieIcon />
-                ) : props.row.getValue("mediaType") === "tv" ? (
+                ) : props.row.getValue("mediaType") === "TV" ? (
                   <TvShowIcon />
                 ) : null}
               </div>
@@ -108,7 +102,7 @@ export function UserEntriesTable({ entries }: { entries: UserData }) {
 
                 <div className="flex items-center gap-x-2">
                   <div className="mt-0.5 text-xs text-gray-500 line-clamp-2 md:text-xs">
-                    {props.row.getValue("creators")}
+                    {props.row.getValue("creator")}
                   </div>
                 </div>
               </div>
@@ -132,19 +126,21 @@ export function UserEntriesTable({ entries }: { entries: UserData }) {
             </div>
           );
         },
-      },
-      {
-        accessorKey: "releaseYear",
+      }),
+      columnHelper.accessor("MediaItem.releaseYear", {
+        id: "releaseYear",
         header: "Year",
-        cell: (props) => (
+        cell: ({ getValue }) => (
           <div className="flex h-full w-full items-center justify-center text-sm">
-            {`${props.getValue()}`}
+            {`${getValue()}`}
           </div>
         ),
-      },
-      { accessorKey: "creators", header: "Creators" },
-      {
-        accessorKey: "stars",
+      }),
+      columnHelper.accessor("MediaItem.creator", {
+        id: "creator",
+        header: "Creator",
+      }),
+      columnHelper.accessor("stars", {
         header: "Rating",
         cell: (props) => {
           const stars = props.getValue();
@@ -156,26 +152,24 @@ export function UserEntriesTable({ entries }: { entries: UserData }) {
             );
           }
         },
-      },
-      { accessorKey: "id", header: "ID" },
-      {
-        accessorKey: "favorited",
+      }),
+      columnHelper.accessor("id", { header: "ID" }),
+      columnHelper.accessor("favorited", {
         header: "Favorited",
         cell: (props) => (
           <div className="flex h-full w-full items-center justify-center">
             {props.getValue() ? <FavoriteHeart isOn /> : null}
           </div>
         ),
-      },
-      {
-        accessorKey: "hasReview",
+      }),
+      columnHelper.accessor("hasReview", {
         header: "Review",
         cell: (props) => (
           <div className="flex h-full w-full items-center justify-center">
             {props.getValue() ? <ReviewIcon isOn /> : null}
           </div>
         ),
-      },
+      }),
     ],
     []
   );
@@ -187,7 +181,7 @@ export function UserEntriesTable({ entries }: { entries: UserData }) {
     initialState: {
       columnVisibility: {
         stars: !listOwner.soderberghMode,
-        creators: false,
+        creator: false,
         id: false,
       },
     },
