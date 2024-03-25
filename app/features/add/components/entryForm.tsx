@@ -2,6 +2,7 @@ import { MediaType } from "@prisma/client";
 import { RatingBar } from "../RatingBar";
 import { BookInputs, MovieInputs } from "./inputs";
 import classNames from "classnames";
+import { cn } from "~/components/utils";
 
 type HiddenInputs = { name: string; value: string };
 
@@ -87,12 +88,12 @@ export function EntryFormHeader({
 }
 
 export function EntryFormInputs({
-  audiobook,
-  consumedDate = new Date().toISOString().slice(0, 10),
+  audiobook = false,
+  consumedDate,
   favorited = false,
   hiddenInputs = [],
-  isInTheater,
-  isOnPlane,
+  isInTheater = false,
+  isOnPlane = false,
   mediaType,
   review = "",
   stars = null,
@@ -120,18 +121,19 @@ export function EntryFormInputs({
           className="py-0.5  text-slate-900"
           id="consumedDate"
           name="consumedDate"
-          defaultValue={consumedDate}
+          defaultValue={consumedDate?.slice(0, 10)}
           max={new Date().toISOString().slice(0, 10)}
           type="date"
         />
       </div>
 
       <div className="grid grid-cols-[auto_auto] justify-start gap-x-4 gap-y-2 text-gray-500">
-        {mediaType === "MOVIE" ? (
+        <div className={cn(mediaType !== "MOVIE" && "hidden")}>
           <MovieInputs isInTheater={isInTheater} isOnPlane={isOnPlane} />
-        ) : mediaType === "BOOK" ? (
-          <BookInputs audiobook={audiobook} />
-        ) : null}
+        </div>
+        <div className={cn(mediaType !== "BOOK" && "hidden")}>
+          <BookInputs isAudiobook={audiobook} />
+        </div>
       </div>
 
       <textarea

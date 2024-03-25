@@ -163,6 +163,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
+
         mediaItem: {
           connectOrCreate: {
             ...formattedBook,

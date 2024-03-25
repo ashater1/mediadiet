@@ -1,19 +1,16 @@
 import { useState } from "react";
 
-export function BookInputs({ audiobook = false }: { audiobook?: boolean }) {
-  const [_isAudiobook, setIsAudiobook] = useState(audiobook);
-
+export function BookInputs({ isAudiobook }: { isAudiobook: boolean }) {
   return (
     <div className="flex items-center">
       <label htmlFor="audiobook" className="flex items-center gap-2">
         Audiobook
       </label>
       <input
-        checked={_isAudiobook}
+        defaultChecked={isAudiobook}
         className="ml-3"
         id="audiobook"
         name="audiobook"
-        onChange={(e) => setIsAudiobook(e.target.checked)}
         type="checkbox"
       />
     </div>
@@ -21,14 +18,14 @@ export function BookInputs({ audiobook = false }: { audiobook?: boolean }) {
 }
 
 export function MovieInputs({
-  isInTheater = false,
-  isOnPlane = false,
+  isInTheater,
+  isOnPlane,
 }: {
-  isInTheater?: boolean;
-  isOnPlane?: boolean;
+  isInTheater: boolean;
+  isOnPlane: boolean;
 }) {
-  const [_isInTheater, setIsInTheater] = useState(false);
-  const [_isOnPlane, setIsOnPlane] = useState(false);
+  const [_isInTheater, setIsInTheater] = useState(isInTheater);
+  const [_isOnPlane, setIsOnPlane] = useState(isOnPlane);
 
   const onTheaterSelect = (checked: boolean) => {
     setIsInTheater(checked);

@@ -234,26 +234,18 @@ model Review {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
   createdAt    DateTime? @default(now()) @map("created_date")
-  favorited    Boolean?
+  favorited    Boolean   @default(false)
   review       String?
   stars        Int?
   userId       String    @map("user_id") @db.Uuid
   user         User      @relation(fields: [userId], references: [id])
   mediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
   mediaItemId  String    @map("media_item_id") @db.Uuid
+  audiobook    Boolean   @default(false)
+  onPlane      Boolean   @default(false) @map("on_plane")
+  inTheater    Boolean   @default(false) @map("in_theater")
 
   @@map("review")
-}
-
-model Details {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  mediaItemId String    @db.Uuid
-  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
-  audiobook   Boolean?  @default(false)
-  onPlane     Boolean?  @default(false) @map("on_plane")
-  inTheater   Boolean?  @default(false) @map("in_theater")
-
-  @@map("details")
 }
 
 model MediaItem {
@@ -266,7 +258,6 @@ model MediaItem {
   length            Int?
   creator           Creator[]           @relation("MediaItemToCreator")
   MediaItemForLater MediaItemForLater[]
-  Details           Details[]
   TvSeries          TvSeries?           @relation(fields: [tvSeriesId], references: [id])
   tvSeriesId        String?             @map("tv_series_id") @db.Uuid
   Review            Review[]

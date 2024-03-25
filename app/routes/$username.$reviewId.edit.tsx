@@ -1,3 +1,4 @@
+import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   Form,
   Link,
@@ -16,6 +17,7 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 import { Button } from "~/components/button";
 import { Spinner } from "~/components/login/Spinner";
+import { db } from "~/db.server";
 import {
   EntryFormHeader,
   EntryFormImage,
@@ -23,113 +25,55 @@ import {
   EntryFormInputs,
   EntryFormRoot,
 } from "~/features/add/components/entryForm";
-import {
-  NewBookSchema,
-  NewMovieSchema,
-  NewTvSchema,
-} from "~/features/add/types";
-import { getUserDetails } from "~/features/auth/auth.server";
-import { updateEntry } from "~/features/list/db/entry";
-import { deleteEntry } from "~/features/v2/list/delete.server";
-
+import { getUser } from "~/features/auth/auth.server";
+import { setToast } from "~/features/toasts/toast.server";
+import { entrySchema, updateEntry } from "~/features/v2/list/update.server";
 import { loader as reviewLoader } from "~/routes/$username.$reviewId";
-import { convertStringToBool, safeFilter } from "~/utils/funcs";
-
-const UpdateBookSchema = NewBookSchema.omit({
-  id: true,
-});
-
-const UpdateMovieSchema = NewMovieSchema.omit({
-  id: true,
-});
-
-const UpdateTvSchema = NewTvSchema.omit({
-  id: true,
-  seasonId: true,
-});
-
-export const UpdateSchema = z.union([
-  UpdateBookSchema.merge(
-    z.object({ reviewId: z.string(), mediaType: z.literal("book") })
-  ),
-
-  UpdateMovieSchema.merge(
-    z.object({ reviewId: z.string(), mediaType: z.literal("movie") })
-  ),
-
-  UpdateTvSchema.merge(
-    z.object({ reviewId: z.string(), mediaType: z.literal("tv") })
-  ),
-]);
-
-const DeleteSchema = z.object({
-  reviewId: z.string(),
-  mediaType: z.union([z.literal("book"), z.literal("movie"), z.literal("tv")]),
-});
-
-export type UpdateSchemaType = z.infer<typeof UpdateSchema>;
+import { safeFilter } from "~/utils/funcs";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
-  const user = await getUserDetails({ request, response });
-
-  const username = params.username;
-  const reviewId = params.reviewId;
-
-  invariant(username, "userId is required");
-  invariant(reviewId, "reviewId is required");
-
-  const isAuthed = !!user;
-  const isSelf = isAuthed && user.username === username;
-  if (!isSelf) throw redirect(`/${username}/${reviewId}`);
+  const user = await getUser({ request, response });
+  if (!user) {
+    throw redirect("/login", { headers: response.headers });
+  }
   return json(null, { headers: response.headers });
 }
 
+const submission = z.object({});
+
 export async function action({ params, request }: ActionFunctionArgs) {
+  const response = new Response();
   const { username, reviewId } = params;
-  invariant(username, "The username is required");
-  invariant(reviewId, "The reviewId is required");
+  invariant(username, "username required");
+  invariant(reviewId, "reviewId required");
+
+  const user = await getUser({ request, response });
+  if (!user) throw redirect("/login", { headers: response.headers });
 
   const submission = Object.fromEntries(await request.formData());
-
-  if (submission.intent === "delete") {
-    const data = DeleteSchema.parse(submission);
-    await deleteEntry(data.reviewId);
-    throw redirect(`/${username}`);
-  }
-
-  if (submission.intent === "update") {
-    const favorited = convertStringToBool(submission.favorited);
-
-    const data = UpdateSchema.parse({ ...submission, favorited });
-    await updateEntry({ ...data, reviewId });
-    throw redirect(`/${username}/${reviewId}`);
-  }
-
-  throw new Error("Invalid intent");
+  console.log(submission.consumedDate);
+  const parsedSubmission = entrySchema.parse({ ...submission, id: reviewId });
+  console.log(parsedSubmission);
+  const result = await updateEntry(parsedSubmission);
+  // throw redirect(`/${username}/${reviewId}`, { headers: response.headers });
+  return null;
 }
 
 export default function Edit() {
   const matches = useMatches();
   const entry = matches.at(-2)?.data as SerializeFrom<typeof reviewLoader>;
-
   const params = useParams();
   const navigation = useNavigation();
 
-  const updating =
-    navigation.state !== "idle" &&
-    navigation.formData?.get("intent") === "update";
+  const updating = navigation.state !== "idle";
 
-  const deleting =
-    navigation.state !== "idle" &&
-    navigation.formData?.get("intent") === "delete";
+  const subHeaders = safeFilter([
+    entry.mediaItem.creator,
+    String(entry.mediaItem.releaseYear),
+  ]);
 
-  const subHeaders = safeFilter([entry.creators, entry.releaseYear]);
-
-  const hiddenInputs = [
-    { name: "mediaType", value: entry.mediaType },
-    { name: "reviewId", value: entry.id },
-  ];
+  const hiddenInputs = [{ name: "reviewId", value: entry.id }];
 
   return (
     <>
@@ -141,13 +85,15 @@ export default function Edit() {
         <div>
           <EntryFormRoot>
             <EntryFormImageRoot>
-              {entry.img && <EntryFormImage src={entry.img} />}
+              {entry.mediaItem.coverArt && (
+                <EntryFormImage src={entry.mediaItem.coverArt} />
+              )}
             </EntryFormImageRoot>
             <div className="flex h-full w-full flex-col">
-              <div className="flex items-start justify-between">
-                <div className="flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col w-full">
                   <EntryFormHeader
-                    title={entry.title}
+                    title={entry.mediaItem.title}
                     subHeaders={subHeaders}
                   />
                 </div>
@@ -155,15 +101,15 @@ export default function Edit() {
 
               <Form className="mt-4 flex h-full flex-col gap-4" method="post">
                 <EntryFormInputs
-                  audiobook={"audiobook" in entry && entry.audiobook}
-                  isOnPlane={("onPlane" in entry && entry.onPlane) ?? false}
+                  audiobook={entry.audiobook}
+                  isOnPlane={entry.onPlane ?? false}
                   isInTheater={
                     ("inTheater" in entry && entry.inTheater) ?? false
                   }
                   hiddenInputs={hiddenInputs}
-                  consumedDate={entry.utcDate}
+                  consumedDate={entry.consumedDate}
                   favorited={entry.favorited ?? false}
-                  mediaType={entry.mediaType}
+                  mediaType={entry.mediaItem.mediaType}
                   review={entry.review ?? undefined}
                   stars={entry.stars ?? null}
                 />

@@ -1,4 +1,10 @@
+import { z } from "zod";
 import { db } from "~/db.server";
+
+export const deleteSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+});
 
 export async function deleteEntry({
   id,
@@ -32,7 +38,7 @@ export async function deleteEntry({
           }`
         : mediaItem.title;
 
-    return { title };
+    return { success: true, title };
   } catch (e) {
     return { success: false, error: e };
   }
