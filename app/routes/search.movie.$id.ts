@@ -1,16 +1,17 @@
 import { LoaderFunctionArgs } from "@vercel/remix";
-import { getDirectors, movieDb } from "~/features/tvAndMovies";
-
 import { listToString, safeFilter } from "~/utils/funcs";
 import invariant from "tiny-invariant";
 import { MediaType } from "@prisma/client";
+import { movieDb } from "~/features/v2/tvAndMovies/api";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const movieId = params.id;
   invariant(movieId, "movieId was not provided");
+
   const movie = await movieDb.getMovie(movieId);
-  const directors = getDirectors(movie.credits?.crew);
-  const directorNames = listToString(safeFilter(directors.map((d) => d.name)));
+  const directorNames = listToString(
+    safeFilter(movie.directors.map((d) => d.name))
+  );
 
   const data = {
     imgSrc:

@@ -2,7 +2,7 @@ import { MediaType } from "@prisma/client";
 import { json, LoaderFunctionArgs } from "@vercel/remix";
 import { ComboboxOption } from "~/features/v2/search/SearchCombobox";
 import { getSearchTerm } from "~/features/v2/search/utils";
-import { movieDb } from "~/features/tvAndMovies";
+import { movieDb } from "~/features/v2/tvAndMovies/api";
 import { titleize } from "~/utils/capitalize";
 
 export async function loader({ request }: LoaderFunctionArgs) {

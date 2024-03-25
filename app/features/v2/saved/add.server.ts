@@ -2,12 +2,12 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 import { db } from "~/db.server";
 import { openlibrary } from "~/features/v2/books/openLibrary";
-import { getDirectors, movieDb } from "~/features/tvAndMovies";
 import {
   formatBookToCreateMediaItem,
   formatMovieToCreateMediaItem,
   formatTvShowToCreateMediaItem,
 } from "../list/add.server";
+import { movieDb } from "../tvAndMovies/api";
 
 export const AddToSavedSchema = z.discriminatedUnion("mediaType", [
   z.object({ mediaType: z.literal("MOVIE"), id: z.string() }),
@@ -31,9 +31,6 @@ export async function addSavedMovie({
 }) {
   const movie = await movieDb.getMovie(apiId);
   const formattedMovie = formatMovieToCreateMediaItem(movie);
-  let directors = movie.credits?.crew
-    ? getDirectors(movie.credits?.crew)
-    : [{ id: "unknown", name: "unknown" }];
 
   const savedItem = await db.mediaItemForLater.create({
     data: {

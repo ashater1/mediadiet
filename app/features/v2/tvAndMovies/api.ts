@@ -1,6 +1,6 @@
 import invariant from "tiny-invariant";
 import { z } from "zod";
-import { getDirectors } from ".";
+import { getDirectors } from "./utils";
 
 const apiKey = process.env.THE_MOVIE_DB_API_KEY;
 const apiUrl = "https://api.themoviedb.org/3";
