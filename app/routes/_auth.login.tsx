@@ -9,13 +9,13 @@ import {
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import Spinner from "~/components/spinner";
+
+import { Logo } from "~/features/brand/logo";
 import {
-  getUserById,
-  getUserDetails,
   loginSchema,
   signInWithPassword,
-} from "~/features/auth/auth.server";
-import { Logo } from "~/features/brand/logo";
+} from "~/features/v2/auth/signIn.server";
+import { findUser, getUserDetails } from "~/features/v2/auth/user.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ email: "Invalid email or password.", password: null });
   }
 
-  const { username } = await getUserById(data.user.id);
+  const { username } = await findUser({ id: data.user.id });
   throw redirect(`/${username}`, { headers: response.headers });
 }
 

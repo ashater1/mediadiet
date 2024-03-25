@@ -16,10 +16,10 @@ import {
 import classNames from "classnames";
 import invariant from "tiny-invariant";
 import { Spinner } from "~/components/login/Spinner";
-import { getUserDetails } from "~/features/auth/auth.server";
 import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 
 import { setToast } from "~/features/toasts/toast.server";
+import { getUserDetails } from "~/features/v2/auth/user.server";
 import { deleteEntry } from "~/features/v2/list/delete.server";
 import { getEntry } from "~/features/v2/list/entries.server";
 import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";

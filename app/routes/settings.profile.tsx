@@ -5,7 +5,10 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@vercel/remix";
 import { z } from "zod";
 import Spinner from "~/components/spinner";
 import { db } from "~/db.server";
-import { getUserDetails, getUserOrRedirect } from "~/features/auth/auth.server";
+import {
+  getUserDetails,
+  getUserOrRedirect,
+} from "~/features/v2/auth/user.server";
 
 const profileSchema = z.object({
   firstName: z.string(),

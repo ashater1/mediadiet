@@ -7,10 +7,14 @@ import {
 } from "@vercel/remix";
 import invariant from "tiny-invariant";
 import { db } from "~/db.server";
-import { getUserByUsername, getUserDetails } from "~/features/auth/auth.server";
-import { getAvatarUrl } from "~/features/auth/context";
+
 import { followUserById, unfollowUserById } from "~/features/friends/follow";
 import { PageFrame } from "~/features/ui/frames";
+import {
+  findUser,
+  getAvatarUrl,
+  getUserDetails,
+} from "~/features/v2/auth/user.server";
 import { ListOwnerContextType } from "~/features/v2/list/useListOwnerContext";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -69,7 +73,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   // Get the user submitting the action, the user being followed, and the form data
   const [user, listOwner, _formData] = await Promise.all([
     getUserDetails({ request, response }),
-    getUserByUsername(username),
+    findUser({ username }),
     await request.formData(),
   ]);
 

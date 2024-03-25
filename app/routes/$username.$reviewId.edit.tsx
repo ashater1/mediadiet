@@ -25,15 +25,15 @@ import {
   EntryFormInputs,
   EntryFormRoot,
 } from "~/features/add/components/entryForm";
-import { getUser } from "~/features/auth/auth.server";
-import { setToast } from "~/features/toasts/toast.server";
+
+import { getSessionUser } from "~/features/v2/auth/user.server";
 import { entrySchema, updateEntry } from "~/features/v2/list/update.server";
 import { loader as reviewLoader } from "~/routes/$username.$reviewId";
 import { safeFilter } from "~/utils/funcs";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
-  const user = await getUser({ request, response });
+  const user = await getSessionUser({ request, response });
   if (!user) {
     throw redirect("/login", { headers: response.headers });
   }
@@ -48,7 +48,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   invariant(username, "username required");
   invariant(reviewId, "reviewId required");
 
-  const user = await getUser({ request, response });
+  const user = await getSessionUser({ request, response });
   if (!user) throw redirect("/login", { headers: response.headers });
 
   const submission = Object.fromEntries(await request.formData());

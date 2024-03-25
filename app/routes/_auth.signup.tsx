@@ -9,12 +9,13 @@ import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import { z } from "zod";
 import Spinner from "~/components/spinner";
-import { getUser, getUserById, signUp } from "~/features/auth/auth.server";
-import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
+import ConfirmEmailAddressEmail from "~/features/v2/auth/emails/confirmSignup";
 import { Logo } from "~/features/brand/logo";
 import { resend } from "~/features/emails/resend.server";
 import { json } from "@vercel/remix";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import { findUser, getSessionUser } from "~/features/v2/auth/user.server";
+import { signUp } from "~/features/v2/auth/signUp.server";
 
 const SignUpSchema = z
   .object({
@@ -38,10 +39,10 @@ const SignUpSchema = z
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
-  const user = await getUser({ request, response });
+  const user = await getSessionUser({ request, response });
 
   if (user) {
-    const { username } = await getUserById(user.id);
+    const { username } = await findUser({ id: user.id });
     throw redirect(`/${username}`, { headers: request.headers });
   }
 

@@ -16,7 +16,7 @@ import stylesheet from "~/tailwind.css";
 import toastStylesheet from "~/toaststyle.css";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { AddNewContext } from "./features/add/context";
-import { getUserDetails } from "./features/auth/auth.server";
+
 import { UserContextProvider } from "./features/auth/context";
 import { useIsAuthPage } from "./features/auth/hooks";
 import Navbar from "./features/nav/Navbar";
@@ -24,6 +24,7 @@ import { getToast } from "./features/toasts/toast.server";
 import { Toaster, toast } from "sonner";
 import { useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { getUserDetails } from "./features/v2/auth/user.server";
 
 export const meta: MetaFunction = () => {
   return [

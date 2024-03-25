@@ -1,11 +1,7 @@
 import { createContext, useContext } from "react";
-import { getUserById } from "./auth.server";
+import { findUser } from "../v2/auth/user.server";
 
-export type User = Awaited<ReturnType<typeof getUserById>>;
-
-export function getAvatarUrl(avatar: string) {
-  return `https://cgoipxithucvtnbvyypv.supabase.co/storage/v1/object/public/public/avatars/${avatar}`;
-}
+export type User = Awaited<ReturnType<typeof findUser>>;
 
 export const UserContext = createContext<User | null>(null);
 

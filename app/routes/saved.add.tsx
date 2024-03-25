@@ -2,7 +2,7 @@ import { Link, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
-import { getUserDetails } from "~/features/auth/auth.server";
+import { getUserDetails } from "~/features/v2/auth/user.server";
 import { SearchCombobox } from "~/features/search";
 import { setToast } from "~/features/toasts/toast.server";
 import {

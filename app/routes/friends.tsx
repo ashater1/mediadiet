@@ -2,7 +2,7 @@ import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { redirect } from "remix-typedjson";
 import { Count } from "~/components/headerbar/count";
-import { getUserDetails } from "~/features/auth/auth.server";
+import { getUserDetails } from "~/features/v2/auth/user.server";
 import { useUserContext } from "~/features/auth/context";
 import { getCounts } from "~/features/friends/counts";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
