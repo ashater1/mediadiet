@@ -17,8 +17,8 @@ import toastStylesheet from "~/toaststyle.css";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { AddNewContext } from "./features/add/context";
 
-import { UserContextProvider } from "./features/auth/context";
-import { useIsAuthPage } from "./features/auth/hooks";
+import { UserContextProvider } from "./features/v2/auth/context";
+import { useIsAuthPage } from "./features/v2/auth/hooks";
 import Navbar from "./features/nav/Navbar";
 import { getToast } from "./features/toasts/toast.server";
 import { Toaster, toast } from "sonner";

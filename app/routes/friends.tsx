@@ -3,7 +3,7 @@ import { LoaderFunctionArgs } from "@vercel/remix";
 import { redirect } from "remix-typedjson";
 import { Count } from "~/components/headerbar/count";
 import { getUserDetails } from "~/features/v2/auth/user.server";
-import { useUserContext } from "~/features/auth/context";
+import { useUserContext } from "~/features/v2/auth/context";
 import { getCounts } from "~/features/friends/counts";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { PageFrame } from "~/features/ui/frames";
