@@ -1,12 +1,12 @@
 import { createContext, useContext } from "react";
 import { useAddNew } from "./useAddNew";
 
-export const _AddNewContext = createContext<ReturnType<
-  typeof useAddNew
-> | null>(null);
+export const AddNewContext = createContext<ReturnType<typeof useAddNew> | null>(
+  null
+);
 
 export const useAddNewContext = () => {
-  const context = useContext(_AddNewContext);
+  const context = useContext(AddNewContext);
 
   if (!context) {
     throw new Error(
@@ -16,10 +16,14 @@ export const useAddNewContext = () => {
   return context;
 };
 
-export const AddNewContext = ({ children }: { children: React.ReactNode }) => {
+export const AddNewContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const addNew = useAddNew();
 
   return (
-    <_AddNewContext.Provider value={addNew}>{children}</_AddNewContext.Provider>
+    <AddNewContext.Provider value={addNew}>{children}</AddNewContext.Provider>
   );
 };

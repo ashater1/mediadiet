@@ -52,9 +52,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   if (!user) throw redirect("/login", { headers: response.headers });
 
   const submission = Object.fromEntries(await request.formData());
-  console.log(submission.consumedDate);
   const parsedSubmission = entrySchema.parse({ ...submission, id: reviewId });
-  console.log(parsedSubmission);
   const result = await updateEntry(parsedSubmission);
   // throw redirect(`/${username}/${reviewId}`, { headers: response.headers });
   return null;

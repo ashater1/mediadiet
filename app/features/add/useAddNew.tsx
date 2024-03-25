@@ -3,29 +3,16 @@ import { useEffect, useReducer, useState } from "react";
 import { loader as bookLoader } from "~/routes/search.book.$id";
 import { loader as movieLoader } from "~/routes/search.movie.$id";
 import { loader as tvLoader } from "~/routes/search.tv.$id";
-
 import { SerializeFrom } from "@vercel/remix";
 import { useSearch } from "../v2/search/useSearch";
-import { MediaType } from "@prisma/client";
-
-type ModalCloses = "default" | "success" | "draft";
 
 type State = {
-  isSearchLoading: boolean;
-  searchTerm: string;
-  mediaType: MediaType;
   selectedItem: string | null;
   selectedSeason: string | null;
   isModalOpen: boolean;
 };
 
 type Action =
-  | { type: "SET_MEDIA_TYPE"; payload: MediaType }
-  | {
-      type: "SET_SEARCH_TERM";
-      payload: string;
-    }
-  | { type: "SET_LOADING"; payload: boolean }
   | {
       type: "SET_SELECTED_ITEM";
       payload: string;
@@ -38,7 +25,6 @@ type Action =
   | { type: "RESET_SEASON" }
   | {
       type: "CLOSE_MODAL";
-      closeType: ModalCloses;
     }
   | {
       type: "OPEN_MODAL";
@@ -48,29 +34,10 @@ const initialState: State = {
   isModalOpen: false,
   selectedSeason: null,
   selectedItem: null,
-  isSearchLoading: false,
-  mediaType: MediaType.MOVIE,
-  searchTerm: "",
 };
 
 function reducer(state: State, action: Action) {
   switch (action.type) {
-    case "SET_MEDIA_TYPE":
-      return {
-        ...state,
-        mediaType: action.payload,
-        searchTerm: "",
-        loading: false,
-      };
-
-    case "SET_SEARCH_TERM": {
-      return { ...state, searchTerm: action.payload, isSearchLoading: true };
-    }
-
-    case "SET_LOADING": {
-      return { ...state, isSearchLoading: action.payload };
-    }
-
     case "RESET_SELECTED_ITEM": {
       return {
         ...state,
@@ -99,18 +66,12 @@ function reducer(state: State, action: Action) {
     }
 
     case "CLOSE_MODAL": {
-      if (action.closeType === "success") {
-        return {
-          ...state,
-          searchTerm: "",
-          mediaType: "movie" as MediaType,
-          selectedItem: null,
-          selectedSeason: null,
-          isModalOpen: false,
-        };
-      }
-
-      return { ...state, isModalOpen: false };
+      return {
+        ...state,
+        selectedItem: null,
+        selectedSeason: null,
+        isModalOpen: false,
+      };
     }
 
     case "OPEN_MODAL": {
@@ -170,7 +131,7 @@ export function useAddNew() {
 
   const setSelectedItem = (id: string) => {
     dispatch({ type: "SET_SELECTED_ITEM", payload: id });
-    mediaItemLoad(`/search/${state.mediaType}/${id}`);
+    mediaItemLoad(`/search/${mediaType}/${id}`);
   };
 
   const resetSelectedItem = () => {
@@ -179,7 +140,7 @@ export function useAddNew() {
   };
 
   const setSeason = (seasonId: string) => {
-    if (state.mediaType !== "TV")
+    if (mediaType !== "TV")
       throw new Error("Can't set a season for movie or book");
 
     dispatch({ type: "SET_SEASON", payload: seasonId });
@@ -189,8 +150,8 @@ export function useAddNew() {
     dispatch({ type: "RESET_SEASON" });
   };
 
-  const closeModal = ({ type = "default" }: { type?: ModalCloses }) => {
-    dispatch({ type: "CLOSE_MODAL", closeType: type });
+  const closeModal = () => {
+    dispatch({ type: "CLOSE_MODAL" });
   };
 
   const openModal = () => {

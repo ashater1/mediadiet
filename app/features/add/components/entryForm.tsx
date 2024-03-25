@@ -121,7 +121,9 @@ export function EntryFormInputs({
           className="py-0.5  text-slate-900"
           id="consumedDate"
           name="consumedDate"
-          defaultValue={consumedDate?.slice(0, 10)}
+          defaultValue={
+            consumedDate?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)
+          }
           max={new Date().toISOString().slice(0, 10)}
           type="date"
         />

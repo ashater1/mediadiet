@@ -25,12 +25,12 @@ export function NewEntryModal() {
 
       <Dialog.Root
         open={isModalOpen}
-        onOpenChange={(open) => !open && closeModal({ type: "default" })}
+        onOpenChange={(open) => !open && closeModal()}
       >
         <Dialog.Portal>
           <Dialog.Overlay key={"overlay"} asChild>
             <motion.div
-              onClick={() => closeModal({ type: "default" })}
+              onClick={() => closeModal()}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.15 }}
@@ -77,7 +77,7 @@ function SelectAndSearch() {
         <SearchCombobox
           isSearchLoading={isSearchLoading}
           items={searchData}
-          mediaType={state.mediaType}
+          mediaType={mediaType}
           onInputChange={(value) => setSearchTerm(value)}
           onSelect={(item) => setSelectedItem(item.id)}
           searchTerm={searchTerm}

@@ -52,7 +52,7 @@ export function TVForm() {
   const isDone = addingState === "idle" && addSuccess?.success;
 
   useEffect(() => {
-    if (isDone) closeModal({ type: "success" });
+    if (isDone) closeModal();
   }, [isDone]);
 
   if (!selectedSeason) {
@@ -68,7 +68,7 @@ export function TVForm() {
       <div className="relative">
         <EntryFormHeaderBar
           onBackClick={resetSelectedItem}
-          onCloseClick={() => closeModal({ type: "default" })}
+          onCloseClick={() => closeModal()}
         />
         <EntryFormRoot className="p-5">
           <EntryFormImageRoot>
@@ -128,7 +128,7 @@ export function TVForm() {
     <div className="relative">
       <EntryFormHeaderBar
         onBackClick={resetSeason}
-        onCloseClick={() => closeModal({ type: "default" })}
+        onCloseClick={() => closeModal()}
       />
       <NewEntryForm
         creators={mediaItemData?.creator}
@@ -160,7 +160,7 @@ export function ReviewForm() {
       <div className="relative">
         <EntryFormHeaderBar
           onBackClick={resetSelectedItem}
-          onCloseClick={() => closeModal({ type: "default" })}
+          onCloseClick={() => closeModal()}
         />
         <NewEntryForm
           hiddenIds={[
@@ -185,7 +185,7 @@ export function ReviewForm() {
     <div className="relative">
       <EntryFormHeaderBar
         onBackClick={resetSelectedItem}
-        onCloseClick={() => closeModal({ type: "default" })}
+        onCloseClick={() => closeModal()}
       />
       <NewEntryForm
         id={state.selectedItem ?? ""}
@@ -222,7 +222,7 @@ export function NewEntryForm({
   const success = addingState === "idle" && addSuccess?.success;
 
   if (success) {
-    closeModal({ type: "success" });
+    closeModal();
   }
 
   const subHeaders = safeFilter([creators, releaseYear, length]);
@@ -239,7 +239,7 @@ export function NewEntryForm({
         <Form
           className="mt-2 flex h-full flex-col gap-4"
           method="post"
-          action={`/list/${mediaType}/add`}
+          action={`/list/${mediaType.toLowerCase()}/add`}
         >
           <EntryFormInputs
             hiddenInputs={[...(hiddenIds ?? []), { name: "id", value: id }]}

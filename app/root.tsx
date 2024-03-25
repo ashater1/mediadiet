@@ -15,8 +15,7 @@ import {
 import stylesheet from "~/tailwind.css";
 import toastStylesheet from "~/toaststyle.css";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import { AddNewContext } from "./features/add/context";
-
+import { AddNewContextProvider } from "./features/add/context";
 import { UserContextProvider } from "./features/v2/auth/context";
 import { useIsAuthPage } from "./features/v2/auth/hooks";
 import Navbar from "./features/v2/nav/Navbar";
@@ -102,7 +101,7 @@ export default function App() {
       </head>
       <body className="flex bg-gradient-to-tr from-orange-100 via-pink-100 to-indigo-50 h-full min-h-screen">
         <div className="h-full w-full">
-          <AddNewContext>
+          <AddNewContextProvider>
             <UserContextProvider user={user}>
               {!isAuthPage && <Navbar />}
               <Outlet />
@@ -111,7 +110,7 @@ export default function App() {
               <LiveReload />
               <Analytics />
             </UserContextProvider>
-          </AddNewContext>
+          </AddNewContextProvider>
         </div>
         <Toaster richColors position="bottom-right" />
       </body>

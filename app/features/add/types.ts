@@ -13,6 +13,7 @@ export const NewSubmissionSchema = z.object({
   review: z.string(),
 });
 
+// TODO - Fix this to use stringToBoolean util
 export const NewMovieSchema = NewSubmissionSchema.merge(
   z.object({
     onPlane: z.coerce.boolean().default(false),
