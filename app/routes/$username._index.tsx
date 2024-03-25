@@ -3,14 +3,14 @@ import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { EmptyState } from "~/features/list/components/empty";
-import { getMediaTypesFromUrl } from "~/features/list/utils";
+import { getMediaTypesFromUrl } from "~/features/v2/list/utils.server";
 import { UserHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 import { getEntryListCounts } from "~/features/v2/list/counts.server";
 import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
 import invariant from "tiny-invariant";
 import { UserEntriesTable } from "~/features/list/components/userEntriesTable_V2";
-import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
+import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];

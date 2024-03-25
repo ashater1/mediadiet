@@ -17,10 +17,10 @@ import {
   ReviewIcon,
   StarsDisplay,
   TvShowIcon,
-} from "~/features/list/icons/icons";
-import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
+} from "~/features/v2/list/icons/icons";
+import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
 import { UserData } from "~/routes/$username._index";
-import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
+import { usePendingDeletions } from "../../v2/list/hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
 
 function TableRow({

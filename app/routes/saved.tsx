@@ -11,8 +11,12 @@ import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { getUserDetails } from "~/features/v2/auth/user.server";
-import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
-import { getMediaTypesFromUrl } from "~/features/list/utils";
+import {
+  BookIcon,
+  MovieIcon,
+  TvShowIcon,
+} from "~/features/v2/list/icons/icons";
+import { getMediaTypesFromUrl } from "~/features/v2/list/utils.server";
 import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/features/ui/frames";
 import { deleteSavedItem } from "~/features/v2/saved/delete.server";

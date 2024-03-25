@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames";
-import { FavoriteHeart } from "../list/icons/icons";
+import { FavoriteHeart } from "../v2/list/icons/icons";
 import { StarIcon } from "@heroicons/react/24/outline";
 import { useUserContext } from "../v2/auth/context";
 

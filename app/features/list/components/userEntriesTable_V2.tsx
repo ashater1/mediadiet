@@ -17,8 +17,8 @@ import {
   ReviewIcon,
   StarsDisplay,
   TvShowIcon,
-} from "~/features/list/icons/icons";
-import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
+} from "~/features/v2/list/icons/icons";
+import { usePendingDeletions } from "../../v2/list/hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
 import { FormattedReview } from "~/features/v2/list/entries.server";
 

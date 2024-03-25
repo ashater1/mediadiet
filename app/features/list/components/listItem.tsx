@@ -10,7 +10,7 @@ import {
   ThumbsDown,
   ThumbsUp,
   TvShowIcon,
-} from "~/features/list/icons/icons";
+} from "~/features/v2/list/icons/icons";
 
 function Dot() {
   return (

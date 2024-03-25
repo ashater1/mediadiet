@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "~/components/button";
 import { useAddNewContext } from "~/features/add/context";
-import { useListOwnerContext } from "~/features/v2/list/useListOwnerContext";
+import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
 
 export function EmptyState({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const { openModal } = useAddNewContext();

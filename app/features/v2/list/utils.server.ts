@@ -2,6 +2,7 @@ import { MediaType } from "@prisma/client";
 import { z } from "zod";
 
 const entryTypesEnum = z.array(z.enum(["BOOK", "MOVIE", "TV"]));
+
 const entryTypesArraySchema = z
   .array(z.string().toUpperCase())
   .pipe(entryTypesEnum);

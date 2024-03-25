@@ -15,7 +15,7 @@ import {
   getAvatarUrl,
   getUserDetails,
 } from "~/features/v2/auth/user.server";
-import { ListOwnerContextType } from "~/features/v2/list/useListOwnerContext";
+import { ListOwnerContextType } from "~/features/v2/list/hooks/useListOwnerContext";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
