@@ -4,7 +4,7 @@ import { getUserDetails } from "~/features/v2/auth/user.server";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { ListOwnerHeaderBar } from "~/features/v2/list/components/listOwnerHeaderBar";
 import { LoaderFunctionArgs } from "@vercel/remix";
-import { PageFrame } from "~/features/ui/frames";
+import { PageFrame } from "~/components/frames";
 import { redirect } from "remix-typedjson";
 import { useUserContext } from "~/features/v2/auth/context";
 

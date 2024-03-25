@@ -1,7 +1,7 @@
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { db } from "~/db.server";
-import { openlibrary } from "~/features/books/openLibrary";
+import { openlibrary } from "~/features/v2/books/openLibrary";
 import { getDirectors, movieDb } from "~/features/tvAndMovies";
 import {
   formatBookToCreateMediaItem,

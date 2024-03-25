@@ -17,8 +17,8 @@ import {
   TvShowIcon,
 } from "~/features/v2/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/v2/list/utils.server";
-import { setToast } from "~/features/toasts/toast.server";
-import { PageFrame, PageHeader } from "~/features/ui/frames";
+import { setToast } from "~/features/v2/toasts/toast.server";
+import { PageFrame, PageHeader } from "~/components/frames";
 import { deleteSavedItem } from "~/features/v2/saved/delete.server";
 import {
   formatSavedItem,

@@ -18,7 +18,7 @@ import invariant from "tiny-invariant";
 import { Spinner } from "~/components/login/Spinner";
 import { FavoriteHeart, StarsDisplay } from "~/features/v2/list/icons/icons";
 
-import { setToast } from "~/features/toasts/toast.server";
+import { setToast } from "~/features/v2/toasts/toast.server";
 import { getUserDetails } from "~/features/v2/auth/user.server";
 import { deleteEntry } from "~/features/v2/list/delete.server";
 import { getEntry } from "~/features/v2/list/entries.server";

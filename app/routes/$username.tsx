@@ -9,7 +9,7 @@ import invariant from "tiny-invariant";
 import { db } from "~/db.server";
 
 import { followUserById, unfollowUserById } from "~/features/v2/friends/follow";
-import { PageFrame } from "~/features/ui/frames";
+import { PageFrame } from "~/components/frames";
 import {
   findUser,
   getAvatarUrl,

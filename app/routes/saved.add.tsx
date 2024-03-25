@@ -4,7 +4,7 @@ import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
 import { getUserDetails } from "~/features/v2/auth/user.server";
 
-import { setToast } from "~/features/toasts/toast.server";
+import { setToast } from "~/features/v2/toasts/toast.server";
 import {
   AddToSavedSchema,
   addSavedBook,
@@ -12,7 +12,7 @@ import {
   addSavedShow,
 } from "~/features/v2/saved/add.server";
 import { useSearch } from "~/features/v2/search/useSearch";
-import { SearchCombobox } from "~/features/search/SearchCombobox";
+import { SearchCombobox } from "~/features/v2/search/SearchCombobox";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();

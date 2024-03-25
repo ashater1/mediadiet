@@ -10,7 +10,7 @@ import classNames from "classnames";
 import { motion } from "framer-motion";
 import Spinner from "~/components/spinner";
 
-import { Logo } from "~/features/brand/logo";
+import { Logo } from "~/components/logo";
 import {
   loginSchema,
   signInWithPassword,

@@ -1,11 +1,11 @@
 import { LoaderFunctionArgs, json } from "@vercel/remix";
-import { openlibrary } from "~/features/books/openLibrary";
+import { openlibrary } from "~/features/v2/books/openLibrary";
 
 import { listToString, safeFilter } from "~/utils/funcs";
 import { titleize } from "~/utils/capitalize";
 import { MediaType } from "@prisma/client";
-import { ComboboxOption } from "~/features/search/SearchCombobox";
-import { getSearchTerm } from "~/features/search/utils";
+import { ComboboxOption } from "~/features/v2/search/SearchCombobox";
+import { getSearchTerm } from "~/features/v2/search/utils";
 
 export type BookSearchResults = (ComboboxOption & {
   imgSrc: string | null;

@@ -19,8 +19,8 @@ import { AddNewContext } from "./features/add/context";
 
 import { UserContextProvider } from "./features/v2/auth/context";
 import { useIsAuthPage } from "./features/v2/auth/hooks";
-import Navbar from "./features/nav/Navbar";
-import { getToast } from "./features/toasts/toast.server";
+import Navbar from "./features/v2/nav/Navbar";
+import { getToast } from "./features/v2/toasts/toast.server";
 import { Toaster, toast } from "sonner";
 import { useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
