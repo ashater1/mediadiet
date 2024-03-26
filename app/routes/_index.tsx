@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, redirect } from "@vercel/remix";
-import { getUserDetails } from "~/features/v2/auth/user.server";
+import { getUserDetails } from "~/features/auth/user.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();

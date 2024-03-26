@@ -11,11 +11,8 @@ import { motion } from "framer-motion";
 import Spinner from "~/components/spinner";
 
 import { Logo } from "~/components/logo";
-import {
-  loginSchema,
-  signInWithPassword,
-} from "~/features/v2/auth/signIn.server";
-import { findUser, getUserDetails } from "~/features/v2/auth/user.server";
+import { loginSchema, signInWithPassword } from "~/features/auth/signIn.server";
+import { findUser, getUserDetails } from "~/features/auth/user.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();

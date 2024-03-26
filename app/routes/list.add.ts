@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, json } from "@vercel/remix";
-import { getUserOrRedirect } from "~/features/v2/auth/user.server";
-import { AddToListSchema, addNewEntry } from "~/features/v2/list/add.server";
-import { setToast } from "~/features/v2/toasts/toast.server";
+import { getUserOrRedirect } from "~/features/auth/user.server";
+import { AddToListSchema, addNewEntry } from "~/features/list/add.server";
+import { setToast } from "~/features/toasts/toast.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();

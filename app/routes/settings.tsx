@@ -6,7 +6,7 @@ import { NavLink, Outlet } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import classNames from "classnames";
 import { PageFrame } from "~/components/frames";
-import { getUserOrRedirect } from "~/features/v2/auth/user.server";
+import { getUserOrRedirect } from "~/features/auth/user.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();

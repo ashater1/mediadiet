@@ -2,17 +2,17 @@ import { Link, useNavigation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@vercel/remix";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
-import { getUserDetails } from "~/features/v2/auth/user.server";
+import { getUserDetails } from "~/features/auth/user.server";
 
-import { setToast } from "~/features/v2/toasts/toast.server";
+import { setToast } from "~/features/toasts/toast.server";
 import {
   AddToSavedSchema,
   addSavedBook,
   addSavedMovie,
   addSavedShow,
-} from "~/features/v2/saved/add.server";
-import { useSearch } from "~/features/v2/search/useSearch";
-import { SearchCombobox } from "~/features/v2/search/SearchCombobox";
+} from "~/features/saved/add.server";
+import { useSearch } from "~/features/search/useSearch";
+import { SearchCombobox } from "~/features/search/SearchCombobox";
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();

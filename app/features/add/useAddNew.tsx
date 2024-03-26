@@ -4,7 +4,7 @@ import { loader as bookLoader } from "~/routes/search.book.$id";
 import { loader as movieLoader } from "~/routes/search.movie.$id";
 import { loader as tvLoader } from "~/routes/search.tv.$id";
 import { SerializeFrom } from "@vercel/remix";
-import { useSearch } from "../v2/search/useSearch";
+import { useSearch } from "../search/useSearch";
 
 type State = {
   selectedItem: string | null;

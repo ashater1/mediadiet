@@ -1,5 +1,5 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { MovieIcon, BookIcon, TvShowIcon } from "../v2/list/icons/icons";
+import { MovieIcon, BookIcon, TvShowIcon } from "../list/icons/icons";
 import { MediaType } from "@prisma/client";
 
 type SelectMediaOptionsType = {

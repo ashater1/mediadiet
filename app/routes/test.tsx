@@ -1,7 +1,7 @@
 import { useTypedLoaderData } from "remix-typedjson";
 import { db } from "~/db.server";
 import { PageFrame } from "~/components/frames";
-import { useSearch } from "~/features/v2/search/useSearch";
+import { useSearch } from "~/features/search/useSearch";
 
 export async function loader() {
   return null;

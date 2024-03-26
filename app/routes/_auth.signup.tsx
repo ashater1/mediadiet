@@ -9,13 +9,13 @@ import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import { z } from "zod";
 import Spinner from "~/components/spinner";
-import ConfirmEmailAddressEmail from "~/features/v2/auth/emails/confirmSignup";
+import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
 import { Logo } from "~/components/logo";
-import { resend } from "~/features/v2/emails/resend.server";
+import { resend } from "~/features/emails/resend.server";
 import { json } from "@vercel/remix";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { findUser, getSessionUser } from "~/features/v2/auth/user.server";
-import { signUp } from "~/features/v2/auth/signUp.server";
+import { findUser, getSessionUser } from "~/features/auth/user.server";
+import { signUp } from "~/features/auth/signUp.server";
 
 const SignUpSchema = z
   .object({

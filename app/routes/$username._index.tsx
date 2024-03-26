@@ -2,17 +2,17 @@ import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom, json } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
-import { EmptyState } from "~/features/v2/list/components/empty";
-import { getMediaTypesFromUrl } from "~/features/v2/list/utils.server";
-import { ListOwnerHeaderBar } from "~/features/v2/list/components/listOwnerHeaderBar";
+import { EmptyState } from "~/features/list/components/empty";
+import { getMediaTypesFromUrl } from "~/features/list/utils.server";
+import { ListOwnerHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
-import { getEntryListCounts } from "~/features/v2/list/counts.server";
-import { formatEntries, getEntries } from "~/features/v2/list/entries.server";
+import { getEntryListCounts } from "~/features/list/counts.server";
+import { formatEntries, getEntries } from "~/features/list/entries.server";
 import invariant from "tiny-invariant";
-import { UserEntriesTable } from "~/features/v2/list/components/userEntriesTable";
-import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
+import { UserEntriesTable } from "~/features/list/components/userEntriesTable";
+import { useListOwnerContext } from "~/features/list/hooks/useListOwnerContext";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import { useUserContext } from "~/features/v2/auth/context";
+import { useUserContext } from "~/features/auth/context";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 

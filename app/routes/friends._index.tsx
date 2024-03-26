@@ -1,7 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { db } from "~/db.server";
-import { getUserOrRedirect } from "~/features/v2/auth/user.server";
+import { getUserOrRedirect } from "~/features/auth/user.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let response = new Response();

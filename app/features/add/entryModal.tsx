@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { SearchCombobox } from "../v2/search/SearchCombobox";
+import { SearchCombobox } from "../search/SearchCombobox";
 import { SelectMediaType } from "./SelectMediaType";
 import { useAddNewContext } from "./context";
 import { ReviewForm } from "./entryForm";

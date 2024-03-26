@@ -8,14 +8,14 @@ import {
 import invariant from "tiny-invariant";
 import { db } from "~/db.server";
 
-import { followUserById, unfollowUserById } from "~/features/v2/friends/follow";
+import { followUserById, unfollowUserById } from "~/features/friends/follow";
 import { PageFrame } from "~/components/frames";
 import {
   findUser,
   getAvatarUrl,
   getUserDetails,
-} from "~/features/v2/auth/user.server";
-import { ListOwnerContextType } from "~/features/v2/list/hooks/useListOwnerContext";
+} from "~/features/auth/user.server";
+import { ListOwnerContextType } from "~/features/list/hooks/useListOwnerContext";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();

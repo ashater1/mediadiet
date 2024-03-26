@@ -1,5 +1,5 @@
 import { createCookieSessionStorage } from "@vercel/remix";
-import { Toast } from "~/features/v2/toasts/toast.server";
+import { Toast } from "~/features/toasts/toast.server";
 
 export const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<never, { toast: Toast[] }>({

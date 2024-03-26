@@ -12,9 +12,9 @@ import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import Spinner from "~/components/spinner";
 import { db } from "~/db.server";
-import { useUserContext } from "~/features/v2/auth/context";
-import { getServerClient } from "~/features/v2/auth/client.server";
-import { getUserOrRedirect } from "~/features/v2/auth/user.server";
+import { useUserContext } from "~/features/auth/context";
+import { getServerClient } from "~/features/auth/client.server";
+import { getUserOrRedirect } from "~/features/auth/user.server";
 import asyncIterableToStream from "~/utils/asyncIterableToStream";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 

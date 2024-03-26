@@ -10,21 +10,17 @@ import {
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
-import { getUserDetails } from "~/features/v2/auth/user.server";
-import {
-  BookIcon,
-  MovieIcon,
-  TvShowIcon,
-} from "~/features/v2/list/icons/icons";
-import { getMediaTypesFromUrl } from "~/features/v2/list/utils.server";
-import { setToast } from "~/features/v2/toasts/toast.server";
+import { getUserDetails } from "~/features/auth/user.server";
+import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
+import { getMediaTypesFromUrl } from "~/features/list/utils.server";
+import { setToast } from "~/features/toasts/toast.server";
 import { PageFrame, PageHeader } from "~/components/frames";
-import { deleteSavedItem } from "~/features/v2/saved/delete.server";
+import { deleteSavedItem } from "~/features/saved/delete.server";
 import {
   formatSavedItem,
   getSavedCounts,
   getSavedItems,
-} from "~/features/v2/saved/get.server";
+} from "~/features/saved/get.server";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
 
 export async function loader({ request }: LoaderFunctionArgs) {

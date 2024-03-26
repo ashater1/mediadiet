@@ -2,7 +2,7 @@ import { MediaType, Prisma } from "@prisma/client";
 import { parse } from "date-fns";
 import { z } from "zod";
 import { db } from "~/db.server";
-import { Book, openlibrary } from "~/features/v2/books/openLibrary";
+import { Book, openlibrary } from "~/features/books/openLibrary";
 import { Movie, Season, Show, movieDb } from "../tvAndMovies/api";
 
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {

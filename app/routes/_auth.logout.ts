@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, redirect } from "@vercel/remix";
-import { signOut } from "~/features/v2/auth/signOut.server";
+import { signOut } from "~/features/auth/signOut.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();

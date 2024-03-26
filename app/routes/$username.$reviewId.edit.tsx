@@ -26,8 +26,8 @@ import {
   EntryFormRoot,
 } from "~/features/add/components/entryForm";
 
-import { getSessionUser } from "~/features/v2/auth/user.server";
-import { entrySchema, updateEntry } from "~/features/v2/list/update.server";
+import { getSessionUser } from "~/features/auth/user.server";
+import { entrySchema, updateEntry } from "~/features/list/update.server";
 import { loader as reviewLoader } from "~/routes/$username.$reviewId";
 import { safeFilter } from "~/utils/funcs";
 

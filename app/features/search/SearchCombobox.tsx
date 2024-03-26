@@ -6,7 +6,7 @@ import {
 import { Combobox } from "~/components/combobox";
 import { Spinner } from "~/components/login/Spinner";
 import classNames from "classnames";
-import { useAddNewContext } from "../../add/context";
+import { useAddNewContext } from "../add/context";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { MediaType } from "@prisma/client";
 

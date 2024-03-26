@@ -9,9 +9,9 @@ import classNames from "classnames";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { NewEntryModal } from "~/features/add/entryModal";
-import { useUserContext } from "~/features/v2/auth/context";
-import { Logo } from "../../../components/logo";
-import { useAddNewContext } from "../../add/context";
+import { useUserContext } from "~/features/auth/context";
+import { Logo } from "../../components/logo";
+import { useAddNewContext } from "../add/context";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
