@@ -8,6 +8,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MediaType {
+  BOOK
+  MOVIE
+  TV
+
+  @@map("mediatype")
+}
+
 model User {
   id                String              @id @db.Uuid
   createdAt         DateTime?           @default(now()) @map("created_date")
@@ -18,12 +26,6 @@ model User {
   username          String              @unique
   avatar            String?
   soderberghMode    Boolean             @default(false) @map("soderbergh_mode")
-  BookForLater      BookForLater[]
-  BookReviews       BookReview[]
-  MovieForLater     MovieForLater[]
-  MovieReviews      MovieReview[]
-  ShowForLater      ShowForLater[]
-  TvReviews         TvReview[]
   followedBy        Follows[]           @relation("followedBy")
   following         Follows[]           @relation("following")
   MediaItemForLater MediaItemForLater[]
@@ -41,211 +43,6 @@ model Follows {
 
   @@id([followedId, followerId])
   @@map("follows")
-}
-
-model BookReview {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
-  favorited    Boolean?
-  review       String?
-  bookId       String
-  audiobook    Boolean   @default(false)
-  createdAt    DateTime? @default(now()) @map("created_date")
-  userId       String    @map("user_id") @db.Uuid
-  stars        Int?
-  book         Book      @relation(fields: [bookId], references: [id])
-  user         User      @relation(fields: [userId], references: [id])
-
-  @@map("book_review")
-}
-
-model Author {
-  name  String
-  id    String @id @unique
-  books Book[] @relation("AuthorToBook")
-
-  @@map("author")
-}
-
-model Book {
-  id            String         @id @unique
-  title         String
-  publishedDate DateTime?      @map("published_date") @db.Date
-  isbn10        String?        @map("isbn_10")
-  isbn13        String?        @map("isbn_13")
-  BookForLater  BookForLater[]
-  BookReview    BookReview[]
-  authors       Author[]       @relation("AuthorToBook")
-  olCoverId     String?        @map("ol_cover_id")
-
-  @@map("book")
-}
-
-model MovieReview {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
-  favorited    Boolean?
-  review       String?
-  movieId      String
-  inTheater    Boolean?  @default(false) @map("in_theater")
-  onPlane      Boolean?  @default(false) @map("on_plane")
-  createdAt    DateTime? @default(now()) @map("created_date")
-  userId       String    @map("user_id") @db.Uuid
-  stars        Int?
-  movie        Movie     @relation(fields: [movieId], references: [id])
-  user         User      @relation(fields: [userId], references: [id])
-
-  @@map("movie_review")
-}
-
-model Director {
-  id     String  @id @unique
-  name   String?
-  movies Movie[] @relation("DirectorToMovie")
-
-  @@map("director")
-}
-
-model Movie {
-  id            String          @id @unique
-  title         String
-  releasedYear  Int?            @map("released_year")
-  posterPath    String?         @map("poster_path")
-  MovieForLater MovieForLater[]
-  MovieReview   MovieReview[]
-  directors     Director[]      @relation("DirectorToMovie")
-
-  @@map("movie")
-}
-
-model TvReview {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
-  favorited    Boolean?
-  review       String?
-  tvSeasonId   String
-  createdAt    DateTime? @default(now()) @map("created_date")
-  userId       String    @map("user_id") @db.Uuid
-  stars        Int?
-  tvSeason     TvSeason  @relation(fields: [tvSeasonId], references: [id])
-  user         User      @relation(fields: [userId], references: [id])
-
-  @@map("tv_review")
-}
-
-model TvShow {
-  id           String         @id @unique
-  title        String?
-  ShowForLater ShowForLater[]
-  seasons      TvSeason[]
-  studio       Studio[]       @relation("StudioToTvShow")
-
-  @@map("tv_show")
-}
-
-model TvSeason {
-  id           String     @id @unique
-  title        String?
-  airDate      DateTime?  @db.Date
-  seasonNumber Int?       @map("season_number")
-  posterPath   String?    @map("poster_path")
-  tvShowId     String
-  TvReview     TvReview[]
-  tvShow       TvShow     @relation(fields: [tvShowId], references: [id])
-
-  @@map("tv_season")
-}
-
-model Studio {
-  id    String   @id @unique
-  name  String?
-  shows TvShow[] @relation("StudioToTvShow")
-
-  @@map("studio")
-}
-
-model BookForLater {
-  id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookId  String
-  userId  String   @db.Uuid
-  addedAt DateTime @default(now()) @map("created_date")
-  book    Book     @relation(fields: [bookId], references: [id])
-  user    User     @relation(fields: [userId], references: [id])
-
-  @@unique([bookId, userId])
-  @@map("book_for_later")
-}
-
-model MovieForLater {
-  id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  movieId String
-  userId  String   @db.Uuid
-  addedAt DateTime @default(now()) @map("created_date")
-  movie   Movie    @relation(fields: [movieId], references: [id])
-  user    User     @relation(fields: [userId], references: [id])
-
-  @@unique([movieId, userId])
-  @@map("movie_for_later")
-}
-
-model ShowForLater {
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tvShowId String
-  userId   String   @db.Uuid
-  addedAt  DateTime @default(now()) @map("created_date")
-  tvShow   TvShow   @relation(fields: [tvShowId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-
-  @@unique([tvShowId, userId])
-  @@map("show_for_later")
-}
-
-// NEW SCHEMA
-
-enum MediaType {
-  BOOK
-  MOVIE
-  TV
-
-  @@map("mediatype")
-}
-
-enum CreatorType {
-  DIRECTOR
-  AUTHOR
-  STUDIO
-
-  @@map("creatortype")
-}
-
-model MediaItemForLater {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
-  mediaItemId String    @db.Uuid
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String    @db.Uuid
-  createdAt   DateTime  @default(now()) @map("created_at")
-
-  @@unique([mediaItemId, userId])
-  @@map("media_item_for_later")
-}
-
-model Review {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
-  createdAt    DateTime? @default(now()) @map("created_date")
-  favorited    Boolean   @default(false)
-  review       String?
-  stars        Int?
-  userId       String    @map("user_id") @db.Uuid
-  user         User      @relation(fields: [userId], references: [id])
-  mediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
-  mediaItemId  String    @map("media_item_id") @db.Uuid
-  audiobook    Boolean   @default(false)
-  onPlane      Boolean   @default(false) @map("on_plane")
-  inTheater    Boolean   @default(false) @map("in_theater")
-
-  @@map("review")
 }
 
 model MediaItem {
@@ -266,6 +63,36 @@ model MediaItem {
   @@map("media_item")
 }
 
+model Review {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
+  createdAt    DateTime? @default(now()) @map("created_date")
+  favorited    Boolean   @default(false)
+  review       String?
+  stars        Int?
+  userId       String    @map("user_id") @db.Uuid
+  user         User      @relation(fields: [userId], references: [id])
+  mediaItem    MediaItem @relation(fields: [mediaItemId], references: [id])
+  mediaItemId  String    @map("media_item_id") @db.Uuid
+  audiobook    Boolean   @default(false)
+  onPlane      Boolean   @default(false) @map("on_plane")
+  inTheater    Boolean   @default(false) @map("in_theater")
+
+  @@map("review")
+}
+
+model MediaItemForLater {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mediaItem   MediaItem @relation(fields: [mediaItemId], references: [id])
+  mediaItemId String    @db.Uuid
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@unique([mediaItemId, userId])
+  @@map("media_item_for_later")
+}
+
 model TvSeries {
   id     String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   apiId  String      @unique @map("api_id")
@@ -273,6 +100,14 @@ model TvSeries {
   season MediaItem[]
 
   @@map("tv_series")
+}
+
+enum CreatorType {
+  DIRECTOR
+  AUTHOR
+  STUDIO
+
+  @@map("creatortype")
 }
 
 model Creator {
