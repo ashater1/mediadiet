@@ -21,6 +21,7 @@ import {
 import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
 import { FormattedReview } from "~/features/v2/list/entries.server";
+import { useListOwnerContext } from "../hooks/useListOwnerContext";
 
 function TableRow({
   isSelf,
@@ -47,11 +48,7 @@ function TableRow({
 const columnHelper = createColumnHelper<FormattedReview>();
 
 export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
-  // const { listOwner, isSelf } = useListOwnerContext();
-  let isSelf = true;
-  let listOwner = {
-    soderberghMode: false,
-  };
+  const { listOwner, isSelf } = useListOwnerContext();
 
   const columns = useMemo(
     () => [

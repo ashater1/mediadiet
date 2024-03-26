@@ -6,6 +6,7 @@ import { cn } from "~/components/utils";
 
 type ListOwnerHeaderBarProps = {
   avatar: string | null;
+  isAuthed: boolean;
   isFollowing: boolean;
   isSelf: boolean;
   primaryName: string | null;
@@ -15,6 +16,7 @@ type ListOwnerHeaderBarProps = {
 export function ListOwnerHeaderBar({
   avatar,
   isFollowing,
+  isAuthed,
   isSelf,
   primaryName,
   secondaryName,
@@ -43,7 +45,7 @@ export function ListOwnerHeaderBar({
             {primaryName ? primaryName : secondaryName}
           </h2>
 
-          {!isSelf && (
+          {!isSelf && isAuthed && (
             <Form method="post" action={`/${params.username}`}>
               <Button
                 name="intent"

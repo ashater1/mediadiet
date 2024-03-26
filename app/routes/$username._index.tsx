@@ -12,6 +12,7 @@ import invariant from "tiny-invariant";
 import { UserEntriesTable } from "~/features/v2/list/components/userEntriesTable";
 import { useListOwnerContext } from "~/features/v2/list/hooks/useListOwnerContext";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { useUserContext } from "~/features/v2/auth/context";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -45,11 +46,13 @@ export default function UserIndex() {
 
   const mediaTypes = getAllParams("type");
   const { listOwner, isSelf, isFollowing } = useListOwnerContext();
+  const user = useUserContext();
 
   return (
     <div className="flex w-full flex-col">
       <div className="flex-col md:flex-row md:flex">
         <ListOwnerHeaderBar
+          isAuthed={!!user}
           isSelf={isSelf}
           isFollowing={isFollowing}
           avatar={listOwner.avatar}
