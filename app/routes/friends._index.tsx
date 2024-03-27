@@ -25,9 +25,11 @@ export default function FriendsIndex() {
           return (
             <Link to={`/${user.username}/${review.id}`}>
               <li key={index} className="flex gap-5 items-start">
-                {user.avatar && (
-                  <img className="w-10 h-10 rounded-full" src={user.avatar} />
-                )}
+                <Link to={"/" + user.username}>
+                  {user.avatar && (
+                    <img className="w-10 h-10 rounded-full" src={user.avatar} />
+                  )}
+                </Link>
 
                 {mediaItem.coverArt && (
                   <img
@@ -47,7 +49,10 @@ export default function FriendsIndex() {
                         <span className="text-lg font-bold">
                           {mediaItem.title}
                         </span>
-                        <span>({mediaItem.releaseDate})</span>
+                        {mediaItem.releaseDate && (
+                          <span>({mediaItem.releaseDate})</span>
+                        )}
+
                         {review.stars && <StarsDisplay stars={review.stars} />}
                         {review.favorited && <FavoriteHeart isOn />}
                       </div>

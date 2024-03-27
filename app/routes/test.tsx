@@ -1,30 +1,28 @@
+import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import { db } from "~/db.server";
-import { useSearch } from "~/features/search/useSearch";
 
-export async function getCounts(username: string) {
-  let data = db.user.findFirst({
-    where: { username },
+import { getUserOrRedirect } from "~/features/auth/user.server";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const response = new Response();
+  const user = await getUserOrRedirect({ request, response });
+  const query = await db.review.groupBy({
+    by: ["userId"],
+    _min: {
+      createdAt: true,
+    },
   });
-
-  return data;
-}
-
-export async function loader() {
-  return await getCounts("adam");
+  return query;
 }
 
 export default function Test() {
-  const { isLoading, mediaType, results, search } = useSearch();
+  const data = useLoaderData<typeof loader>();
 
   return (
     <PageFrame>
-      <div>
-        <input onChange={(e) => search(e.target.value)} />
-        <div>{String(isLoading)}</div>
-        <div>{mediaType}</div>
-        <pre>{JSON.stringify(results, null, 2)}</pre>
-      </div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </PageFrame>
   );
 }
