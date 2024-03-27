@@ -16,8 +16,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/login");
   }
 
-  let followers = await getCounts(user.username);
-  return followers;
+  let data = await getCounts(user.username);
+  return data;
 }
 
 export default function Friends() {
@@ -29,6 +29,7 @@ export default function Friends() {
       <div className="w-full flex flex-col">
         <div className="flex">
           <ListOwnerHeaderBar
+            isAuthed={true}
             isSelf={true}
             isFollowing={false}
             avatar={user?.avatar ?? null}

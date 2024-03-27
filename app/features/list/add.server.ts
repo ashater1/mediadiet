@@ -4,26 +4,33 @@ import { z } from "zod";
 import { db } from "~/db.server";
 import { Book, openlibrary } from "~/features/books/openLibrary";
 import { Movie, Season, Show, movieDb } from "../tvAndMovies/api";
+import { entrySchema } from "./update.server";
 
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {
   userId: string;
 };
 
 export const AddToListSchema = z.discriminatedUnion("mediaType", [
-  z.object({
-    mediaType: z.literal("MOVIE"),
-    apiId: z.string(),
-  }),
-  z.object({
-    mediaType: z.literal("BOOK"),
-    apiId: z.string(),
-    releaseYear: z.string().nullish().default(null),
-  }),
-  z.object({
-    mediaType: z.literal("TV"),
-    apiId: z.string(),
-    seasonId: z.string(),
-  }),
+  z
+    .object({
+      mediaType: z.literal("MOVIE"),
+      apiId: z.string(),
+    })
+    .merge(entrySchema),
+  z
+    .object({
+      mediaType: z.literal("BOOK"),
+      apiId: z.string(),
+      releaseYear: z.string().nullish().default(null),
+    })
+    .merge(entrySchema),
+  z
+    .object({
+      mediaType: z.literal("TV"),
+      apiId: z.string(),
+      seasonId: z.string(),
+    })
+    .merge(entrySchema),
 ]);
 
 // export type MediaItem = Prisma.MediaItemCreateInput;
@@ -153,6 +160,7 @@ export function formatTvShowToCreateMediaItem(
 }
 
 export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
+  let { id: _userId, mediaType, ..._args } = args;
   if (args.mediaType === "BOOK") {
     const book = await openlibrary.getBook(apiId);
     const formattedBook = formatBookToCreateMediaItem(book, args.releaseYear);
@@ -163,7 +171,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
-
+        ..._args,
         mediaItem: {
           connectOrCreate: {
             ...formattedBook,
@@ -182,6 +190,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
+        ..._args,
         mediaItem: {
           connectOrCreate: {
             ...formattedMovie,
@@ -202,6 +211,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
+        ..._args,
         mediaItem: {
           connectOrCreate: {
             ...formattedTvSeason,

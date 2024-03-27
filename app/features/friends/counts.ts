@@ -1,15 +1,9 @@
 import { db } from "~/db.server";
 
 export async function getCounts(username: string) {
-  let {
-    _count: { followedBy, following },
-  } = await db.user.findFirstOrThrow({
+  let data = db.user.findFirst({
     where: { username },
-    select: {
-      id: true,
-      _count: { select: { following: true, followedBy: true } },
-    },
   });
 
-  return { followedBy, following };
+  return data;
 }

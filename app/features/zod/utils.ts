@@ -17,4 +17,5 @@ export const nullishStringToBool = z
 
 export const isoDate = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date provided" });
+  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date provided" })
+  .transform((x) => new Date(x));

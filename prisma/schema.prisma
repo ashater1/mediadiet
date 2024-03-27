@@ -65,7 +65,7 @@ model MediaItem {
 
 model Review {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  consumedDate DateTime  @default(now()) @map("consumed_date") @db.Date
+  consumedDate DateTime  @map("consumed_date") @db.Date
   createdAt    DateTime? @default(now()) @map("created_date")
   favorited    Boolean   @default(false)
   review       String?

@@ -1,10 +1,17 @@
-import { useTypedLoaderData } from "remix-typedjson";
-import { db } from "~/db.server";
 import { PageFrame } from "~/components/frames";
+import { db } from "~/db.server";
 import { useSearch } from "~/features/search/useSearch";
 
+export async function getCounts(username: string) {
+  let data = db.user.findFirst({
+    where: { username },
+  });
+
+  return data;
+}
+
 export async function loader() {
-  return null;
+  return await getCounts("adam");
 }
 
 export default function Test() {

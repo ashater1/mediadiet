@@ -1,4 +1,3 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   Form,
   Link,
@@ -17,7 +16,6 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 import { Button } from "~/components/button";
 import { Spinner } from "~/components/login/Spinner";
-import { db } from "~/db.server";
 import {
   EntryFormHeader,
   EntryFormImage,
@@ -25,7 +23,6 @@ import {
   EntryFormInputs,
   EntryFormRoot,
 } from "~/features/add/components/entryForm";
-
 import { getSessionUser } from "~/features/auth/user.server";
 import { entrySchema, updateEntry } from "~/features/list/update.server";
 import { loader as reviewLoader } from "~/routes/$username.$reviewId";
@@ -40,8 +37,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json(null, { headers: response.headers });
 }
 
-const submission = z.object({});
-
 export async function action({ params, request }: ActionFunctionArgs) {
   const response = new Response();
   const { username, reviewId } = params;
@@ -54,8 +49,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const submission = Object.fromEntries(await request.formData());
   const parsedSubmission = entrySchema.parse({ ...submission, id: reviewId });
   const result = await updateEntry(parsedSubmission);
-  // throw redirect(`/${username}/${reviewId}`, { headers: response.headers });
-  return null;
+  throw redirect(`/${username}/${reviewId}`, { headers: response.headers });
 }
 
 export default function Edit() {
