@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { getUserOrRedirect } from "~/features/auth/user.server";
 import { getFollowingFeed } from "~/features/friends/feed.server";
@@ -16,36 +16,50 @@ export default function FriendsIndex() {
 
   return (
     <div>
-      <ul className="flex flex-col gap-10">
+      <ul className="flex flex-col gap-12">
         {data.map(({ user, mediaItem, verb, ...review }, index) => {
           const name = user.firstName
             ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
             : user.username;
 
           return (
-            <li key={index} className="flex gap-5 items-start">
-              {user.avatar && (
-                <img className="w-10 h-10 rounded-full" src={user.avatar} />
-              )}
+            <Link to={`/${user.username}/${review.id}`}>
+              <li key={index} className="flex gap-5 items-start">
+                {user.avatar && (
+                  <img className="w-10 h-10 rounded-full" src={user.avatar} />
+                )}
 
-              {mediaItem.coverArt && (
-                <img
-                  className="object-contain h-auto w-16 rounded"
-                  src={mediaItem.coverArt}
-                />
-              )}
+                {mediaItem.coverArt && (
+                  <img
+                    className="object-contain h-auto w-16 rounded"
+                    src={mediaItem.coverArt}
+                  />
+                )}
 
-              <div className="text-xs">
-                <span>{name}</span> <span>{verb}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">{mediaItem.title}</span>
-                  <span>({mediaItem.releaseDate})</span>
-                  {review.stars && <StarsDisplay stars={review.stars} />}
-                  {review.favorited && <FavoriteHeart isOn />}
+                <div className="px-3 text-sm">
+                  <Link to={"/" + user.username}>
+                    <span className="text-xs">{name}</span>{" "}
+                  </Link>
+                  <span className="text-xs">{verb}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col justify-center">
+                      <div className="flex gap-2 items-center">
+                        <span className="text-lg font-bold">
+                          {mediaItem.title}
+                        </span>
+                        <span>({mediaItem.releaseDate})</span>
+                        {review.stars && <StarsDisplay stars={review.stars} />}
+                        {review.favorited && <FavoriteHeart isOn />}
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {mediaItem.creator}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-4 leading-6 text-sm">{review.review}</div>
                 </div>
-                <div className="mt-2 leading-6 text-sm">{review.review}</div>
-              </div>
-            </li>
+              </li>
+            </Link>
           );
         })}
       </ul>
