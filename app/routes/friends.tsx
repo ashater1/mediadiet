@@ -3,7 +3,7 @@ import { getCounts } from "~/features/friends/counts";
 import { getUserDetails } from "~/features/auth/user.server";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { ListOwnerHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
-import { LoaderFunctionArgs } from "@vercel/remix";
+import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import { redirect } from "remix-typedjson";
 import { useUserContext } from "~/features/auth/context";
@@ -16,8 +16,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/login");
   }
 
-  let data = await getCounts(user.username);
-  return data;
+  let counts = await getCounts(user.username);
+  return json(counts, { headers: response.headers });
 }
 
 export default function Friends() {

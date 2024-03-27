@@ -19,3 +19,15 @@ export function getMediaTypesFromUrl(url: string): MediaType[] {
 
   return parsedEntryTypes;
 }
+
+export function getCoverArt({
+  id,
+  mediaType,
+}: {
+  id: string;
+  mediaType: MediaType;
+}) {
+  return mediaType === "BOOK"
+    ? `https://covers.openlibrary.org/b/id/${id}-L.jpg`
+    : `https://image.tmdb.org/t/p/w342${id}`;
+}

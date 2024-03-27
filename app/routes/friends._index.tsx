@@ -1,31 +1,14 @@
 import { useLoaderData } from "@remix-run/react";
-import { LoaderFunctionArgs } from "@vercel/remix";
-import { db } from "~/db.server";
+import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { getUserOrRedirect } from "~/features/auth/user.server";
+import { getFollowingFeed } from "~/features/friends/feed.server";
+import { FavoriteHeart, StarsDisplay } from "~/features/list/icons/icons";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let response = new Response();
-  let { id } = await getUserOrRedirect({ request, response });
-
-  let followingFeed = await db.user.findFirst({
-    where: { id },
-    select: {
-      following: {
-        take: 1,
-        select: {
-          followed: {
-            select: {
-              MovieReviews: {
-                take: 10,
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  return { data: followingFeed };
+  const response = new Response();
+  const user = await getUserOrRedirect({ request, response });
+  const feed = await getFollowingFeed({ userId: user.id });
+  return json(feed);
 }
 
 export default function FriendsIndex() {
@@ -33,10 +16,39 @@ export default function FriendsIndex() {
 
   return (
     <div>
-      <h2>Friends Index!</h2>
-      <pre>
-        {JSON.stringify(data.data?.following[0].followed.MovieReviews, null, 2)}
-      </pre>
+      <ul className="flex flex-col gap-10">
+        {data.map(({ user, mediaItem, verb, ...review }, index) => {
+          const name = user.firstName
+            ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+            : user.username;
+
+          return (
+            <li key={index} className="flex gap-5 items-start">
+              {user.avatar && (
+                <img className="w-10 h-10 rounded-full" src={user.avatar} />
+              )}
+
+              {mediaItem.coverArt && (
+                <img
+                  className="object-contain h-auto w-16 rounded"
+                  src={mediaItem.coverArt}
+                />
+              )}
+
+              <div className="text-xs">
+                <span>{name}</span> <span>{verb}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-bold">{mediaItem.title}</span>
+                  <span>({mediaItem.releaseDate})</span>
+                  {review.stars && <StarsDisplay stars={review.stars} />}
+                  {review.favorited && <FavoriteHeart isOn />}
+                </div>
+                <div className="mt-2 leading-6 text-sm">{review.review}</div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
