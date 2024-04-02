@@ -1,19 +1,15 @@
 import { z } from "zod";
 import { db } from "~/db.server";
 import { isoDate, nullishStringToBool } from "../zod/utils";
+import { CoreAddToListSchema } from "./add.server";
 
 export type EntryArgs = z.infer<typeof entrySchema>;
 
-export const entrySchema = z.object({
-  audiobook: nullishStringToBool,
-  consumedDate: isoDate,
-  favorited: nullishStringToBool,
-  id: z.string().nullish(),
-  inTheater: nullishStringToBool,
-  onPlane: nullishStringToBool,
-  review: z.string().nullish(),
-  stars: z.coerce.number().nullish(),
-});
+export const entrySchema = CoreAddToListSchema.merge(
+  z.object({
+    id: z.string(),
+  })
+);
 
 export async function updateEntry({
   audiobook,

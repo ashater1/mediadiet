@@ -57,7 +57,7 @@ export default function UserIndex() {
           isFollowing={isFollowing}
           avatar={listOwner.avatar}
           primaryName={listOwner.displayName}
-          secondaryName={listOwner.username}
+          secondaryName={"@" + listOwner.username}
         />
 
         <div className="md:ml-auto self-end mt-2 md:mt-0">

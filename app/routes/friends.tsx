@@ -7,6 +7,7 @@ import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import { redirect } from "remix-typedjson";
 import { useUserContext } from "~/features/auth/context";
+import { MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -27,7 +28,7 @@ export default function Friends() {
   return (
     <PageFrame>
       <div className="w-full flex flex-col">
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           <ListOwnerHeaderBar
             isAuthed={true}
             isSelf={true}
@@ -39,16 +40,20 @@ export default function Friends() {
             secondaryName={user?.username ?? ""}
           />
 
-          <div className="md:ml-auto self-end mt-2 md:mt-0">
-            <div className="relative w-min flex">
+          <div className="md:self-end md:ml-auto mt-2">
+            <div className="relative w-min items-center flex">
               <div className="flex divide-x divide-slate-300">
-                <Link to="followers" className="px-4 pl:0">
+                <Link to="followers" className="px-4 pl-0">
                   <Count count={data.followedBy} label="followers" />
                 </Link>
 
                 <Link to="following" className="px-4">
                   <Count count={data.following} label="following" />
                 </Link>
+              </div>
+              <div className="md:mr-5 flex text-sm whitespace-nowrap items-center">
+                <MagnifyingGlassCircleIcon className="w-8 h-8 stroke-1 stroke-gray-900" />
+                Find user
               </div>
             </div>
           </div>

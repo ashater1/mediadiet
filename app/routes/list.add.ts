@@ -14,6 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const result = AddToListSchema.safeParse(submission);
 
   if (!result.success) {
+    console.log(result.error.errors);
     return { success: false };
   } else {
     let dbResult = await addNewEntry({ userId: user.id, ...result.data });

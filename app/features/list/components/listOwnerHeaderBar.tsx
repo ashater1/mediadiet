@@ -23,7 +23,7 @@ export function ListOwnerHeaderBar({
 }: ListOwnerHeaderBarProps) {
   const params = useParams();
 
-  const { Form, data, formAction, formData } = useFetcher();
+  const { Form, formData } = useFetcher();
 
   const isSubmittingFollow =
     formData?.get("intent") === "follow" ||

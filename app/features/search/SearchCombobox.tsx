@@ -53,9 +53,6 @@ export function SearchCombobox({
   selectedItem: string | null;
   mediaType: MediaType;
 }) {
-  // const { searchData, isSearchLoading, state, setSearchTerm, setSelectedItem } =
-  //   useAddNewContext();
-
   return (
     <Combobox.Root
       searchTerm={searchTerm}
@@ -138,7 +135,3 @@ function SearchComboboxItem({
     </Combobox.Item>
   );
 }
-
-// combobox is empty
-// combobox is loading
-// combobox has results

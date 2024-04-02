@@ -25,9 +25,12 @@ export default function FriendsIndex() {
           return (
             <Link to={`/${user.username}/${review.id}`}>
               <li key={index} className="flex gap-5 items-start">
-                <Link to={"/" + user.username}>
+                <Link
+                  className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden"
+                  to={"/" + user.username}
+                >
                   {user.avatar && (
-                    <img className="w-10 h-10 rounded-full" src={user.avatar} />
+                    <img className="w-full h-full" src={user.avatar} />
                   )}
                 </Link>
 

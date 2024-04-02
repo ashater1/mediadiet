@@ -4,11 +4,20 @@ import { z } from "zod";
 import { db } from "~/db.server";
 import { Book, openlibrary } from "~/features/books/openLibrary";
 import { Movie, Season, Show, movieDb } from "../tvAndMovies/api";
-import { entrySchema } from "./update.server";
+import { isoDate, nullishStringToBool } from "../zod/utils";
 
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {
   userId: string;
 };
+export const CoreAddToListSchema = z.object({
+  audiobook: nullishStringToBool,
+  consumedDate: isoDate,
+  favorited: nullishStringToBool,
+  inTheater: nullishStringToBool,
+  onPlane: nullishStringToBool,
+  review: z.string().nullish(),
+  stars: z.coerce.number().nullish(),
+});
 
 export const AddToListSchema = z.discriminatedUnion("mediaType", [
   z
@@ -16,21 +25,21 @@ export const AddToListSchema = z.discriminatedUnion("mediaType", [
       mediaType: z.literal("MOVIE"),
       apiId: z.string(),
     })
-    .merge(entrySchema),
+    .merge(CoreAddToListSchema),
   z
     .object({
       mediaType: z.literal("BOOK"),
       apiId: z.string(),
-      releaseYear: z.string().nullish().default(null),
+      firstPublishedYear: z.string().nullable(),
     })
-    .merge(entrySchema),
+    .merge(CoreAddToListSchema),
   z
     .object({
       mediaType: z.literal("TV"),
       apiId: z.string(),
       seasonId: z.string(),
     })
-    .merge(entrySchema),
+    .merge(CoreAddToListSchema),
 ]);
 
 // export type MediaItem = Prisma.MediaItemCreateInput;
@@ -160,10 +169,15 @@ export function formatTvShowToCreateMediaItem(
 }
 
 export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
-  let { id: _userId, mediaType, ..._args } = args;
   if (args.mediaType === "BOOK") {
+    let { firstPublishedYear, mediaType, ...rest } = args;
     const book = await openlibrary.getBook(apiId);
-    const formattedBook = formatBookToCreateMediaItem(book, args.releaseYear);
+
+    const formattedBook = formatBookToCreateMediaItem(
+      book,
+      args.firstPublishedYear
+    );
+
     await db.review.create({
       data: {
         user: {
@@ -171,7 +185,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
-        ..._args,
+        ...rest,
         mediaItem: {
           connectOrCreate: {
             ...formattedBook,
@@ -181,6 +195,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
     });
     return { success: true, title: book.title };
   } else if (args.mediaType === "MOVIE") {
+    let { mediaType, ...rest } = args;
     const movie = await movieDb.getMovie(apiId);
     const formattedMovie = formatMovieToCreateMediaItem(movie);
     await db.review.create({
@@ -190,7 +205,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
-        ..._args,
+        ...rest,
         mediaItem: {
           connectOrCreate: {
             ...formattedMovie,
@@ -200,8 +215,9 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
     });
     return { success: true, title: movie.title };
   } else if (args.mediaType === "TV") {
+    let { mediaType, seasonId, ...rest } = args;
     const show = await movieDb.getShow(apiId);
-    const season = show.seasons.find((s) => s?.id === args.seasonId);
+    const season = show.seasons.find((s) => s?.id === seasonId);
     if (!season) throw new Error("Season not found");
     const formattedTvSeason = formatTvShowToCreateMediaItem(show, season);
     await db.review.create({
@@ -211,7 +227,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
             id: userId,
           },
         },
-        ..._args,
+        ...rest,
         mediaItem: {
           connectOrCreate: {
             ...formattedTvSeason,
