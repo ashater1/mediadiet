@@ -34,7 +34,9 @@ export default function Navbar() {
       <div className="flex items-center justify-center py-2 mb-10">
         <div className="flex w-full max-w-5xl justify-between px-4">
           <div className="flex gap-3">
-            <Logo size="lg" />
+            <Link to={!!user ? `/${user.username}` : "/login"}>
+              <Logo size="lg" />
+            </Link>
           </div>
 
           <div className="hidden items-center gap-3 md:flex">

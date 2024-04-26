@@ -2,7 +2,6 @@ import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  SerializeFrom,
   redirect,
 } from "@vercel/remix";
 import invariant from "tiny-invariant";
