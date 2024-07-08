@@ -4,7 +4,10 @@ import {
   Form,
   NavLink,
   Outlet,
+  useFetcher,
   useLoaderData,
+  useLocation,
+  useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
@@ -22,6 +25,8 @@ import {
   getSavedItems,
 } from "~/features/saved/get.server";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
+import { useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -30,11 +35,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!user) throw redirect("/login", { headers: response.headers });
   const mediaTypes = getMediaTypesFromUrl(request.url);
 
+  const url = new URL(request.url);
+  let page = url.searchParams.get("page");
+  let pageNumber = page ? parseInt(page) ?? 1 : 1;
+  console.log({ pageNumber });
   //   TODO: Migrate supabase db to use MediaItemForLater instead of individual tables
   const [saved, counts] = await Promise.all([
     getSavedItems({
       username: user.username,
       mediaTypes,
+      take: pageNumber * 30,
+      skip: (pageNumber - 1) * 30,
     }),
     getSavedCounts({ username: user.username }),
   ]);
@@ -74,11 +85,48 @@ export async function action({ request }: LoaderFunctionArgs) {
 }
 
 export default function Saved() {
+  const { search } = useLocation();
+
   const submit = useSubmit();
   const data = useLoaderData<typeof loader>();
+  const [dataState, setDataState] = useState<typeof data.saved>(() => []);
 
   const { isLoading, getAllParams } = useOptimisticParams();
   const mediaTypes = getAllParams("type");
+
+  const infiniteScrollRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(infiniteScrollRef);
+
+  let [page, setPage] = useState(1);
+  const savedItemsFetcher = useFetcher<typeof loader>();
+
+  useEffect(() => {
+    setDataState([]);
+  }, [search]);
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    if (mediaTypes.length) {
+      let searchParams = new URLSearchParams();
+      mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
+      savedItemsFetcher.load(`/saved?page=${page + 1}&${searchParams}`);
+      return;
+    }
+    savedItemsFetcher.load(`/saved?page=${page + 1}`);
+    setPage((p) => p + 1);
+  }, [isInView]);
+
+  useEffect(() => {
+    if (!savedItemsFetcher.data || savedItemsFetcher.state === "loading") {
+      return;
+    }
+    // If we have new data - append it
+    if (savedItemsFetcher.data) {
+      const newItems = savedItemsFetcher.data.saved;
+      setDataState((d) => [...d, ...newItems]);
+    }
+  }, [savedItemsFetcher.data]);
 
   return (
     <>
@@ -148,8 +196,8 @@ export default function Saved() {
 
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
-          <ul className="mt-6 flex flex-col gap-4 md:gap-8">
-            {data.saved?.map((d) => (
+          <ul key={search} className="mt-6 flex flex-col gap-4 md:gap-8">
+            {[...data.saved, ...dataState].map((d) => (
               <li key={d.id} className="flex items-center gap-6 md:gap-8">
                 <div>
                   {d.mediaItem.mediaType === "BOOK" ? (
@@ -178,6 +226,9 @@ export default function Saved() {
               </li>
             ))}
           </ul>
+          <div ref={infiniteScrollRef} className="bg-green-300 px-2 w-full">
+            Scroll Trigger
+          </div>
         </div>
       </PageFrame>
       <Outlet />

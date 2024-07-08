@@ -45,6 +45,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-email": "^1.10.0",
+    "react-intersection-observer": "^9.10.3",
     "remix-typedjson": "^0.4.1",
     "resend": "^2.0.0",
     "sonner": "^1.4.3",
