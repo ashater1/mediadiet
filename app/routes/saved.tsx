@@ -38,8 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   let page = url.searchParams.get("page");
   let pageNumber = page ? parseInt(page) ?? 1 : 1;
-  console.log({ pageNumber });
-  //   TODO: Migrate supabase db to use MediaItemForLater instead of individual tables
+
   const [saved, counts] = await Promise.all([
     getSavedItems({
       username: user.username,
@@ -85,8 +84,6 @@ export async function action({ request }: LoaderFunctionArgs) {
 }
 
 export default function Saved() {
-  const { search } = useLocation();
-
   const submit = useSubmit();
   const data = useLoaderData<typeof loader>();
   const [dataState, setDataState] = useState<typeof data.saved>(() => []);
@@ -100,12 +97,14 @@ export default function Saved() {
   let [page, setPage] = useState(1);
   const savedItemsFetcher = useFetcher<typeof loader>();
 
+  const { search } = useLocation();
+
   useEffect(() => {
     setDataState([]);
   }, [search]);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || savedItemsFetcher.state === "loading") return;
 
     if (mediaTypes.length) {
       let searchParams = new URLSearchParams();
@@ -226,8 +225,11 @@ export default function Saved() {
               </li>
             ))}
           </ul>
-          <div ref={infiniteScrollRef} className="bg-green-300 px-2 w-full">
-            Scroll Trigger
+          <div
+            ref={infiniteScrollRef}
+            className="py-5 flex items-center justify-center"
+          >
+            <Spinner className="w-6 h-6" />
           </div>
         </div>
       </PageFrame>
