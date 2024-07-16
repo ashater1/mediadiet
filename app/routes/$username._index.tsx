@@ -10,6 +10,7 @@ import {
 import invariant from "tiny-invariant";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
+import { cn } from "~/components/utils";
 import { useUserContext } from "~/features/auth/context";
 import { EmptyState } from "~/features/list/components/empty";
 import { ListOwnerHeaderBar } from "~/features/list/components/listOwnerHeaderBar";
@@ -48,6 +49,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const formattedEntries = entries?.map(formatEntries);
   // TODO: update get entries to return a userFound boolean that can trigger a 404 response
+
   return typedjson(
     { counts, entries: formattedEntries },
     { headers: response.headers }
@@ -75,12 +77,20 @@ export default function UserIndex() {
   const { search } = useLocation();
 
   useEffect(() => {
+    setPage(1);
     setDataState([]);
     setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
-    if (!isInView || activityItemsFetcher.state === "loading") return;
+    if (
+      !isInView ||
+      activityItemsFetcher.state === "loading" ||
+      data.entries.length !== 31 ||
+      allItemsLoaded
+    ) {
+      return;
+    }
 
     setPage((p) => p + 1);
 
@@ -96,6 +106,10 @@ export default function UserIndex() {
   }, [isInView]);
 
   useEffect(() => {
+    console.log(
+      "Data changed :",
+      activityItemsFetcher.data?.entries?.map((e) => e.mediaItem.title)
+    );
     if (activityItemsFetcher.data?.entries) {
       let data = [...activityItemsFetcher.data.entries].slice(0, 30);
       setDataState((d) => [...d, ...data]);
@@ -176,14 +190,16 @@ export default function UserIndex() {
         )}
       </div>
 
-      {data.entries.length !== 31 || allItemsLoaded ? null : (
-        <div
-          ref={infiniteScrollRef}
-          className="flex items-center justify-center py-6 w-full"
-        >
-          <Spinner className="w-6 h-6" />
-        </div>
-      )}
+      <div
+        ref={infiniteScrollRef}
+        className={cn(
+          data.entries.length !== 31 || allItemsLoaded
+            ? "hidden"
+            : "flex items-center justify-center py-6 w-full"
+        )}
+      >
+        <Spinner className="w-6 h-6" />
+      </div>
     </div>
   );
 }

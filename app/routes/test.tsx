@@ -4,6 +4,7 @@ import { PageFrame } from "~/components/frames";
 import { useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { db } from "~/db.server";
+import { apStyleTitleCase } from "ap-style-title-case";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const saved = await db.user.findFirstOrThrow({
@@ -43,12 +44,7 @@ export default function Test() {
 
   return (
     <PageFrame>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-      <div>
-        {data.map((d) => (
-          <div>{d.mediaItem.title}</div>
-        ))}
-      </div>
+      <div>{apStyleTitleCase("FUCK YOU!".toLowerCase())}</div>
     </PageFrame>
   );
 }

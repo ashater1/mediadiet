@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { PageFrame, PageHeader } from "~/components/frames";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
+import { cn } from "~/components/utils";
 import { getUserDetails } from "~/features/auth/user.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/list/utils.server";
@@ -104,12 +105,20 @@ export default function Saved() {
   const { search } = useLocation();
 
   useEffect(() => {
+    setPage(1);
     setDataState([]);
     setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
-    if (!isInView || savedItemsFetcher.state === "loading") return;
+    if (
+      !isInView ||
+      savedItemsFetcher.state === "loading" ||
+      data.saved.length !== 31 ||
+      allItemsLoaded
+    ) {
+      return;
+    }
 
     setPage((p) => p + 1);
 
@@ -230,14 +239,16 @@ export default function Saved() {
               </li>
             ))}
           </ul>
-          {!allItemsLoaded && (
-            <div
-              ref={infiniteScrollRef}
-              className="flex items-center justify-center py-6 w-full"
-            >
-              <Spinner className="w-6 h-6" />
-            </div>
-          )}
+          <div
+            ref={infiniteScrollRef}
+            className={cn(
+              data.saved.length !== 31 || allItemsLoaded
+                ? "hidden"
+                : "flex items-center justify-center py-6 w-full"
+            )}
+          >
+            <Spinner className="w-6 h-6" />
+          </div>
         </div>
       </PageFrame>
       <Outlet />
