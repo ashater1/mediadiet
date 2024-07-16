@@ -124,9 +124,7 @@ export default function Saved() {
 
   useEffect(() => {
     if (savedItemsFetcher.data?.saved) {
-      console.log(savedItemsFetcher.data.saved.at(-1));
       let data = [...savedItemsFetcher.data.saved].slice(0, 30);
-      console.log(data.at(-1));
       setDataState((d) => [...d, ...data]);
       if (savedItemsFetcher.data.saved.length < 31) {
         setAllItemsLoaded(true);
@@ -203,7 +201,7 @@ export default function Saved() {
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
           <ul key={search} className="mt-6 flex flex-col gap-4 md:gap-8">
-            {[...data.saved, ...dataState].map((d) => (
+            {[...data.saved.slice(0, 30), ...dataState].map((d) => (
               <li key={d.id} className="flex items-center gap-6 md:gap-8">
                 <div>
                   {d.mediaItem.mediaType === "BOOK" ? (

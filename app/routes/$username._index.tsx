@@ -1,17 +1,11 @@
-import {
-  Form,
-  useFetcher,
-  useLocation,
-  useParams,
-  useSubmit,
-} from "@remix-run/react";
+import { Form, useLocation, useSubmit } from "@remix-run/react";
 import { LoaderFunctionArgs, SerializeFrom } from "@vercel/remix";
 import { useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   typedjson,
-  useTypedLoaderData,
   useTypedFetcher,
+  useTypedLoaderData,
 } from "remix-typedjson";
 import invariant from "tiny-invariant";
 import { CountsWithParams } from "~/components/headerbar/count";
@@ -42,14 +36,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let page = url.searchParams.get("page");
   let pageNumber = page ? parseInt(page) ?? 1 : 1;
 
-  console.log({ pageNumber });
-
   const [counts, entries] = await Promise.all([
     getEntryListCounts({ username }),
     getEntries({
       username,
       mediaTypes,
-      take: pageNumber * 30,
+      take: 31,
       skip: (pageNumber - 1) * 30,
     }),
   ]);
@@ -63,14 +55,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function UserIndex() {
-  const params = useParams();
   const data = useTypedLoaderData<typeof loader>();
   const [dataState, setDataState] = useState<typeof data.entries>(() => []);
 
   const submit = useSubmit();
   const { isLoading, getAllParams } = useOptimisticParams();
-
   const mediaTypes = getAllParams("type");
+
   const { listOwner, isSelf, isFollowing } = useListOwnerContext();
   const user = useUserContext();
 
@@ -78,41 +69,41 @@ export default function UserIndex() {
   const isInView = useInView(infiniteScrollRef);
 
   let [page, setPage] = useState(1);
-  const dietItemsFetcher = useTypedFetcher<typeof loader>();
+  let [allItemsLoaded, setAllItemsLoaded] = useState(data.entries.length < 31);
+  const activityItemsFetcher = useTypedFetcher<typeof loader>();
 
   const { search } = useLocation();
 
   useEffect(() => {
     setDataState([]);
+    setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
-    if (!isInView || dietItemsFetcher.state === "loading") return;
+    if (!isInView || activityItemsFetcher.state === "loading") return;
+
     setPage((p) => p + 1);
 
     if (mediaTypes.length) {
       let searchParams = new URLSearchParams();
       mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
-      dietItemsFetcher.load(
+      activityItemsFetcher.load(
         `/${listOwner.username}?index&page=${page + 1}&${searchParams}`
       );
       return;
     }
-    console.log(`/${listOwner.username}?page=${page + 1}`);
-    dietItemsFetcher.load(`/${listOwner.username}?index&page=${page + 1}`);
+    activityItemsFetcher.load(`/${listOwner.username}?index&page=${page + 1}`);
   }, [isInView]);
 
   useEffect(() => {
-    if (!dietItemsFetcher.data || dietItemsFetcher.state === "loading") {
-      return;
+    if (activityItemsFetcher.data?.entries) {
+      let data = [...activityItemsFetcher.data.entries].slice(0, 30);
+      setDataState((d) => [...d, ...data]);
+      if (activityItemsFetcher.data.entries.length < 31) {
+        setAllItemsLoaded(true);
+      }
     }
-    // If we have new data - append it
-    if (dietItemsFetcher.data) {
-      const newItems = dietItemsFetcher.data.entries;
-      console.log({ newItems });
-      setDataState((d) => [...d, ...newItems]);
-    }
-  }, [dietItemsFetcher.data]);
+  }, [activityItemsFetcher.data]);
 
   return (
     <div className="flex w-full flex-col">
@@ -176,18 +167,23 @@ export default function UserIndex() {
       <div className="mt-2.5 mb-2.5 border-b border-b-primary-800/20 md:mt-4 md:mb-4" />
 
       <div>
-        {data.entries.length ? (
-          <UserEntriesTable entries={[...data.entries, ...dataState]} />
+        {[...data.entries, ...dataState].length ? (
+          <UserEntriesTable
+            entries={[...data.entries.slice(0, 30), ...dataState]}
+          />
         ) : (
           <EmptyState />
         )}
       </div>
-      <div
-        ref={infiniteScrollRef}
-        className="py-5 flex items-center justify-center"
-      >
-        <Spinner className="w-6 h-6" />
-      </div>
+
+      {data.entries.length !== 31 || allItemsLoaded ? null : (
+        <div
+          ref={infiniteScrollRef}
+          className="flex items-center justify-center py-6 w-full"
+        >
+          <Spinner className="w-6 h-6" />
+        </div>
+      )}
     </div>
   );
 }
