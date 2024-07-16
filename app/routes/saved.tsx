@@ -11,7 +11,6 @@ import {
 } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
 import { useInView } from "framer-motion";
-import { set } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { PageFrame, PageHeader } from "~/components/frames";
 import { CountsWithParams } from "~/components/headerbar/count";
