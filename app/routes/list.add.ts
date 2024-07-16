@@ -10,6 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const submission = Object.fromEntries(formData);
 
+  console.log({ ...submission });
   // TODO - Make sure book release date is passed and added to db for book entries
   const result = AddToListSchema.safeParse(submission);
 

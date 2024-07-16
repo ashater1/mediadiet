@@ -1,6 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { getUserOrRedirect } from "~/features/auth/user.server";
+import { Friend } from "~/features/friends/friendsList";
 import { getFollowers } from "~/features/friends/get.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -23,7 +24,11 @@ export default function Followers() {
       {!followers.length ? (
         <Empty />
       ) : (
-        <pre>{JSON.stringify(followers, null, 2)}</pre>
+        <ul className="pt-4">
+          {followers.map((f) => (
+            <Friend {...f} />
+          ))}
+        </ul>
       )}
     </div>
   );

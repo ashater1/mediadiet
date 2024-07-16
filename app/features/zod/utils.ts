@@ -15,6 +15,13 @@ export const nullishStringToBool = z
   .transform((x) => !!x && x === "true")
   .pipe(z.boolean());
 
+export const nullishOnToBool = z
+  .string()
+  .toLowerCase()
+  .nullish()
+  .transform((x) => !!x && x === "on")
+  .pipe(z.boolean());
+
 export const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date provided" })

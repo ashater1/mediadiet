@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "~/db.server";
 import { Book, openlibrary } from "~/features/books/openLibrary";
 import { Movie, Season, Show, movieDb } from "../tvAndMovies/api";
-import { isoDate, nullishStringToBool } from "../zod/utils";
+import { isoDate, nullishOnToBool, nullishStringToBool } from "../zod/utils";
 
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {
   userId: string;
@@ -13,8 +13,8 @@ export const CoreAddToListSchema = z.object({
   audiobook: nullishStringToBool,
   consumedDate: isoDate,
   favorited: nullishStringToBool,
-  inTheater: nullishStringToBool,
-  onPlane: nullishStringToBool,
+  inTheater: nullishOnToBool,
+  onPlane: nullishOnToBool,
   review: z.string().nullish(),
   stars: z.coerce.number().nullish(),
 });
@@ -198,6 +198,8 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
     let { mediaType, ...rest } = args;
     const movie = await movieDb.getMovie(apiId);
     const formattedMovie = formatMovieToCreateMediaItem(movie);
+    console.log({ plane: rest.onPlane });
+
     await db.review.create({
       data: {
         user: {

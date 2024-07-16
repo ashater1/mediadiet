@@ -151,6 +151,9 @@ export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
         },
       }),
       columnHelper.accessor("id", { header: "ID" }),
+      columnHelper.accessor("onPlane", { header: "onPlane" }),
+      columnHelper.accessor("inTheater", { header: "inTheater" }),
+      columnHelper.accessor("audiobook", { header: "audiobook" }),
       columnHelper.accessor("favorited", {
         header: "Favorited",
         cell: (props) => (
@@ -180,6 +183,9 @@ export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
         stars: !listOwner.soderberghMode,
         creator: false,
         id: false,
+        onPlane: false,
+        inTheater: false,
+        audiobook: false,
       },
     },
     getCoreRowModel: getCoreRowModel(),

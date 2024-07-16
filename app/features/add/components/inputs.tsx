@@ -68,8 +68,8 @@ export function MovieInputs({
         <input
           onChange={(e) => onPlaneSelect(e.target.checked)}
           checked={_isOnPlane}
-          id="plane"
-          name="plane"
+          id="onPlane"
+          name="onPlane"
           type="checkbox"
           className="ml-auto p-1"
         />

@@ -81,6 +81,7 @@ function MovieInputs() {
           <PaperAirplaneIcon className="ml-3 h-4 w-4" />
           <span className="text-sm">On a plane</span>
         </label>
+
         <input
           defaultChecked={false}
           onChange={(e) => setIsOnPlane(e.target.checked)}
