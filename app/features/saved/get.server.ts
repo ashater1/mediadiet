@@ -1,7 +1,9 @@
 import { MediaType } from "@prisma/client";
 import { formatInTimeZone } from "date-fns-tz";
 import { db } from "~/db.server";
+
 import { listToString } from "~/utils/funcs";
+import { apStyleTitleCase } from "ap-style-title-case";
 
 // TODO - Move types to Prisma type helper
 
@@ -25,8 +27,17 @@ export function formatSavedItem(item: SavedItem) {
   return {
     ..._item,
     createdAt: formattedCreatedAt,
+    tvSeries: _mediaItem.TvSeries
+      ? {
+          ..._mediaItem.TvSeries,
+          title:
+            _mediaItem.TvSeries.title &&
+            apStyleTitleCase(_mediaItem.TvSeries.title),
+        }
+      : null,
     mediaItem: {
       ..._mediaItem,
+      title: apStyleTitleCase(_mediaItem.title),
       creator,
     },
   };

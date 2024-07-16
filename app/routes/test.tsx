@@ -3,56 +3,51 @@ import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import { useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { db } from "~/db.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  let page = url.searchParams.get("page");
-  let pageNumber = page ? parseInt(page) ?? 1 : 1;
-  console.log({ pageNumber });
-  return json({
-    data: [...Array(pageNumber * 20).keys()],
+  const saved = await db.user.findFirstOrThrow({
+    where: {
+      username: "adam",
+    },
+    include: {
+      MediaItemForLater: {
+        take: 30,
+        skip: 9999,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          mediaItem: {
+            include: {
+              TvSeries: true,
+              creator: true,
+            },
+          },
+        },
+        where: {
+          mediaItem: {
+            mediaType: undefined,
+          },
+        },
+      },
+    },
   });
+
+  console.log();
+  return json(saved.MediaItemForLater);
 }
 
 export default function Test() {
   const data = useLoaderData<typeof loader>();
-  const [dataState, setDataState] = useState(data);
-
-  const ref = useRef(null);
-  const isInView = useInView(ref);
-  const fetcher = useFetcher<typeof loader>();
-  const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    if (!isInView) return;
-    console.log("Fetching more shit!");
-    fetcher.load(`/test?page=${page}`);
-    setPage((p) => p + 1);
-  }, [isInView]);
-
-  useEffect(() => {
-    if (!fetcher.data || fetcher.state === "loading") {
-      return;
-    }
-    // If we have new data - append it
-    if (fetcher.data) {
-      const newItems = fetcher.data.data;
-      setDataState((d) => ({
-        data: [...d.data, ...newItems],
-      }));
-    }
-  }, [fetcher.data]);
 
   return (
     <PageFrame>
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <div>
-        {data &&
-          dataState.data.map((_, i) => (
-            <div key={i} className="flex gap-2 items-center">
-              Fuck face
-            </div>
-          ))}
-        <div ref={ref} className="py-10 bg-red-300 w-full" id="scrollTrigger" />
+        {data.map((d) => (
+          <div>{d.mediaItem.title}</div>
+        ))}
       </div>
     </PageFrame>
   );

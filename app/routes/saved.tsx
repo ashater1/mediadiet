@@ -7,26 +7,26 @@ import {
   useFetcher,
   useLoaderData,
   useLocation,
-  useSearchParams,
   useSubmit,
 } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
+import { useInView } from "framer-motion";
+import { set } from "lodash";
+import { useEffect, useRef, useState } from "react";
+import { PageFrame, PageHeader } from "~/components/frames";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
 import { getUserDetails } from "~/features/auth/user.server";
 import { BookIcon, MovieIcon, TvShowIcon } from "~/features/list/icons/icons";
 import { getMediaTypesFromUrl } from "~/features/list/utils.server";
-import { setToast } from "~/features/toasts/toast.server";
-import { PageFrame, PageHeader } from "~/components/frames";
 import { deleteSavedItem } from "~/features/saved/delete.server";
 import {
   formatSavedItem,
   getSavedCounts,
   getSavedItems,
 } from "~/features/saved/get.server";
+import { setToast } from "~/features/toasts/toast.server";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
-import { useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -37,21 +37,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   let page = url.searchParams.get("page");
+  console.log({ page });
   let pageNumber = page ? parseInt(page) ?? 1 : 1;
 
   const [saved, counts] = await Promise.all([
     getSavedItems({
       username: user.username,
       mediaTypes,
-      take: pageNumber * 30,
+      take: 31,
       skip: (pageNumber - 1) * 30,
     }),
     getSavedCounts({ username: user.username }),
   ]);
 
-  const formattedSaved = saved?.map(formatSavedItem);
+  const formattedSaved = saved.map(formatSavedItem);
 
-  return json({ saved: formattedSaved, counts });
+  return json({
+    saved: formattedSaved,
+    counts,
+  });
 }
 
 export async function action({ request }: LoaderFunctionArgs) {
@@ -95,16 +99,20 @@ export default function Saved() {
   const isInView = useInView(infiniteScrollRef);
 
   let [page, setPage] = useState(1);
+  let [allItemsLoaded, setAllItemsLoaded] = useState(data.saved.length < 31);
   const savedItemsFetcher = useFetcher<typeof loader>();
 
   const { search } = useLocation();
 
   useEffect(() => {
     setDataState([]);
+    setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
     if (!isInView || savedItemsFetcher.state === "loading") return;
+
+    setPage((p) => p + 1);
 
     if (mediaTypes.length) {
       let searchParams = new URLSearchParams();
@@ -113,24 +121,24 @@ export default function Saved() {
       return;
     }
     savedItemsFetcher.load(`/saved?page=${page + 1}`);
-    setPage((p) => p + 1);
   }, [isInView]);
 
   useEffect(() => {
-    if (!savedItemsFetcher.data || savedItemsFetcher.state === "loading") {
-      return;
-    }
-    // If we have new data - append it
-    if (savedItemsFetcher.data) {
-      const newItems = savedItemsFetcher.data.saved;
-      setDataState((d) => [...d, ...newItems]);
+    if (savedItemsFetcher.data?.saved) {
+      console.log(savedItemsFetcher.data.saved.at(-1));
+      let data = [...savedItemsFetcher.data.saved].slice(0, 30);
+      console.log(data.at(-1));
+      setDataState((d) => [...d, ...data]);
+      if (savedItemsFetcher.data.saved.length < 31) {
+        setAllItemsLoaded(true);
+      }
     }
   }, [savedItemsFetcher.data]);
 
   return (
     <>
       <PageFrame>
-        <div className="flex w-full flex-col">
+        <div className="pb-6 flex w-full flex-col">
           <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
             <div className="flex">
               <PageHeader>
@@ -225,12 +233,14 @@ export default function Saved() {
               </li>
             ))}
           </ul>
-          <div
-            ref={infiniteScrollRef}
-            className="py-5 flex items-center justify-center"
-          >
-            <Spinner className="w-6 h-6" />
-          </div>
+          {!allItemsLoaded && (
+            <div
+              ref={infiniteScrollRef}
+              className="flex items-center justify-center py-6 w-full"
+            >
+              <Spinner className="w-6 h-6" />
+            </div>
+          )}
         </div>
       </PageFrame>
       <Outlet />

@@ -1,11 +1,10 @@
 import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { openlibrary } from "~/features/books/openLibrary";
-
 import { listToString, safeFilter } from "~/utils/funcs";
-import { titleize } from "~/utils/capitalize";
 import { MediaType } from "@prisma/client";
 import { ComboboxOption } from "~/features/search/SearchCombobox";
 import { getSearchTerm } from "~/features/search/utils";
+import { apStyleTitleCase } from "ap-style-title-case";
 
 export type BookSearchResults = (ComboboxOption & {
   imgSrc: string | null;
@@ -46,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       id: book.key,
       imgSrc,
       releaseYear: year,
-      title: book.title ? titleize(book.title) ?? "" : "",
+      title: book.title ? apStyleTitleCase(book.title) ?? "" : "",
       medianPages,
     };
   });

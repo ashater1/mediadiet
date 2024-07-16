@@ -1,9 +1,9 @@
 import { MediaType } from "@prisma/client";
 import { json, LoaderFunctionArgs } from "@vercel/remix";
+import { apStyleTitleCase } from "ap-style-title-case";
 import { ComboboxOption } from "~/features/search/SearchCombobox";
 import { getSearchTerm } from "~/features/search/utils";
 import { movieDb } from "~/features/tvAndMovies/api";
-import { titleize } from "~/utils/capitalize";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -14,7 +14,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const data: ComboboxOption[] = tvShows.map((show) => {
     return {
       id: String(show.id),
-      title: titleize(show.name) ?? "",
+      title: apStyleTitleCase(show.name) ?? "",
       firstAirYear: show.first_air_date?.slice(0, 4),
     };
   });
