@@ -14,6 +14,7 @@ import {
   BookIcon,
   FavoriteHeart,
   MovieIcon,
+  PlaneIcon,
   ReviewIcon,
   StarsDisplay,
   TvShowIcon,
@@ -22,6 +23,7 @@ import { usePendingDeletions } from "../hooks/useGetPendingDeletions";
 import { MediaType } from "@prisma/client";
 import { FormattedReview } from "~/features/list/entries.server";
 import { useListOwnerContext } from "../hooks/useListOwnerContext";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 
 function TableRow({
   isSelf,
@@ -93,8 +95,8 @@ export function UserEntriesTable({ entries }: { entries: FormattedReview[] }) {
               </div>
 
               <div className="flex flex-col">
-                <div className="text-sm font-semibold line-clamp-2 md:text-sm">
-                  {props.getValue() as string}
+                <div className="flex text-sm font-semibold line-clamp-2 md:text-sm">
+                  <p>{props.getValue() as string}</p>
                 </div>
 
                 <div className="flex items-center gap-x-2">
