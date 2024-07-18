@@ -1,21 +1,21 @@
+import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import {
   ActionFunctionArgs,
+  json,
   LoaderFunctionArgs,
   redirect,
 } from "@vercel/remix";
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import { z } from "zod";
+import { Logo } from "~/components/logo";
 import Spinner from "~/components/spinner";
 import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
-import { Logo } from "~/components/logo";
-import { resend } from "~/features/emails/resend.server";
-import { json } from "@vercel/remix";
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { findUser, getSessionUser } from "~/features/auth/user.server";
 import { signUp } from "~/features/auth/signUp.server";
+import { findUser, getSessionUser } from "~/features/auth/user.server";
+import { resend } from "~/features/emails/resend.server";
 
 const SignUpSchema = z
   .object({
@@ -27,10 +27,7 @@ const SignUpSchema = z
       .string()
       .min(8, { message: "Password is too short (minimum 8 characters)" })
       .max(50, { message: "Password is too long (maximum 50 characters)" }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "Password is too short (minimum 8 characters)" })
-      .max(50, { message: "Password is too long (maximum 50 characters)" }),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -63,7 +60,9 @@ export async function action({ request }: ActionFunctionArgs) {
     password: data.data.password,
   });
 
-  if (success) {
+  if (!success) {
+    return json({ success: false, data: signUpResult });
+  } else if (success) {
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: "Adam <adam@mediadiet.app>",
       to: data.data.email,
@@ -77,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
 
     if (emailError) {
-      throw new Error("Uh oh!");
+      throw new Error(emailError ? JSON.stringify(emailError) : "Email error");
     }
   }
 
@@ -202,6 +201,7 @@ export default function SignUp() {
                     />
                   </div>
                   {data &&
+                    !("password" in data.data) &&
                     "confirmPassword" in data.data &&
                     data.data.confirmPassword && (
                       <Alert>{data.data.confirmPassword}</Alert>

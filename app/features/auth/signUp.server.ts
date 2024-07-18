@@ -20,9 +20,11 @@ export async function signUp({
     db.user.findFirst({ where: { email } }),
   ]);
 
+  console.log({ usernameExists: !!usernameExists, emailExists: !!emailExists });
+
   if (!!usernameExists) {
     return {
-      success: false,
+      success: false as const,
       username: ["Username already exists."],
       email: null,
       password: null,
@@ -32,7 +34,7 @@ export async function signUp({
 
   if (!!emailExists) {
     return {
-      success: false,
+      success: false as const,
       username: null,
       email: ["Email address is already being used."],
       password: null,
@@ -60,5 +62,5 @@ export async function signUp({
     });
   }
 
-  return { success: true, link: data.properties.action_link };
+  return { success: true as const, link: data.properties.action_link };
 }

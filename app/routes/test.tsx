@@ -49,6 +49,8 @@ export default function Test() {
   const data = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  searchParams.get("page");
+  searchParams.set("page", "1");
   console.log(searchParams.toString());
 
   const allParams = Array.from(searchParams).reduce(
