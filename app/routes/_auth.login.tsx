@@ -1,4 +1,8 @@
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ExclamationCircleIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/outline";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import {
   ActionFunctionArgs,
@@ -13,6 +17,7 @@ import Spinner from "~/components/spinner";
 import { Logo } from "~/components/logo";
 import { loginSchema, signInWithPassword } from "~/features/auth/signIn.server";
 import { findUser, getUserDetails } from "~/features/auth/user.server";
+import { useState } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -28,12 +33,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
   const submission = Object.fromEntries(await request.formData());
+
   const parsedLogin = loginSchema.safeParse({ ...submission });
 
   if (!parsedLogin.success) {
-    return json(parsedLogin.error.flatten().fieldErrors, {
-      headers: request.headers,
-    });
+    return json(parsedLogin.error.flatten().fieldErrors);
   }
 
   const { email, password } = parsedLogin.data;
@@ -54,7 +58,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Login() {
   const actionData = useActionData<typeof action>();
+
   const navigation = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const loading =
     navigation.state !== "idle" &&
@@ -110,12 +116,18 @@ export default function Login() {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 className="relative block w-full rounded-b-md border-0 px-3 py-1.5 text-gray-900  placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                 placeholder="Password"
               />
+              <div
+                className="z-50 select-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 cursor-pointer"
+                onClick={() => setShowPassword((s) => !s)}
+              >
+                {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+              </div>
 
               {passwordError && !loading && (
                 <motion.div
