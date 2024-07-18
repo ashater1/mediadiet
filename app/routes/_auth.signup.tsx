@@ -1,5 +1,9 @@
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  CheckIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import {
   ActionFunctionArgs,
@@ -9,10 +13,12 @@ import {
 } from "@vercel/remix";
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import { z } from "zod";
 import { Logo } from "~/components/logo";
 import Spinner from "~/components/spinner";
 import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
+import { usePasswordValidator } from "~/features/auth/hooks";
 import { signUp } from "~/features/auth/signUp.server";
 import { findUser, getSessionUser } from "~/features/auth/user.server";
 import { resend } from "~/features/emails/resend.server";
@@ -84,6 +90,18 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function SignUp() {
+  const {
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isMatching,
+    includesNumber,
+    isValidLength,
+    includesUppercase,
+    includesSymbol,
+  } = usePasswordValidator();
+
   const data = useActionData<typeof action>();
   const navigation = useNavigation();
   const loading =
@@ -173,6 +191,8 @@ export default function SignUp() {
                       id="password"
                       name="password"
                       type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       autoComplete="current-password"
                       required
                       className="relative block w-full rounded border-0 px-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
@@ -182,6 +202,28 @@ export default function SignUp() {
                   {data && "password" in data.data && data.data.password && (
                     <Alert>{data.data.password}</Alert>
                   )}
+                  <div className="mt-2 flex flex-col gap-3">
+                    <div className="flex justify-between">
+                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                        <Indicator status={isValidLength} />
+                        <p>8 character minimum</p>
+                      </div>
+                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                        <Indicator status={includesNumber} />
+                        <p>One number</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                        <Indicator status={includesUppercase} />
+                        <p>One uppercase letter</p>
+                      </div>
+                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                        <Indicator status={includesSymbol} />
+                        <p>One symbol</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -194,8 +236,18 @@ export default function SignUp() {
                       id="confirmPassword"
                       name="confirmPassword"
                       type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       autoComplete="current-password"
                       required
+                      disabled={
+                        !(
+                          includesNumber &&
+                          includesUppercase &&
+                          includesSymbol &&
+                          isValidLength
+                        )
+                      }
                       className="relative block w-full rounded border-0 px-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                       placeholder="Confirm password"
                     />
@@ -206,6 +258,22 @@ export default function SignUp() {
                     data.data.confirmPassword && (
                       <Alert>{data.data.confirmPassword}</Alert>
                     )}
+                  {includesNumber &&
+                    includesUppercase &&
+                    includesSymbol &&
+                    isValidLength && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: "auto" }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-2 text-sm items-center text-gray-600 flex gap-3">
+                          <Indicator status={isMatching} />
+                          <p>Passwords match</p>
+                        </div>
+                      </motion.div>
+                    )}
                 </div>
               </div>
 
@@ -215,10 +283,12 @@ export default function SignUp() {
                     name="actionId"
                     value="signup"
                     type="submit"
-                    disabled={loading}
+                    disabled={!isMatching || loading}
                     className={classNames(
-                      loading ? "mt-opacity-50" : "hover:bg-primary-700",
-                      "mt-4 flex h-10 w-full items-center justify-center rounded-md bg-primary-800 text-sm font-semibold leading-6 text-white  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
+                      !isMatching || loading
+                        ? "bg-opacity-75"
+                        : "hover:bg-primary-700",
+                      "mt-4 flex h-10 w-full items-center justify-center rounded-md bg-primary-800 text-sm font-semibold leading-6 text-white transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-800"
                     )}
                   >
                     <div className="relative">
@@ -246,6 +316,14 @@ export default function SignUp() {
   );
 }
 
+function Indicator({ status }: { status: boolean }) {
+  return status ? (
+    <CheckIcon className="stroke-green-600 h-3 w-3 stroke-2" />
+  ) : (
+    <XMarkIcon className="stroke-red-600 h-3 w-3 stroke-2" />
+  );
+}
+
 function Success() {
   return (
     <div className="flex items-center justify-center w-full">
@@ -268,6 +346,7 @@ function Success() {
     </div>
   );
 }
+
 function Alert({ children }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <motion.p

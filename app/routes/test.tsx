@@ -1,87 +1,57 @@
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useLocation,
-  useSearchParams,
-} from "@remix-run/react";
-import { LoaderFunctionArgs, json } from "@vercel/remix";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { PageFrame } from "~/components/frames";
-import { useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { db } from "~/db.server";
-import { apStyleTitleCase } from "ap-style-title-case";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const saved = await db.user.findFirstOrThrow({
-    where: {
-      username: "adam",
-    },
-    include: {
-      MediaItemForLater: {
-        take: 30,
-        skip: 9999,
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          mediaItem: {
-            include: {
-              TvSeries: true,
-              creator: true,
-            },
-          },
-        },
-        where: {
-          mediaItem: {
-            mediaType: undefined,
-          },
-        },
-      },
-    },
-  });
-
-  console.log();
-  return json(saved.MediaItemForLater);
+function Indicator({ status }: { status: boolean }) {
+  return status ? (
+    <CheckIcon className="stroke-green-600 h-3 w-3 stroke-2" />
+  ) : (
+    <XMarkIcon className="stroke-red-600 h-3 w-3 stroke-2" />
+  );
 }
 
 export default function Test() {
-  const data = useLoaderData<typeof loader>();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  searchParams.get("page");
-  searchParams.set("page", "1");
-  console.log(searchParams.toString());
-
-  const allParams = Array.from(searchParams).reduce(
-    (acc: { [key: string]: string | string[] }, [key, value]) => {
-      if (key in acc) {
-        if (Array.isArray(acc[key])) {
-          acc[key] = [...acc[key], value];
-        } else {
-          acc[key] = [acc[key], value];
-        }
-      } else {
-        acc[key] = value;
-      }
-
-      return acc;
-    },
-    {}
-  );
+  const [password, setPassword] = useState("");
 
   return (
     <PageFrame>
-      <pre>{JSON.stringify(allParams, null, 2)}</pre>
-      <pre>{JSON.stringify(searchParams, null, 2)}</pre>
-      <button
-        className="px-2 py-1 bg-gray-200 rounded"
-        onClick={() =>
-          setSearchParams({ ...allParams, fuck: ["you", "youToo"] })
-        }
-      >
-        Fucks
-      </button>
+      <div className="qoverflow-hidden w-80 relative rounded-md">
+        <input
+          id="username"
+          name="username"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="relative block w-full rounded border-0 px-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
+          placeholder="Username"
+        />
+        <div className="mt-2 flex flex-col gap-3">
+          <div className="flex justify-between">
+            <div className="flex gap-1 items-center text-sm text-gray-600">
+              <Indicator status={password.length >= 8} />
+              <p>8 character minimum</p>
+            </div>
+            <div className="flex gap-1 items-center text-sm text-gray-600">
+              <Indicator status={/\d/.test(password)} />
+              <p>One number</p>
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div className="flex gap-1 items-center text-sm text-gray-600">
+              <Indicator status={password.toLowerCase() !== password} />
+              <p>One uppercase letter</p>
+            </div>
+            <div className="flex gap-1 items-center text-sm text-gray-600">
+              <Indicator
+                status={/[\?\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\;\:\'\"\,\.\<\>\/\|\`\~]/.test(
+                  password
+                )}
+              />
+              <p>One symbol</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </PageFrame>
   );
 }
