@@ -216,23 +216,47 @@ export default function SignUp() {
                   )}
                   <div className="mt-2 flex flex-col gap-3">
                     <div className="flex justify-between">
-                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                      <div className="flex gap-1 items-center text-sm ">
                         <Indicator status={isValidLength} />
-                        <p>8 character minimum</p>
+                        <p
+                          className={
+                            !isValidLength ? "opacity-60" : "opacity-100"
+                          }
+                        >
+                          8 character minimum
+                        </p>
                       </div>
-                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                      <div className="flex gap-1 items-center text-sm ">
                         <Indicator status={includesNumber} />
-                        <p>One number</p>
+                        <p
+                          className={
+                            !includesNumber ? "opacity-60" : "opacity-100"
+                          }
+                        >
+                          One number
+                        </p>
                       </div>
                     </div>
                     <div className="flex justify-between">
-                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                      <div className="flex gap-1 items-center text-sm ">
                         <Indicator status={includesUppercase} />
-                        <p>One uppercase letter</p>
+                        <p
+                          className={
+                            !includesUppercase ? "opacity-60" : "opacity-100"
+                          }
+                        >
+                          One uppercase letter
+                        </p>
                       </div>
-                      <div className="flex gap-1 items-center text-sm text-gray-600">
+                      <div className="flex gap-1 items-center text-sm ">
                         <Indicator status={includesSymbol} />
-                        <p>One symbol</p>
+                        <p
+                          className={
+                            !includesSymbol ? "opacity-60" : "opacity-100"
+                          }
+                        >
+                          One symbol
+                        </p>
                       </div>
                     </div>
                   </div>
