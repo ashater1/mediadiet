@@ -1,5 +1,5 @@
 import { useLocation } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function useIsAuthPage() {
   const location = useLocation();
@@ -10,6 +10,12 @@ export function useIsAuthPage() {
 export function usePasswordValidator() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    if (password.length === 0) {
+      setConfirmPassword("");
+    }
+  }, [password]);
 
   return {
     password,
