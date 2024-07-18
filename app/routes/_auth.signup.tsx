@@ -2,6 +2,8 @@ import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import {
   CheckIcon,
   ExclamationCircleIcon,
+  EyeIcon,
+  EyeSlashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
@@ -112,7 +114,11 @@ export default function SignUp() {
     isValidLength,
     includesUppercase,
     includesSymbol,
+    isValidPassword,
   } = usePasswordValidator();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const data = useActionData<typeof action>();
   const navigation = useNavigation();
@@ -202,7 +208,7 @@ export default function SignUp() {
                     <input
                       id="password"
                       name="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="current-password"
@@ -210,6 +216,12 @@ export default function SignUp() {
                       className="relative block w-full rounded border-0 px-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                       placeholder="Password"
                     />
+                    <div
+                      className="select-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 cursor-pointer"
+                      onClick={() => setShowPassword((s) => !s)}
+                    >
+                      {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+                    </div>
                   </div>
                   {data && "password" in data.data && data.data.password && (
                     <Alert>{data.data.password}</Alert>
@@ -271,22 +283,26 @@ export default function SignUp() {
                     <input
                       id="confirmPassword"
                       name="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       autoComplete="current-password"
                       required
-                      disabled={
-                        !(
-                          includesNumber &&
-                          includesUppercase &&
-                          includesSymbol &&
-                          isValidLength
-                        )
-                      }
+                      disabled={!isValidPassword}
                       className="relative block w-full rounded border-0 px-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-800 outline-none sm:text-sm sm:leading-6"
                       placeholder="Confirm password"
                     />
+                    <div
+                      className={classNames(
+                        isValidPassword && "cursor-pointer",
+                        "select-none absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                      )}
+                      onClick={() =>
+                        isValidPassword && setShowConfirmPassword((s) => !s)
+                      }
+                    >
+                      {showConfirmPassword ? <EyeSlashIcon /> : <EyeIcon />}
+                    </div>
                   </div>
                   {data &&
                     !("password" in data.data) &&
@@ -294,22 +310,23 @@ export default function SignUp() {
                     data.data.confirmPassword && (
                       <Alert>{data.data.confirmPassword}</Alert>
                     )}
-                  {includesNumber &&
-                    includesUppercase &&
-                    includesSymbol &&
-                    isValidLength && (
-                      <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: "auto" }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-2 text-sm items-center text-gray-600 flex gap-3">
-                          <Indicator status={isMatching} />
-                          <p>Passwords match</p>
-                        </div>
-                      </motion.div>
-                    )}
+                  {isValidPassword && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: "auto" }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-2 text-sm items-center flex gap-3">
+                        <Indicator status={isMatching} />
+                        <p
+                          className={!isMatching ? "opacity-60" : "opacity-100"}
+                        >
+                          Passwords match
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </div>
 

@@ -17,6 +17,29 @@ export function usePasswordValidator() {
     }
   }, [password]);
 
+  const isMatching = password.length > 0 && password === confirmPassword;
+  const isValidLength = password.length >= 8;
+  const includesSymbol =
+    /[\?\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\;\:\'\"\,\.\<\>\/\|\`\~]/.test(
+      password
+    );
+  const includesNumber = /\d/.test(password);
+  const includesUppercase = password.toLowerCase() !== password;
+
+  return {
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isMatching,
+    isValidLength,
+    includesSymbol,
+    includesNumber,
+    includesUppercase,
+    isValidPassword:
+      isValidLength && includesNumber && includesUppercase && includesSymbol,
+  };
+
   return {
     password,
     setPassword,
