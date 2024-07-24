@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@vercel/remix";
 import { getUserOrRedirect } from "~/features/auth/user.server";
+import { FriendsTable } from "~/features/friends/followTable";
 import { Friend } from "~/features/friends/friendsList";
 import { getFollowing } from "~/features/friends/get.server";
 
@@ -20,15 +21,7 @@ export default function Followers() {
 
   return (
     <div>
-      {!following.length ? (
-        <Empty />
-      ) : (
-        <ul className="pt-4">
-          {following.map((f) => (
-            <Friend {...f} />
-          ))}
-        </ul>
-      )}
+      {!following.length ? <Empty /> : <FriendsTable followers={following} />}
     </div>
   );
 }
