@@ -4,7 +4,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Link, NavLink } from "@remix-run/react";
+import { Link, NavLink, useNavigation } from "@remix-run/react";
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
@@ -12,11 +12,17 @@ import { NewEntryModal } from "~/features/add/entryModal";
 import { useUserContext } from "~/features/auth/context";
 import { Logo } from "../../components/logo";
 import { useAddNewContext } from "../add/context";
+import Spinner from "~/components/spinner";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const user = useUserContext();
   const { openModal } = useAddNewContext();
+
+  const nav = useNavigation();
+  const loggingOut =
+    nav.location?.pathname === "/logout" ||
+    (nav.state === "loading" && nav.location?.pathname === "/login");
 
   const navigation = useMemo(
     () => [
@@ -71,7 +77,11 @@ export default function Navbar() {
                 <div className="flex gap-2 h-full items-center justify-center">
                   <NewEntryModal />
                   <Link to="/logout">
-                    <ArrowLeftOnRectangleIcon className="w-6 h-6 rotate-180" />
+                    {loggingOut ? (
+                      <Spinner className="w-6 h-6" />
+                    ) : (
+                      <ArrowLeftOnRectangleIcon className="w-6 h-6 rotate-180" />
+                    )}
                   </Link>
                 </div>
               ) : (
