@@ -94,8 +94,21 @@ export default function Saved() {
   const { isLoading, getAllParams } = useOptimisticParams();
   const mediaTypes = getAllParams("type");
 
-  const { page, resetPage, incrementPage, infiniteScrollRef, isInView } =
-    usePagination();
+  const { page, resetPage, infiniteScrollRef } = usePagination({
+    callback: ({ page }) => {
+      if (savedItemsFetcher.state === "loading" || allItemsLoaded) {
+        return;
+      }
+
+      if (mediaTypes.length) {
+        let searchParams = new URLSearchParams();
+        mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
+        savedItemsFetcher.load(`/saved?page=${page}&${searchParams}`);
+        return;
+      }
+      savedItemsFetcher.load(`/saved?page=${page}`);
+    },
+  });
 
   let [allItemsLoaded, setAllItemsLoaded] = useState(data.saved.length < 31);
   const savedItemsFetcher = useFetcher<typeof loader>();
@@ -107,22 +120,6 @@ export default function Saved() {
     setDataState([]);
     setAllItemsLoaded(false);
   }, [search]);
-
-  useEffect(() => {
-    if (!isInView || savedItemsFetcher.state === "loading" || allItemsLoaded) {
-      return;
-    }
-
-    incrementPage();
-
-    if (mediaTypes.length) {
-      let searchParams = new URLSearchParams();
-      mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
-      savedItemsFetcher.load(`/saved?page=${page + 1}&${searchParams}`);
-      return;
-    }
-    savedItemsFetcher.load(`/saved?page=${page + 1}`);
-  }, [isInView]);
 
   useEffect(() => {
     if (savedItemsFetcher.data?.saved) {

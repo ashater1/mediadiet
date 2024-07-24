@@ -20,6 +20,7 @@ import { formatEntries, getEntries } from "~/features/list/entries.server";
 import { useListOwnerContext } from "~/features/list/hooks/useListOwnerContext";
 import { getMediaTypesFromUrl } from "~/features/list/utils.server";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
+import { usePagination } from "~/utils/usePagination";
 
 export type UserData = SerializeFrom<typeof loader>["entries"];
 
@@ -67,49 +68,36 @@ export default function UserIndex() {
   const { listOwner, isSelf, isFollowing } = useListOwnerContext();
   const user = useUserContext();
 
-  const infiniteScrollRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(infiniteScrollRef);
+  const { page, resetPage, infiniteScrollRef, isInView } = usePagination({
+    callback: ({ page }) => {
+      if (activityItemsFetcher.state === "loading" || allItemsLoaded) {
+        return;
+      }
 
-  let [page, setPage] = useState(1);
+      if (mediaTypes.length) {
+        let searchParams = new URLSearchParams();
+        mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
+        activityItemsFetcher.load(
+          `/${listOwner.username}?index&page=${page}&${searchParams}`
+        );
+        return;
+      }
+      activityItemsFetcher.load(`/${listOwner.username}?index&page=${page}`);
+    },
+  });
+
   let [allItemsLoaded, setAllItemsLoaded] = useState(data.entries.length < 31);
   const activityItemsFetcher = useTypedFetcher<typeof loader>();
 
   const { search } = useLocation();
 
   useEffect(() => {
-    setPage(1);
+    resetPage();
     setDataState([]);
     setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
-    if (
-      !isInView ||
-      activityItemsFetcher.state === "loading" ||
-      data.entries.length !== 31 ||
-      allItemsLoaded
-    ) {
-      return;
-    }
-
-    setPage((p) => p + 1);
-
-    if (mediaTypes.length) {
-      let searchParams = new URLSearchParams();
-      mediaTypes.forEach((t) => searchParams.append("type", t.toString()));
-      activityItemsFetcher.load(
-        `/${listOwner.username}?index&page=${page + 1}&${searchParams}`
-      );
-      return;
-    }
-    activityItemsFetcher.load(`/${listOwner.username}?index&page=${page + 1}`);
-  }, [isInView]);
-
-  useEffect(() => {
-    console.log(
-      "Data changed :",
-      activityItemsFetcher.data?.entries?.map((e) => e.mediaItem.title)
-    );
     if (activityItemsFetcher.data?.entries) {
       let data = [...activityItemsFetcher.data.entries].slice(0, 30);
       setDataState((d) => [...d, ...data]);

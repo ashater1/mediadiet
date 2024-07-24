@@ -20,8 +20,6 @@ export async function signUp({
     db.user.findFirst({ where: { email } }),
   ]);
 
-  console.log({ usernameExists: !!usernameExists, emailExists: !!emailExists });
-
   if (!!usernameExists) {
     return {
       success: false as const,

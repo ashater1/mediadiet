@@ -1,7 +1,9 @@
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function usePagination() {
+export function usePagination(
+  args: { callback?: (args: { page: number }) => void } = {}
+) {
   let [page, setPage] = useState(1);
   const infiniteScrollRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(infiniteScrollRef);
@@ -17,6 +19,18 @@ export function usePagination() {
   function resetPage() {
     setPage(1);
   }
+
+  useEffect(() => {
+    if (isInView) {
+      incrementPage();
+    }
+  }, [isInView]);
+
+  useEffect(() => {
+    if (args.callback) {
+      args.callback({ page });
+    }
+  }, [page]);
 
   return {
     isInView,
