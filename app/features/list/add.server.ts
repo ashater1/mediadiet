@@ -9,6 +9,7 @@ import { isoDate, nullishOnToBool, nullishStringToBool } from "../zod/utils";
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {
   userId: string;
 };
+
 export const CoreAddToListSchema = z.object({
   audiobook: nullishStringToBool,
   consumedDate: isoDate,
@@ -178,7 +179,7 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
       args.firstPublishedYear
     );
 
-    await db.review.create({
+    const { mediaItemId } = await db.review.create({
       data: {
         user: {
           connect: {
@@ -193,14 +194,21 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
         },
       },
     });
+
+    await db.mediaItemForLater.deleteMany({
+      where: {
+        mediaItemId,
+        userId,
+      },
+    });
+
     return { success: true, title: book.title };
   } else if (args.mediaType === "MOVIE") {
     let { mediaType, ...rest } = args;
     const movie = await movieDb.getMovie(apiId);
     const formattedMovie = formatMovieToCreateMediaItem(movie);
-    console.log({ plane: rest.onPlane });
 
-    await db.review.create({
+    const { mediaItemId } = await db.review.create({
       data: {
         user: {
           connect: {
@@ -215,6 +223,14 @@ export async function addNewEntry({ userId, apiId, ...args }: AddToListArgs) {
         },
       },
     });
+
+    await db.mediaItemForLater.deleteMany({
+      where: {
+        mediaItemId,
+        userId,
+      },
+    });
+
     return { success: true, title: movie.title };
   } else if (args.mediaType === "TV") {
     let { mediaType, seasonId, ...rest } = args;

@@ -10,8 +10,7 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { LoaderFunctionArgs, json, redirect } from "@vercel/remix";
-import { useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { PageFrame, PageHeader } from "~/components/frames";
 import { CountsWithParams } from "~/components/headerbar/count";
 import Spinner from "~/components/spinner";
@@ -27,6 +26,7 @@ import {
 } from "~/features/saved/get.server";
 import { setToast } from "~/features/toasts/toast.server";
 import { useOptimisticParams } from "~/utils/useOptimisticParams";
+import { usePagination } from "~/utils/usePagination";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
@@ -37,7 +37,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   let page = url.searchParams.get("page");
-  console.log({ page });
   let pageNumber = page ? parseInt(page) ?? 1 : 1;
 
   const [saved, counts] = await Promise.all([
@@ -95,32 +94,26 @@ export default function Saved() {
   const { isLoading, getAllParams } = useOptimisticParams();
   const mediaTypes = getAllParams("type");
 
-  const infiniteScrollRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(infiniteScrollRef);
+  const { page, resetPage, incrementPage, infiniteScrollRef, isInView } =
+    usePagination();
 
-  let [page, setPage] = useState(1);
   let [allItemsLoaded, setAllItemsLoaded] = useState(data.saved.length < 31);
   const savedItemsFetcher = useFetcher<typeof loader>();
 
   const { search } = useLocation();
 
   useEffect(() => {
-    setPage(1);
+    resetPage();
     setDataState([]);
     setAllItemsLoaded(false);
   }, [search]);
 
   useEffect(() => {
-    if (
-      !isInView ||
-      savedItemsFetcher.state === "loading" ||
-      data.saved.length !== 31 ||
-      allItemsLoaded
-    ) {
+    if (!isInView || savedItemsFetcher.state === "loading" || allItemsLoaded) {
       return;
     }
 
-    setPage((p) => p + 1);
+    incrementPage();
 
     if (mediaTypes.length) {
       let searchParams = new URLSearchParams();
