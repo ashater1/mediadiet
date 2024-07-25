@@ -32,22 +32,49 @@ export async function addSavedMovie({
   const movie = await movieDb.getMovie(apiId);
   const formattedMovie = formatMovieToCreateMediaItem(movie);
 
-  const savedItem = await db.mediaItemForLater.create({
-    data: {
+  const isSaved = await db.mediaItemForLater.findFirst({
+    where: {
       user: {
-        connect: {
-          username,
-        },
+        username,
       },
       mediaItem: {
-        connectOrCreate: {
-          ...formattedMovie,
-        },
+        mediaType: "MOVIE",
+        apiId,
       },
     },
   });
 
-  return { title: movie.title, id: savedItem.id };
+  if (isSaved) {
+    await db.mediaItemForLater.update({
+      where: {
+        mediaItemId_userId: {
+          mediaItemId: isSaved.mediaItemId,
+          userId: isSaved.userId,
+        },
+      },
+      data: {
+        createdAt: new Date(),
+      },
+    });
+
+    return { title: movie.title, id: isSaved.id };
+  } else {
+    const savedItem = await db.mediaItemForLater.create({
+      data: {
+        user: {
+          connect: {
+            username,
+          },
+        },
+        mediaItem: {
+          connectOrCreate: {
+            ...formattedMovie,
+          },
+        },
+      },
+    });
+    return { title: movie.title, id: savedItem.id };
+  }
 }
 
 export async function addSavedBook({
@@ -64,22 +91,50 @@ export async function addSavedBook({
 
   const formattedBook = formatBookToCreateMediaItem(book, firstPublishedYear);
 
-  const savedItem = await db.mediaItemForLater.create({
-    data: {
+  const isSaved = await db.mediaItemForLater.findFirst({
+    where: {
       user: {
-        connect: {
-          username,
-        },
+        username,
       },
       mediaItem: {
-        connectOrCreate: {
-          ...formattedBook,
-        },
+        mediaType: "BOOK",
+        apiId,
       },
     },
   });
 
-  return { id: savedItem.id, title: book.title };
+  if (isSaved) {
+    await db.mediaItemForLater.update({
+      where: {
+        mediaItemId_userId: {
+          mediaItemId: isSaved.mediaItemId,
+          userId: isSaved.userId,
+        },
+      },
+      data: {
+        createdAt: new Date(),
+      },
+    });
+
+    return { title: book.title, id: isSaved.id };
+  } else {
+    const savedItem = await db.mediaItemForLater.create({
+      data: {
+        user: {
+          connect: {
+            username,
+          },
+        },
+        mediaItem: {
+          connectOrCreate: {
+            ...formattedBook,
+          },
+        },
+      },
+    });
+
+    return { id: savedItem.id, title: book.title };
+  }
 }
 
 export async function addSavedShow({

@@ -3,7 +3,6 @@ import { ActionFunctionArgs, redirect } from "@vercel/remix";
 import { Spinner } from "~/components/login/Spinner";
 import { SelectMediaType } from "~/features/add/SelectMediaType";
 import { getUserDetails } from "~/features/auth/user.server";
-
 import { setToast } from "~/features/toasts/toast.server";
 import {
   AddToSavedSchema,
@@ -39,9 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
         title: `${savedBook.title} was added to your Saved list`,
       },
     });
-  }
-
-  if (result.mediaType === "MOVIE") {
+  } else if (result.mediaType === "MOVIE") {
     const savedMovie = await addSavedMovie({
       apiId: result.id,
       username: user.username,
@@ -55,9 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
         title: `${savedMovie.title} was added to your Saved list`,
       },
     });
-  }
-
-  if (result.mediaType === "TV") {
+  } else if (result.mediaType === "TV") {
     const savedTv = await addSavedShow({
       username: user.username,
       showId: result.id,
@@ -72,6 +67,8 @@ export async function action({ request }: ActionFunctionArgs) {
       },
     });
   }
+
+  console.log("Should throw redirect!");
 
   throw redirect("/saved", {
     headers: response.headers,
