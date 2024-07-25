@@ -115,3 +115,20 @@ export async function getSavedCounts({ username }: { username: string }) {
     tvCount: tvCount._count.MediaItemForLater,
   };
 }
+
+export async function getIsSavedItem({
+  mediaItemId,
+  userId,
+}: {
+  mediaItemId: string;
+  userId: string;
+}) {
+  const result = await db.mediaItemForLater.findFirst({
+    where: {
+      mediaItemId: mediaItemId,
+      userId: userId,
+    },
+  });
+
+  return !!result;
+}

@@ -2,6 +2,7 @@ import { ClockIcon } from "@heroicons/react/20/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   useFetcher,
@@ -71,7 +72,6 @@ export async function action({ request }: LoaderFunctionArgs) {
   if (!id || typeof id !== "string") throw new Error("Invalide id provided");
 
   // TODO - add intent & a "Move to top" option
-  await deleteSavedItem(id);
 
   await setToast({
     request,
@@ -138,7 +138,7 @@ export default function Saved() {
           <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
             <div className="flex">
               <PageHeader>
-                <ClockIcon className="mr-3 h-8 w-8 fill-primary-500" />
+                <ClockIcon className="mr-3 h-8 w-8 fill-primary-400" />
                 Saved For Later
               </PageHeader>
               <NavLink to="add" className="flex items-center">
@@ -148,12 +148,11 @@ export default function Saved() {
               </NavLink>
             </div>
 
-            <div className="md:ml-auto self-end mt-2 md:mt-0">
+            <div className="md:ml-auto mt-2 md:mt-0">
               <Form
                 onChange={(e) => {
                   submit(e.currentTarget);
                 }}
-                className="w-min flex md:ml-auto self-auto md:self-end"
               >
                 <div className="relative w-min flex">
                   <div className="flex divide-x divide-slate-300">
@@ -199,36 +198,59 @@ export default function Saved() {
 
           <div className="mt-3 border-b border-b-slate-400 md:mt-6" />
 
-          <ul key={search} className="mt-6 flex flex-col gap-4 md:gap-8">
-            {[...data.saved.slice(0, 30), ...dataState].map((d) => (
-              <li key={d.id} className="flex items-center gap-6 md:gap-8">
-                <div>
-                  {d.mediaItem.mediaType === "BOOK" ? (
-                    <BookIcon />
-                  ) : d.mediaItem.mediaType === "MOVIE" ? (
-                    <MovieIcon />
-                  ) : d.mediaItem.mediaType === "TV" ? (
-                    <TvShowIcon />
-                  ) : null}
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-sm font-semibold line-clamp-2 md:text-base">
-                    {d.mediaItem.mediaType == "TV"
-                      ? d.mediaItem.TvSeries?.title
-                      : d.mediaItem.title}
-                  </div>
-                  <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
-                    {d.mediaItem.creator?.length && (
-                      <div className="text-sm">{d.mediaItem.creator}</div>
-                    )}
-                    <div className="text-xs text-gray-500">
-                      Added on {d.createdAt}
+          {data.saved.length > 0 ? (
+            <ul key={search} className="mt-6 flex flex-col gap-4 md:gap-8">
+              {[...data.saved.slice(0, 30), ...dataState].map((d) => {
+                const link =
+                  d.mediaItem.mediaType === "MOVIE"
+                    ? `/movies/${d.mediaItemId}`
+                    : `/`;
+
+                return (
+                  <li key={d.id} className="flex items-center gap-6 md:gap-8">
+                    <div>
+                      {d.mediaItem.mediaType === "BOOK" ? (
+                        <BookIcon />
+                      ) : d.mediaItem.mediaType === "MOVIE" ? (
+                        <MovieIcon />
+                      ) : d.mediaItem.mediaType === "TV" ? (
+                        <TvShowIcon />
+                      ) : null}
                     </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                    <div className="flex flex-col">
+                      <Link to={link}>
+                        <div className="text-sm font-semibold line-clamp-2 md:text-base">
+                          {d.mediaItem.mediaType == "TV"
+                            ? d.mediaItem.TvSeries?.title
+                            : d.mediaItem.title}
+                        </div>
+                      </Link>
+                      <div className="flex flex-col items-baseline gap-0.5 md:mt-1 md:flex-row  md:gap-4">
+                        {d.mediaItem.creator?.length && (
+                          <div className="text-sm">{d.mediaItem.creator}</div>
+                        )}
+                        <div className="text-xs text-gray-500">
+                          Added on {d.createdAt}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="flex flex-col items-center justify-center mt-8">
+              <div className="flex gap-4 items-center justify-center">
+                <h2 className="mt-2 text-base font-semibold leading-6 text-gray-900">
+                  You don't have anything in your list yet
+                </h2>
+              </div>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Start searching for things to save and come back to later!
+              </p>
+            </div>
+          )}
           <div
             ref={infiniteScrollRef}
             className={cn(
