@@ -1,5 +1,4 @@
 import { ClockIcon } from "@heroicons/react/20/solid";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { json, LoaderFunctionArgs } from "@vercel/remix";
 import Spinner from "~/components/spinner";
@@ -98,7 +97,7 @@ export default function Movie() {
 
             {data.isSavedItem && (
               <div className="w-28 ml-auto flex-col flex items-center group">
-                <div className="cursor-pointergroup h-10 w-10 relative">
+                <div className="cursor-pointer group h-10 w-10 relative">
                   <ClockIcon
                     onClick={() =>
                       fetcher.submit(

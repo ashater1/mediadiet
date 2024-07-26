@@ -68,7 +68,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "description": "This directory is a brief example of a [Remix](https://remix.run/docs) site that can be deployed to Vercel with zero configuration.",
+  "description": "An app to track everything you've watched and read!",
   "version": "1.0.0",
   "main": "remix.config.js",
   "repository": {
