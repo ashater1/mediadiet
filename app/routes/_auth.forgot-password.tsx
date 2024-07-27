@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
     type: "recovery",
     email: result.data.email,
     options: {
-      redirectTo: `https://mediadiet.app/reset-password`,
+      redirectTo: `https://www.mediadiet.app/reset-password`,
     },
   });
 
