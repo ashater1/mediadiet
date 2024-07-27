@@ -12,19 +12,19 @@ import {
 } from "@react-email/components";
 import { MediadietLogo } from "./logo";
 
-interface InviteUserEmailProps {
-  username?: string;
-  inviteLink?: string;
-}
+type ResetPasswordEmailProps = {
+  username: string;
+  resetPasswordLink: string;
+};
 
-export default function ConfirmEmailAddressEmail({
+export default function ResetPasswordEmail({
   username,
-  inviteLink,
-}: InviteUserEmailProps) {
+  resetPasswordLink,
+}: ResetPasswordEmailProps) {
   return (
     <Html>
       <Head />
-      <Preview>Confirm your email on mediadiet</Preview>
+      <Preview>Reset your password on mediadiet</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
@@ -36,16 +36,16 @@ export default function ConfirmEmailAddressEmail({
 
             <Text className="text-black">Hey {username},</Text>
             <Text className="text-black">
-              Thanks for joining! Click the button below to confirm your email
-              address & start using mediadiet.
+              Someone made a request to reset your password for this email
+              address. Click the link below to reset your password:
             </Text>
 
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
                 className="px-4 py-3 bg-pink-800 rounded text-white text-xs font-semibold no-underline text-center"
-                href={inviteLink}
+                href={resetPasswordLink}
               >
-                Confirm your email address
+                Reset your password
               </Button>
             </Section>
 

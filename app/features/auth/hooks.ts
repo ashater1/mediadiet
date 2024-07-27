@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 
 export function useIsAuthPage() {
   const location = useLocation();
-  const authPaths = ["/login", "/signup"];
+  const authPaths = [
+    "/login",
+    "/signup",
+    "/reset-password",
+    "/forgot-password",
+  ];
   return authPaths.includes(location.pathname);
 }
 
@@ -38,20 +43,5 @@ export function usePasswordValidator() {
     includesUppercase,
     isValidPassword:
       isValidLength && includesNumber && includesUppercase && includesSymbol,
-  };
-
-  return {
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    isMatching: password.length > 0 && password === confirmPassword,
-    isValidLength: password.length >= 8,
-    includesSymbol:
-      /[\?\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\;\:\'\"\,\.\<\>\/\|\`\~]/.test(
-        password
-      ),
-    includesNumber: /\d/.test(password),
-    includesUppercase: password.toLowerCase() !== password,
   };
 }

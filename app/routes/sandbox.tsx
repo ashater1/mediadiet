@@ -1,13 +1,8 @@
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@vercel/remix";
-import { Button } from "~/components/button";
 import { PageFrame } from "~/components/frames";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/tooltip";
+import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
+import ResetPasswordEmail from "~/features/auth/emails/resetPassword";
 import { getFollowedThatHaveLogged } from "~/features/tvAndMovies/db";
 
 export async function loader() {
@@ -27,16 +22,10 @@ export default function Test() {
 
   return (
     <PageFrame>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button>Hover</button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Add to library</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <ResetPasswordEmail
+        username="adam"
+        resetPasswordLink="https://mediadiet.app/reset-password"
+      />
     </PageFrame>
   );
 }

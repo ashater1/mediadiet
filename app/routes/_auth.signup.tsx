@@ -21,34 +21,20 @@ import { Logo } from "~/components/logo";
 import Spinner from "~/components/spinner";
 import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
 import { usePasswordValidator } from "~/features/auth/hooks";
+import { passwordSchema } from "~/features/auth/passwords";
 import { signUp } from "~/features/auth/signUp.server";
 import { findUser, getSessionUser } from "~/features/auth/user.server";
 import { resend } from "~/features/emails/resend.server";
 
-const SignUpSchema = z
-  .object({
-    username: z
-      .string()
-      .max(50, { message: "Username is too long (maximum 50 characters)" }),
-    email: z.string().email(),
-    password: z
-      .string()
-      .min(8, { message: "Password is too short (minimum 8 characters)" })
-      .max(50, { message: "Password is too long (maximum 50 characters)" })
-      .refine(
-        (data) =>
-          /[\?\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\;\:\'\"\,\.\<\>\/\|\`\~]/.test(
-            data
-          ) &&
-          /\d/.test(data) &&
-          data.toLowerCase() !== data,
-        {
-          path: ["password"],
-          message: "Password does not meet minimum requirements",
-        }
-      ),
-    confirmPassword: z.string(),
-  })
+const SignUpSchema = passwordSchema
+  .merge(
+    z.object({
+      username: z
+        .string()
+        .max(50, { message: "Username is too long (maximum 50 characters)" }),
+      email: z.string().email(),
+    })
+  )
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
     message: "Passwords dont match!",
@@ -275,7 +261,7 @@ export default function SignUp() {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="sr-only">
+                  <label htmlFor="confirmPassword" className="sr-only">
                     Confirm Password
                   </label>
 
