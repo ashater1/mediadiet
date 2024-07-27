@@ -10,9 +10,11 @@ import { motion } from "framer-motion";
 import classNames from "classnames";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import Spinner from "~/components/spinner";
-import { ActionFunctionArgs, json } from "@vercel/remix";
-import { passwordSchema } from "~/features/auth/passwords";
+import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
+import { passwordSchema, resetPassword } from "~/features/auth/passwords";
 import { Logo } from "~/components/logo";
+import { getSessionUser, getUserDetails } from "~/features/auth/user.server";
+import { setToast } from "~/features/toasts/toast.server";
 
 function Indicator({ status }: { status: boolean }) {
   return status ? (
@@ -24,13 +26,46 @@ function Indicator({ status }: { status: boolean }) {
 
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
+  const user = await getSessionUser({ request, response });
+
+  if (!user) {
+    throw redirect("/login", { headers: response.headers });
+  }
+
   const submission = Object.fromEntries(await request.formData());
+
   const result = passwordSchema.safeParse(submission);
   if (!result.success) {
     return json({ success: false, data: result.error.flatten().fieldErrors });
   }
 
-  return json({ success: true, ...submission }, { headers: response.headers });
+  const { data, error } = await resetPassword({
+    request,
+    response,
+    password: result.data.password,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const userDetails = await getUserDetails({ request, response });
+  if (!userDetails) {
+    throw new Error("User not found");
+  }
+
+  await setToast({
+    request,
+    response,
+    toast: {
+      type: "success",
+      title: "Your password has been successfully reset",
+    },
+  });
+
+  throw redirect(`/${userDetails.username}`, {
+    headers: response.headers,
+  });
 }
 
 export default function ResetPassword() {
