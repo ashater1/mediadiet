@@ -10,7 +10,12 @@ import { motion } from "framer-motion";
 import classNames from "classnames";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import Spinner from "~/components/spinner";
-import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  redirect,
+} from "@vercel/remix";
 import { passwordSchema, resetPassword } from "~/features/auth/passwords";
 import { Logo } from "~/components/logo";
 import { getSessionUser, getUserDetails } from "~/features/auth/user.server";
@@ -24,18 +29,30 @@ function Indicator({ status }: { status: boolean }) {
   );
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const response = new Response();
+  const session = await getSessionUser({ request, response });
+
+  if (!session) {
+    throw redirect("/login", { headers: response.headers });
+  }
+
+  return json(null, { headers: response.headers });
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
-  const user = await getSessionUser({ request, response });
+  const userDetails = await getUserDetails({ request, response });
 
-  if (!user) {
+  if (!userDetails) {
     throw redirect("/login", { headers: response.headers });
   }
 
   const submission = Object.fromEntries(await request.formData());
-
   const result = passwordSchema.safeParse(submission);
+
   if (!result.success) {
+    console.log(result.error.flatten().fieldErrors);
     return json({ success: false, data: result.error.flatten().fieldErrors });
   }
 
@@ -45,11 +62,12 @@ export async function action({ request }: ActionFunctionArgs) {
     password: result.data.password,
   });
 
+  console.log({ data, error });
+
   if (error) {
     throw new Error(error.message);
   }
 
-  const userDetails = await getUserDetails({ request, response });
   if (!userDetails) {
     throw new Error("User not found");
   }
