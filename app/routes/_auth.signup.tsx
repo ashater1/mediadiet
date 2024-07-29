@@ -369,7 +369,9 @@ function Success() {
       <div className="flex gap-3 items-center">
         <CheckCircleIcon className="w-12 h-12 fill-green-500 stoke-white" />
         <div className="flex flex-col gap-3 w-96">
-          <h2 className="text-xl font-light">Thanks for signing up!</h2>
+          <h2 className="self-start text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Thanks for signing up!
+          </h2>
           <div className="text-sm">
             To finish setting up your account, check your email for a
             confirmation link that we just sent.

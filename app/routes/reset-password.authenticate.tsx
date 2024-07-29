@@ -24,17 +24,19 @@ export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
   const formData = Object.fromEntries(await request.formData());
   const submission = resetPasswordTokenSchema.safeParse(formData);
+
   if (!submission.success) {
     return json({ sucess: submission.success }, { headers: response.headers });
   }
 
   const serverClient = getServerClient({ request, response });
-  await serverClient.auth.setSession({
+
+  const { data, error } = await serverClient.auth.setSession({
     access_token: submission.data.access_token,
     refresh_token: submission.data.refresh_token,
   });
 
-  console.log("Redirecting to /reset-password");
+  console.log({ data, error });
   throw redirect("/reset-password", { headers: response.headers });
 }
 
