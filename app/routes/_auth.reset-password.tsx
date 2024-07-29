@@ -18,7 +18,7 @@ import {
 } from "@vercel/remix";
 import { passwordSchema, resetPassword } from "~/features/auth/passwords";
 import { Logo } from "~/components/logo";
-import { getSessionUser, getUserDetails } from "~/features/auth/user.server";
+import { getUserDetails } from "~/features/auth/user.server";
 import { setToast } from "~/features/toasts/toast.server";
 
 function Indicator({ status }: { status: boolean }) {
@@ -31,12 +31,8 @@ function Indicator({ status }: { status: boolean }) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
-  const session = await getSessionUser({ request, response });
-
-  if (!session) {
-    throw redirect("/login", { headers: response.headers });
-  }
-
+  const user = await getUserDetails({ request, response });
+  console.log({ ...user });
   return json(null, { headers: response.headers });
 }
 
@@ -52,7 +48,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const result = passwordSchema.safeParse(submission);
 
   if (!result.success) {
-    console.log(result.error.flatten().fieldErrors);
     return json({ success: false, data: result.error.flatten().fieldErrors });
   }
 
@@ -109,9 +104,6 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const actionData = useActionData<typeof action>();
-  useEffect(() => {
-    console.log({ ...actionData });
-  }, [actionData]);
 
   return (
     <div className="relative flex flex-col gap-y-2 rounded-md">
