@@ -8,6 +8,7 @@ export function useIsAuthPage() {
     "/signup",
     "/reset-password",
     "/forgot-password",
+    "/reset-password/authenticate",
   ];
   return authPaths.includes(location.pathname);
 }

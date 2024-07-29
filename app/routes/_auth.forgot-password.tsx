@@ -27,7 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
     type: "recovery",
     email: result.data.email,
     options: {
-      redirectTo: `https://mediadiet.app/reset-password`,
+      redirectTo: `http://localhost:3000/reset-password`,
     },
   });
 
@@ -62,7 +62,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function ForgotPassword() {
   const actionData = useActionData<typeof action>();
-  useEffect(() => console.log(actionData), [actionData]);
 
   const navigation = useNavigation();
 

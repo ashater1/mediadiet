@@ -1,5 +1,10 @@
-import { useLoaderData } from "@remix-run/react";
-import { json } from "@vercel/remix";
+import {
+  useActionData,
+  useLoaderData,
+  useLocation,
+  useSearchParams,
+} from "@remix-run/react";
+import { ActionFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
 import ResetPasswordEmail from "~/features/auth/emails/resetPassword";
@@ -7,25 +12,37 @@ import { getFollowedThatHaveLogged } from "~/features/tvAndMovies/db";
 
 export async function loader() {
   const response = new Response();
-  const id = "96160289-b196-4245-91f3-655c9c83331a";
-  const movie = "f0132db9-931b-4c5d-a4b7-ecd7acb1d96e";
 
-  const test = await getFollowedThatHaveLogged({
-    mediaItemId: movie,
-    userId: id,
-  });
-  return json({ test }, { headers: response.headers });
+  return json({ loaderData: "loaderData" }, { headers: response.headers });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const response = new Response();
+  const formData = Object.fromEntries(await request.formData());
+
+  return json(
+    { actionData: "actionData", ...formData },
+    { headers: response.headers }
+  );
 }
 
 export default function Test() {
-  const data = useLoaderData<typeof loader>();
+  const location = useLocation();
+  const searchParams = Object.fromEntries(
+    new URLSearchParams(location.hash.split("#")[1])
+  );
+
+  const loaderData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <PageFrame>
-      <ResetPasswordEmail
-        username="adam"
-        resetPasswordLink="https://mediadiet.app/reset-password"
-      />
+      <pre>{JSON.stringify(searchParams, null, 2)}</pre>
+      {/* {actionData ? (
+        <pre>{JSON.stringify(actionData, null, 2)}</pre>
+      ) : (
+        <pre>{JSON.stringify(loaderData, null, 2)}</pre>
+      )} */}
     </PageFrame>
   );
 }

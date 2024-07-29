@@ -32,7 +32,7 @@ function Indicator({ status }: { status: boolean }) {
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
   const user = await getUserDetails({ request, response });
-  console.log({ ...user });
+  console.log({ user });
   return json(null, { headers: response.headers });
 }
 
