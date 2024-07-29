@@ -20,6 +20,7 @@ import { passwordSchema, resetPassword } from "~/features/auth/passwords";
 import { Logo } from "~/components/logo";
 import { getUserDetails } from "~/features/auth/user.server";
 import { setToast } from "~/features/toasts/toast.server";
+import { Alert } from "./_auth.signup";
 
 function Indicator({ status }: { status: boolean }) {
   return status ? (
@@ -47,6 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const submission = Object.fromEntries(await request.formData());
   const result = passwordSchema.safeParse(submission);
+  console.log({ ...result });
 
   if (!result.success) {
     console.log({ result });
@@ -59,24 +61,33 @@ export async function action({ request }: ActionFunctionArgs) {
     password: result.data.password,
   });
 
-  console.log({ data, error });
-
   if (error) {
+    console.log(JSON.stringify(error));
+    if (
+      error.message ===
+      "New password should be different from the old password."
+    ) {
+      return json({
+        success: false,
+        data: { error: "sameAsOldPassword" as const },
+      });
+    }
+
     throw new Error(JSON.stringify(error));
+  } else {
+    await setToast({
+      request,
+      response,
+      toast: {
+        type: "success",
+        title: "Your password has been successfully reset",
+      },
+    });
+
+    throw redirect(`/${userDetails.username}`, {
+      headers: response.headers,
+    });
   }
-
-  await setToast({
-    request,
-    response,
-    toast: {
-      type: "success",
-      title: "Your password has been successfully reset",
-    },
-  });
-
-  throw redirect(`/${userDetails.username}`, {
-    headers: response.headers,
-  });
 }
 
 export default function ResetPassword() {
@@ -104,7 +115,7 @@ export default function ResetPassword() {
   const actionData = useActionData<typeof action>();
 
   return (
-    <div className="relative flex flex-col gap-y-2 rounded-md">
+    <div className="relative flex flex-col gap-y-2 rounded-md w-full max-w-sm">
       <Logo />
       <h2 className="mb-3 self-start text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Set your new password
@@ -134,6 +145,15 @@ export default function ResetPassword() {
               {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
             </div>
           </div>
+          {actionData?.data &&
+            "error" in actionData.data &&
+            actionData.data.error === "sameAsOldPassword" && (
+              <Alert>
+                <p className="text-sm">
+                  Your new password cannot be the same as your old password.
+                </p>
+              </Alert>
+            )}
 
           <div className="mt-2 flex flex-col gap-3">
             <div className="flex justify-between">

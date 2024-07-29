@@ -388,7 +388,9 @@ function Success() {
   );
 }
 
-function Alert({ children }: React.HTMLAttributes<HTMLParagraphElement>) {
+export function Alert({
+  children,
+}: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <motion.p
       initial={{ height: 0 }}
