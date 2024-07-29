@@ -18,8 +18,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const result = emailSchema.safeParse(submission);
 
-  console.log({ result });
-
   if (!result.success) {
     return json({ success: false, data: result.error.flatten().fieldErrors });
   }
@@ -29,7 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
     type: "recovery",
     email: result.data.email,
     options: {
-      redirectTo: `https://www.mediadiet.app/reset-password`,
+      redirectTo: `https://mediadiet.app/reset-password`,
     },
   });
 

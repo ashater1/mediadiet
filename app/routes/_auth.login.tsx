@@ -180,9 +180,12 @@ export default function Login() {
           </button>
 
           <div className="mt-3 flex items-center justify-center text-sm leading-6">
-            <a href="#" className="text-primary-800 hover:text-primary-700">
+            <Link
+              to="/forgot-password"
+              className="text-primary-800 hover:text-primary-700"
+            >
               Forgot your password?
-            </a>
+            </Link>
           </div>
         </div>
       </Form>

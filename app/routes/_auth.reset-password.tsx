@@ -41,6 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const userDetails = await getUserDetails({ request, response });
 
   if (!userDetails) {
+    console.log("User not found");
     throw redirect("/login", { headers: response.headers });
   }
 
@@ -48,6 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const result = passwordSchema.safeParse(submission);
 
   if (!result.success) {
+    console.log({ result });
     return json({ success: false, data: result.error.flatten().fieldErrors });
   }
 
@@ -61,10 +63,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (error) {
     throw new Error(error.message);
-  }
-
-  if (!userDetails) {
-    throw new Error("User not found");
   }
 
   await setToast({
