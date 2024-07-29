@@ -62,7 +62,7 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log({ data, error });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(JSON.stringify(error));
   }
 
   await setToast({
@@ -96,7 +96,7 @@ export default function ResetPassword() {
   const navigation = useNavigation();
   const loading =
     navigation.state !== "idle" &&
-    navigation.formData?.get("actionId") === "signup";
+    navigation.formData?.get("actionId") === "resetPassword";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -228,7 +228,7 @@ export default function ResetPassword() {
           )}
         >
           <div className="relative">
-            {loading ? <Spinner className="w-5 h-5" /> : "Sign up"}
+            {loading ? <Spinner className="w-5 h-5" /> : "Reset password"}
           </div>
         </button>
       </Form>
