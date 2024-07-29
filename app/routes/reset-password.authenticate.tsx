@@ -2,8 +2,6 @@ import { useActionData, useLocation, useSubmit } from "@remix-run/react";
 import { ActionFunctionArgs, json, redirect } from "@vercel/remix";
 import { useEffect } from "react";
 import { z } from "zod";
-import { PageFrame } from "~/components/frames";
-import Spinner from "~/components/spinner";
 import { getServerClient } from "~/features/auth/client.server";
 import { getSessionUser, getUserDetails } from "~/features/auth/user.server";
 
@@ -51,7 +49,7 @@ export default function PasswordRedirect() {
   useEffect(() => {
     submit(searchParams, {
       method: "post",
-      action: "/reset-password/redirect",
+      action: "/reset-password/authenticate",
     });
   }, []);
 
