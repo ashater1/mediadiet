@@ -2,8 +2,8 @@ import { MediaType, Prisma } from "@prisma/client";
 import { parse } from "date-fns";
 import { z } from "zod";
 import { db } from "~/db.server";
-import { Book, openlibrary } from "~/features/books/openLibrary";
-import { Movie, Season, Show, movieDb } from "../tvAndMovies/api";
+import { Book, openlibrary } from "~/features/works/books/openLibrary";
+import { Movie, Season, Show, movieDb } from "~/features/works/tvAndMovies/api";
 import { isoDate, nullishOnToBool, nullishStringToBool } from "../zod/utils";
 
 export type AddToListArgs = z.infer<typeof AddToListSchema> & {

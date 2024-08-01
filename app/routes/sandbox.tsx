@@ -8,7 +8,7 @@ import { ActionFunctionArgs, json } from "@vercel/remix";
 import { PageFrame } from "~/components/frames";
 import ConfirmEmailAddressEmail from "~/features/auth/emails/confirmSignup";
 import ResetPasswordEmail from "~/features/auth/emails/resetPassword";
-import { getFollowedThatHaveLogged } from "~/features/tvAndMovies/db";
+import { getFollowedThatHaveLogged } from "~/features/works/tvAndMovies/db";
 
 export async function loader() {
   const response = new Response();

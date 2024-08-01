@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "~/db.server";
-import { getAvatarUrl } from "../auth/user.server";
+import { getAvatarUrl } from "~/features/auth/user.server";
 
 const getFollowedThatHaveLoggedSchema = z.array(
   z.object({

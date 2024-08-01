@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from "@vercel/remix";
-import { openlibrary } from "~/features/books/openLibrary";
+import { openlibrary } from "~/features/works/books/openLibrary";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { MediaType } from "@prisma/client";
 import { ComboboxOption } from "~/features/search/SearchCombobox";

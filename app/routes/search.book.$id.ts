@@ -1,7 +1,7 @@
 import { MediaType } from "@prisma/client";
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { z } from "zod";
-import { openlibrary } from "~/features/books/openLibrary";
+import { openlibrary } from "~/features/works/books/openLibrary";
 import { listToString, safeFilter } from "~/utils/funcs";
 
 export async function loader({ params }: LoaderFunctionArgs) {

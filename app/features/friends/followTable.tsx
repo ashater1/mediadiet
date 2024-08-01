@@ -10,9 +10,9 @@ export function FriendsTable({ followers }: { followers: FriendsListProps[] }) {
       <thead>
         <tr>
           <th className="w-full text-left">Name</th>
-          <th className="text-left">Movies</th>
-          <th className="text-left">Books</th>
-          <th className="text-left">Seasons</th>
+          <th className="md:px-7 px-2 text-center">Movies</th>
+          <th className="md:px-7 px-2 text-left">Books</th>
+          <th className="md:px-7 px-2 text-left">Seasons</th>
         </tr>
       </thead>
       <tbody>
@@ -43,7 +43,7 @@ export function FriendsTableRow({
       <td className="py-5">
         <Link to={`/${username}`} prefetch="intent">
           <div className="flex gap-4">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="hidden md:block w-10 h-10 rounded-full overflow-hidden">
               {avatar ? (
                 <img className="w-full h-full" src={avatar} alt={username} />
               ) : (
@@ -59,25 +59,31 @@ export function FriendsTableRow({
       </td>
       <td>
         <Link to={`/${username}?type=movie`} prefetch="intent">
-          <div className="mr-6">
-            <span className="text-lg font-bold">{movie_count}</span>
-            <span className="ml-1.5 text-sm">movies</span>
+          <div className="w-full mr-6 text-center">
+            <span className="text-lg font-bold">{movie_count}</span>{" "}
+            <span className="hidden md:inline-block text-sm">
+              {movie_count === 1 ? "movie" : "movies"}
+            </span>
           </div>
         </Link>
       </td>
       <td>
         <Link to={`/${username}?type=book`} prefetch="intent">
-          <div className="mr-6">
-            <span className="text-lg font-bold">{book_count}</span>
-            <span className="ml-1.5 text-sm">books</span>
+          <div className="w-full mr-6 text-center">
+            <span className="text-lg font-bold">{book_count}</span>{" "}
+            <span className="hidden md:inline-block text-sm">
+              {book_count === 1 ? "book" : "books"}
+            </span>
           </div>
         </Link>
       </td>
       <td>
         <Link to={`/${username}?type=tv`} prefetch="intent">
-          <div>
-            <span className="text-lg font-bold">{tv_count}</span>
-            <span className="ml-1.5 text-sm">seasons</span>
+          <div className="w-full ml-1.5 text-center">
+            <span className="text-lg font-bold">{tv_count}</span>{" "}
+            <span className="hidden md:inline-block text-sm">
+              {tv_count === 1 ? "season" : "seasons"}
+            </span>
           </div>
         </Link>
       </td>

@@ -6,11 +6,12 @@ import { db } from "~/db.server";
 import { getUserDetails } from "~/features/auth/user.server";
 import { FavoriteHeart, ReviewIcon } from "~/features/list/icons/icons";
 import { getIsSavedItem } from "~/features/saved/get.server";
-import { movieDb } from "~/features/tvAndMovies/api";
-import { getFollowedThatHaveLogged } from "~/features/tvAndMovies/db";
+import { movieDb } from "~/features/works/tvAndMovies/api";
+import { getFollowedThatHaveLogged } from "~/features/works/tvAndMovies/db";
 import { listToString, safeFilter } from "~/utils/funcs";
 import { getCoverArtUrl } from "~/utils/getCoverArtUrl";
 
+// TODO - use apiId instead of id to support new movies
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const response = new Response();
   const user = await getUserDetails({ request, response });
@@ -97,28 +98,22 @@ export default function Movie() {
 
             {data.isSavedItem && (
               <div className="w-28 ml-auto flex-col flex items-center group">
-                <div className="cursor-pointer group h-10 w-10 relative">
-                  <ClockIcon
-                    onClick={() =>
-                      fetcher.submit(
-                        { mediaItemId: data.mediaItemId },
-                        { method: "post", action: "/saved/delete" }
-                      )
-                    }
-                    className="h-full w-full fill-primary-400"
-                  />
-                  {fetcher.formAction === "/saved/delete" && (
-                    <div className="absolute top-1/2 -translate-y-1/2">
-                      <Spinner className="p-2 h-full w-full stroke-slate-800" />
-                    </div>
-                  )}
+                <div className="cursor-pointer group flex flex-col items-center justify-center">
+                  <div className="md:h-10 md:w-10 w-8 h-8 relative">
+                    <ClockIcon className="h-full w-full fill-primary-400" />
+                    {fetcher.formAction === "/saved/delete" && (
+                      <div className="absolute top-1/2 -translate-y-1/2">
+                        <Spinner className="p-2 h-full w-full stroke-slate-800" />
+                      </div>
+                    )}
+                  </div>
+                  <span className="group-hover:hidden md:inline-flex hidden first-letter:items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-pink-700/10">
+                    Saved for later
+                  </span>
+                  <span className="md:hidden md:group-hover:inline-flex inline-flex items-center rounded-md bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10">
+                    Remove
+                  </span>
                 </div>
-                <span className="group-hover:hidden inline-flexitems-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-pink-700/10">
-                  Saved for later
-                </span>
-                <span className="group-hover:inline-flex hidden items-center rounded-md bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10">
-                  Remove
-                </span>
               </div>
             )}
           </div>

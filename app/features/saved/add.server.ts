@@ -1,13 +1,13 @@
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { db } from "~/db.server";
-import { openlibrary } from "~/features/books/openLibrary";
+import { openlibrary } from "~/features/works/books/openLibrary";
 import {
   formatBookToCreateMediaItem,
   formatMovieToCreateMediaItem,
   formatTvShowToCreateMediaItem,
 } from "../list/add.server";
-import { movieDb } from "../tvAndMovies/api";
+import { movieDb } from "~/features/works/tvAndMovies/api";
 
 export const AddToSavedSchema = z.discriminatedUnion("mediaType", [
   z.object({ mediaType: z.literal("MOVIE"), id: z.string() }),

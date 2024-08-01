@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from "@vercel/remix";
 import { listToString, safeFilter } from "~/utils/funcs";
 import invariant from "tiny-invariant";
-import { movieDb } from "~/features/tvAndMovies/api";
+import { movieDb } from "~/features/works/tvAndMovies/api";
 import { MediaType } from "@prisma/client";
 
 export async function loader({ params }: LoaderFunctionArgs) {

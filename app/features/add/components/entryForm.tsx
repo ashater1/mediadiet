@@ -114,10 +114,10 @@ export function EntryFormInputs({
 
       <div>
         <label htmlFor="date" className="block text-gray-500">
-          Date watched
+          {mediaType === "MOVIE" ? "Date watched" : "Finished on"}
         </label>
         <input
-          placeholder="Date watched"
+          placeholder={mediaType === "MOVIE" ? "Date watched" : "Finished on"}
           className="py-0.5  text-slate-900"
           id="consumedDate"
           name="consumedDate"
